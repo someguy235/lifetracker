@@ -15,5 +15,15 @@
     <string name="title_activity_metrics_new_fragment">MetricsNewFragment</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_test">TestActivity</string>
-
+    <!-- Metrics -->
+	<string name="metrics_main_button_new">New Metric</string>
+	<string name="metrics_new_header">New Metric</string>
+	<string name="metrics_new_label_name">Name:</string>
+	<string name="metrics_new_input_name">Name of metric</string>
+	<string name="metrics_new_label_desc">Description:</string>
+	<string name="metrics_new_input_desc"></string>
+	<string name="metrics_new_label_unit">Unit:</string>
+	<string name="metrics_new_input_unit">miles/glasses/hours/etc.</string>
+	<string name="metrics_main_button_cancel">Cancel</string>
+	<string name="metrics_main_button_save">Save</string>
 </resources>

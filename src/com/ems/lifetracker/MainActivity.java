@@ -59,19 +59,19 @@ public class MainActivity extends Activity
         	case 0:
         		Log.d("FRAGMENT: ", "track");
         		fragmentManager.beginTransaction()
-            		.replace(R.id.container, new TrackMainFragment())
+            		.replace(R.id.main_container, new TrackMainFragment())
             		.commit();
         		break;
         	case 1:
         		Log.d("FRAGMENT: ", "metrics");
         		fragmentManager.beginTransaction()
-        			.replace(R.id.container, new MetricsMainFragment())
+        			.replace(R.id.main_container, new MetricsMainFragment())
         			.commit();
     			break;
         	case 2:
         		Log.d("FRAGMENT: ", "history");
         		fragmentManager.beginTransaction()
-            		.replace(R.id.container, new HistoryMainFragment())
+            		.replace(R.id.main_container, new HistoryMainFragment())
             		.commit();
         		break;
         }
@@ -123,5 +123,9 @@ public class MainActivity extends Activity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    
+    public void chooseActivity(){
+    	Log.d("ACTIVITY: ", "chosen");
     }
 }

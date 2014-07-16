@@ -6,11 +6,87 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ems.lifetracker.MetricsNewFragment$PlaceholderFragment" >
+    tools:context="com.ems.lifetracker.MainActivity$MetricsNewFragment" >
 
     <TextView
+        android:id="@+id/metrics_new_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentTop="true"
+        android:text="@string/metrics_new_header" />
+    
+    <LinearLayout
+        android:id="@+id/metrics_new_layout_name"
+		android:orientation="horizontal" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+        android:layout_below="@id/metrics_new_header" >
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/metrics_new_label_name" />
+	    <EditText
+		    android:id="@+id/metrics_new_name"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:hint="@string/metrics_new_input_name"
+		    android:inputType="text"
+		    android:ems="10" >
+		</EditText>
+	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/metrics_new_layout_desc"
+		android:orientation="horizontal" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:layout_below="@id/metrics_new_layout_name" >
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/metrics_new_label_desc" />
+	    <EditText
+		    android:id="@+id/metrics_new_desc"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:hint="@string/metrics_new_input_desc"
+		    android:inputType="text"
+		    android:ems="10" >
+		</EditText>
+	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/metrics_new_layout_unit"
+		android:orientation="horizontal" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:layout_below="@id/metrics_new_layout_desc" >
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/metrics_new_label_unit" />
+	    <EditText
+		    android:id="@+id/metrics_new_unit"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:hint="@string/metrics_new_input_unit"
+		    android:inputType="text"
+		    android:ems="10" >
+		</EditText>
+	</LinearLayout>
+    
+    <Button
+        android:id="@+id/metrics_new_button_save"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/metrics_main_button_save"
+        android:onClick="" />
+    <Button
+        android:id="@+id/metrics_new_button_cancel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/metrics_new_button_save"
+        android:text="@string/metrics_main_button_cancel"
+        android:onClick="" />
+    
 
 </RelativeLayout>
