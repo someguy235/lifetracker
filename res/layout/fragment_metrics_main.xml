@@ -15,19 +15,22 @@
 <!--         android:layout_alignParentTop="true" -->
 <!--         android:text="fragment_metrics_main" /> -->
     
+        
     <ListView
         android:id="@+id/metrics_main_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
-    </ListView>
-	    
-    <Button
+		android:layout_above="@+id/metrics_main_button_new" 
+		android:layout_alignParentTop="true"
+        >
+	</ListView>
+	<Button
+        style="?android:attr/buttonBarButtonStyle"
         android:id="@+id/metrics_main_button_new"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="@string/metrics_main_button_new"
-        android:onClick="" />
-
+        android:onClick="" 
+        />
 </RelativeLayout>

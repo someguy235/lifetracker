@@ -141,7 +141,6 @@
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
             android:layout_weight="1"
-	        android:onClick=""
 	        android:text="@string/metrics_new_button_cancel" />
        	<Button
 	        style="?android:attr/buttonBarButtonStyle"
@@ -149,7 +148,6 @@
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
             android:layout_weight="1"
-	        android:onClick=""
 	        android:text="@string/metrics_new_button_save" />
 	
 	</LinearLayout>

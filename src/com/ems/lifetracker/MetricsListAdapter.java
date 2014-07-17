@@ -13,7 +13,7 @@ public class MetricsListAdapter extends ArrayAdapter<Metric> {
     public MetricsListAdapter(Context context, ArrayList<Metric> metrics) {
        super(context, R.layout.metrics_list_item, metrics);
     }
-
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
        // Get the data item for this position
@@ -31,7 +31,7 @@ public class MetricsListAdapter extends ArrayAdapter<Metric> {
        TextView mType = (TextView) convertView.findViewById(R.id.metrics_list_item_type);
        
        // Populate the data into the template view using the data object
-       mName.setText("Name: "+ metric.getName());
+       mName.setText(metric.getName());
        mDesc.setText(metric.getDesc());
        mUnit.setText(metric.getUnit());
        mType.setText(metric.getType());

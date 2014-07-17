@@ -1,7 +1,6 @@
 package com.ems.lifetracker;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -12,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
  
@@ -34,6 +35,21 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
         final ListView listView = (ListView) rootView.findViewById(R.id.metrics_main_list);
 		MetricsListAdapter adapter = new MetricsListAdapter(ctx, metrics);
 		listView.setAdapter(adapter);
+		
+		listView.setOnItemClickListener(new OnItemClickListener() {
+			FragmentManager fragmentManager = getFragmentManager();
+
+	        @Override
+	        public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+    			Metric metric = (Metric)parent.getItemAtPosition(pos);
+    			Log.d("CLICKED: ", metric.getName());
+        		fragmentManager.beginTransaction()
+        			.replace(R.id.main_container, new MetricsDetailsFragment())
+        			.commit();
+
+	         }
+
+	    });
 		
         Button b = (Button) rootView.findViewById(R.id.metrics_main_button_new);
         b.setOnClickListener(this);

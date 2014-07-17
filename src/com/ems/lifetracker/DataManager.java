@@ -52,11 +52,24 @@ public class DataManager extends SQLiteOpenHelper{
 	        this.onCreate(db);
 	    }
 	    
+	    public Metric getMetricByName(String name){
+	    	Metric metric = null;
+	    	String query = "SELECT * FROM " + TABLE_METRICS +" WHERE "+ KEY_NAME + "="+ name;
+	    	SQLiteDatabase db = this.getReadableDatabase();
+	    	Cursor cursor = db.rawQuery(query, null);
+	    	
+	    	if (cursor != null && cursor.getCount() != 0){
+	            cursor.moveToFirst();
+    			metric = new Metric(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+	    	}
+	    	return metric;
+	    }
+	    
 	    public List<Metric> getAllMetrics(){
 	    	List<Metric> metrics = new ArrayList<Metric>();
 	    	
 	    	String query = "SELECT * FROM " + TABLE_METRICS;
-	    	SQLiteDatabase db = this.getWritableDatabase();
+	    	SQLiteDatabase db = this.getReadableDatabase();
 	    	Cursor cursor = db.rawQuery(query, null);
 			cursor.moveToPosition(-1);
 	    	
