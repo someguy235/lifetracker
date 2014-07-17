@@ -78,6 +78,7 @@ public class DataManager extends SQLiteOpenHelper{
 		    values.put(KEY_UNIT, metric.getUnit()); 
 		    values.put(KEY_TYPE, metric.getType());
 		     
+		    //TODO: check for duplicates?
 		    long success = db.insert(TABLE_METRICS, null, values);
 		    db.close(); 
 		    
@@ -85,4 +86,5 @@ public class DataManager extends SQLiteOpenHelper{
 		    
 		    return success >= -1;
 	    }
+	    
 }

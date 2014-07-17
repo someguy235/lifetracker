@@ -17,6 +17,7 @@ import android.widget.Toast;
  
 public class MetricsNewFragment extends Fragment implements OnClickListener {
 	View rootView;
+	Context ctx;
 	public MetricsNewFragment(){}
 	
     @Override
@@ -24,6 +25,7 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
             Bundle savedInstanceState) {
   
         rootView = inflater.inflate(R.layout.fragment_metrics_new, container, false);
+        ctx = getActivity();
         
         Button saveButton = (Button) rootView.findViewById(R.id.metrics_new_button_save);
         saveButton.setOnClickListener(this);
@@ -52,21 +54,35 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         	
         	RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.metrics_new_radio_group);
         	int selectedType = radioGroup.getCheckedRadioButtonId();
-	        RadioButton radioTypeButton = (RadioButton) rootView.findViewById(selectedType);
-	        String metricType = radioTypeButton.getText().toString();
-
+        	View radioButton = radioGroup.findViewById(selectedType);
+        	int typeIdx = radioGroup.indexOfChild(radioButton);
+        	
+//        	Log.d("SELECTED TYPE", String.valueOf(typeIdx));
+        	String metricType = null;
+        	switch(typeIdx){
+        	case 0:
+        		metricType = "binary";
+        		break;
+        	case 1:
+        		metricType = "count";
+        		break;
+        	case 2:
+        		metricType = "increment";
+        		break;
+        	}
+ 
 	        Metric metric = new Metric(metricName, metricDesc, metricUnit, metricType);
-	        Log.d("METRIC: ", metric.toString());
-	        //DataManager dm = new DataManager();
+//	        Log.d("METRIC: ", metric.toString());
+	        DataManager dm = new DataManager(ctx);
 	         
-//	        if(dm.addMetric(metric)){
-//	        	fragmentManager.beginTransaction()
-//		    		.replace(R.id.main_container, new MetricsMainFragment())
-//		    		.commit();
-//	        }else{
-//	        	Toast.makeText(getApplicationContext(), "Something went wrong!", 
-//	        			Toast.LENGTH_LONG).show();
-//	        }
+	        if(dm.addMetric(metric)){
+	        	fragmentManager.beginTransaction()
+		    		.replace(R.id.main_container, new MetricsMainFragment())
+		    		.commit();
+	        }else{
+	        	Toast.makeText(ctx, "Something went wrong!", 
+	        			Toast.LENGTH_LONG).show();
+	        }
         	break;
 	    case R.id.metrics_new_button_cancel:
 	    	Log.d("FRAGMENT: ", "metrics_cancel");
