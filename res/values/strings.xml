@@ -19,11 +19,15 @@
 	<string name="metrics_main_button_new">New Metric</string>
 	<string name="metrics_new_header">New Metric</string>
 	<string name="metrics_new_label_name">Name:</string>
-	<string name="metrics_new_input_name">Name of metric</string>
+	<string name="metrics_new_input_name">metric name</string>
 	<string name="metrics_new_label_desc">Description:</string>
-	<string name="metrics_new_input_desc"></string>
+	<string name="metrics_new_input_desc">metric details</string>
 	<string name="metrics_new_label_unit">Unit:</string>
-	<string name="metrics_new_input_unit">miles/glasses/hours/etc.</string>
-	<string name="metrics_main_button_cancel">Cancel</string>
-	<string name="metrics_main_button_save">Save</string>
+	<string name="metrics_new_input_unit">miles/hours/etc.</string>
+	<string name="metrics_new_label_type">Type:</string>
+	<string name="metrics_new_radio_binary">binary (yes/no)</string>
+	<string name="metrics_new_radio_count">count (enter an amount)</string>
+	<string name="metrics_new_radio_increment">increment (accumulate)</string>
+	<string name="metrics_new_button_cancel">Cancel</string>
+	<string name="metrics_new_button_save">Save</string>
 </resources>

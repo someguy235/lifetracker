@@ -32,7 +32,7 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
 
     	switch (v.getId()) {
         case R.id.metrics_main_button_new:
-        	Log.d("FRAGMENT: ", "metrics_add");
+        	Log.d("FRAGMENT: ", "metrics_new");
     		fragmentManager.beginTransaction()
         		.replace(R.id.main_container, new MetricsNewFragment())
         		.commit();
@@ -40,7 +40,4 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
         }
     }
     
-    public void chooseActivity(){
-    	Log.d("ACTIVITY: ", "chosen");
-    }
 }

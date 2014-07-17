@@ -47,38 +47,41 @@ public class MainActivity extends Activity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
         
         //TODO: do this dynamically
-        //onNavigationDrawerItemSelected(1);
+        onNavigationDrawerItemSelected(0);
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
-
         switch (position){
         	case 0:
         		Log.d("FRAGMENT: ", "track");
-        		fragmentManager.beginTransaction()
+        		mTitle = getString(R.string.title_section1);
+                fragmentManager.beginTransaction()
             		.replace(R.id.main_container, new TrackMainFragment())
             		.commit();
+        		
         		break;
         	case 1:
         		Log.d("FRAGMENT: ", "metrics");
-        		fragmentManager.beginTransaction()
+        		mTitle = getString(R.string.title_section2);
+                fragmentManager.beginTransaction()
         			.replace(R.id.main_container, new MetricsMainFragment())
         			.commit();
     			break;
         	case 2:
         		Log.d("FRAGMENT: ", "history");
-        		fragmentManager.beginTransaction()
+        		mTitle = getString(R.string.title_section3);
+                fragmentManager.beginTransaction()
             		.replace(R.id.main_container, new HistoryMainFragment())
             		.commit();
         		break;
         }
-        
-    }
+    } 
 
     public void onSectionAttached(int number) {
+    	Log.d("SECTION: ", "attached");
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
@@ -93,6 +96,7 @@ public class MainActivity extends Activity
     }
 
     public void restoreActionBar() {
+    	Log.d("ACTION BAR TITLE", (String)mTitle);
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
