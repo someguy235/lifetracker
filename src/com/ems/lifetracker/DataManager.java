@@ -54,9 +54,12 @@ public class DataManager extends SQLiteOpenHelper{
 	    
 	    public Metric getMetricByName(String name){
 	    	Metric metric = null;
-	    	String query = "SELECT * FROM " + TABLE_METRICS +" WHERE "+ KEY_NAME + "="+ name;
+	    	//String query = "SELECT * FROM " + TABLE_METRICS +" WHERE "+ KEY_NAME + "="+ name;
 	    	SQLiteDatabase db = this.getReadableDatabase();
-	    	Cursor cursor = db.rawQuery(query, null);
+	    	//Cursor cursor = db.rawQuery(query, null);
+	    	Cursor cursor = db.query(TABLE_METRICS, new String[] { 
+	        		KEY_ID, KEY_NAME, KEY_DESC, KEY_UNIT, KEY_TYPE }, KEY_NAME + "=?",
+	                new String[] { name }, null, null, null, null);
 	    	
 	    	if (cursor != null && cursor.getCount() != 0){
 	            cursor.moveToFirst();

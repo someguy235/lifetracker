@@ -38,13 +38,17 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
 		
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			FragmentManager fragmentManager = getFragmentManager();
-
+			Fragment fragment;
 	        @Override
 	        public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
     			Metric metric = (Metric)parent.getItemAtPosition(pos);
+    			Bundle bundle = new Bundle();
+    			bundle.putString("metricName", metric.getName());
+    			fragment = new MetricsDetailsFragment();
+    			fragment.setArguments(bundle);
     			Log.d("CLICKED: ", metric.getName());
         		fragmentManager.beginTransaction()
-        			.replace(R.id.main_container, new MetricsDetailsFragment())
+        			.replace(R.id.main_container, fragment)
         			.commit();
 
 	         }
