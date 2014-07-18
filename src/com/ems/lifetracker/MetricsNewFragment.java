@@ -41,7 +41,6 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
 
     	switch (v.getId()) {
         case R.id.metrics_new_button_save:
-        	Log.d("FRAGMENT: ", "metrics_save");
         	
         	EditText metricNameText = (EditText) rootView.findViewById(R.id.metrics_new_name);
         	String metricName = metricNameText.getText().toString();
@@ -57,7 +56,6 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         	View radioButton = radioGroup.findViewById(selectedType);
         	int typeIdx = radioGroup.indexOfChild(radioButton);
         	
-//        	Log.d("SELECTED TYPE", String.valueOf(typeIdx));
         	String metricType = null;
         	switch(typeIdx){
         	case 0:
@@ -72,7 +70,6 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         	}
  
 	        Metric metric = new Metric(metricName, metricDesc, metricUnit, metricType);
-//	        Log.d("METRIC: ", metric.toString());
 	        DataManager dm = new DataManager(ctx);
 	         
 	        if(dm.addMetric(metric)){
@@ -85,7 +82,6 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
 	        }
         	break;
 	    case R.id.metrics_new_button_cancel:
-	    	Log.d("FRAGMENT: ", "metrics_cancel");
 			fragmentManager.beginTransaction()
 	    		.replace(R.id.main_container, new MetricsMainFragment())
 	    		.commit();

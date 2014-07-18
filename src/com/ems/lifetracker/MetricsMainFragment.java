@@ -30,7 +30,6 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
         
         DataManager dm = new DataManager(ctx);
         ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
-        Log.d("# metrics", String.valueOf(metrics.size()));
         
         final ListView listView = (ListView) rootView.findViewById(R.id.metrics_main_list);
 		MetricsListAdapter adapter = new MetricsListAdapter(ctx, metrics);
@@ -46,13 +45,10 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
     			bundle.putString("metricName", metric.getName());
     			fragment = new MetricsDetailsFragment();
     			fragment.setArguments(bundle);
-    			Log.d("CLICKED: ", metric.getName());
         		fragmentManager.beginTransaction()
         			.replace(R.id.main_container, fragment)
         			.commit();
-
 	         }
-
 	    });
 		
         Button b = (Button) rootView.findViewById(R.id.metrics_main_button_new);
@@ -67,7 +63,6 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
 
     	switch (v.getId()) {
         case R.id.metrics_main_button_new:
-        	Log.d("FRAGMENT: ", "metrics_new");
     		fragmentManager.beginTransaction()
         		.replace(R.id.main_container, new MetricsNewFragment())
         		.commit();

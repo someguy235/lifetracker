@@ -56,7 +56,6 @@ public class MainActivity extends Activity
         FragmentManager fragmentManager = getFragmentManager();
         switch (position){
         	case 0:
-        		Log.d("FRAGMENT: ", "track");
         		mTitle = getString(R.string.title_section1);
                 fragmentManager.beginTransaction()
             		.replace(R.id.main_container, new TrackMainFragment())
@@ -64,14 +63,12 @@ public class MainActivity extends Activity
         		
         		break;
         	case 1:
-        		Log.d("FRAGMENT: ", "metrics");
         		mTitle = getString(R.string.title_section2);
                 fragmentManager.beginTransaction()
         			.replace(R.id.main_container, new MetricsMainFragment())
         			.commit();
     			break;
         	case 2:
-        		Log.d("FRAGMENT: ", "history");
         		mTitle = getString(R.string.title_section3);
                 fragmentManager.beginTransaction()
             		.replace(R.id.main_container, new HistoryMainFragment())
@@ -81,7 +78,6 @@ public class MainActivity extends Activity
     } 
 
     public void onSectionAttached(int number) {
-    	Log.d("SECTION: ", "attached");
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
@@ -96,7 +92,6 @@ public class MainActivity extends Activity
     }
 
     public void restoreActionBar() {
-    	Log.d("ACTION BAR TITLE", (String)mTitle);
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
@@ -130,6 +125,5 @@ public class MainActivity extends Activity
     }
     
     public void chooseActivity(){
-    	Log.d("ACTIVITY: ", "chosen");
     }
 }

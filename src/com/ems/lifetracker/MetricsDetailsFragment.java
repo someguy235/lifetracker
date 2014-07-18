@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
  
 public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	private Context ctx;
@@ -32,19 +33,17 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         ArrayList<Metric> metrics = new ArrayList<Metric>();
         metrics.add(metric);
         MetricsListAdapter adapter = new MetricsListAdapter(ctx, metrics);
-		//Log.d("# metrics", String.valueOf(metrics.size()));
         
         final ListView listView = (ListView) rootView.findViewById(R.id.metrics_details_list);
 		listView.setAdapter(adapter);
 		
-		/*
-        Button b = (Button) rootView.findViewById(R.id.metrics_main_button_new);
+        Button b = (Button) rootView.findViewById(R.id.metrics_details_button_cancel);
         b.setOnClickListener(this);
-        Button b = (Button) rootView.findViewById(R.id.metrics_main_button_new);
+        b = (Button) rootView.findViewById(R.id.metrics_details_button_edit);
         b.setOnClickListener(this);
-        Button b = (Button) rootView.findViewById(R.id.metrics_main_button_new);
+        b = (Button) rootView.findViewById(R.id.metrics_details_button_delete);
         b.setOnClickListener(this);
-        */
+
         return rootView;
     }
     
@@ -53,11 +52,30 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         FragmentManager fragmentManager = getFragmentManager();
 
     	switch (v.getId()) {
-        case R.id.metrics_main_button_new:
-        	Log.d("FRAGMENT: ", "metrics_new");
+        case R.id.metrics_details_button_cancel:
     		fragmentManager.beginTransaction()
-        		.replace(R.id.main_container, new MetricsNewFragment())
+        		.replace(R.id.main_container, new MetricsMainFragment())
         		.commit();
+    		break;
+        case R.id.metrics_details_button_edit:
+        	Toast.makeText(ctx, "Edit button doesn't work yet.", 
+        			Toast.LENGTH_LONG).show();
+//    		fragmentManager.beginTransaction()
+//        		.replace(R.id.main_container, new MetricsNewFragment())
+//        		.commit();
+    		break;
+        case R.id.metrics_details_button_delete:
+        	DataManager dm = new DataManager(ctx);
+        	Bundle bundle = this.getArguments();
+        	String metricName = bundle.getString("metricName");
+    		if(dm.deleteMetricByName(metricName)){
+	    		fragmentManager.beginTransaction()
+	        		.replace(R.id.main_container, new MetricsMainFragment())
+	        		.commit();
+    		}else{
+    			Toast.makeText(ctx, "Something went wrong!", 
+	        			Toast.LENGTH_LONG).show();
+    		}
     		break;
         }
     }
