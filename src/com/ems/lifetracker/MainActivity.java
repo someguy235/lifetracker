@@ -59,20 +59,23 @@ public class MainActivity extends Activity
         		mTitle = getString(R.string.title_section1);
                 fragmentManager.beginTransaction()
             		.replace(R.id.main_container, new TrackMainFragment())
-            		.commit();
+            		.addToBackStack(null)
+        			.commit();
         		
         		break;
         	case 1:
         		mTitle = getString(R.string.title_section2);
                 fragmentManager.beginTransaction()
         			.replace(R.id.main_container, new MetricsMainFragment())
+       			    .addToBackStack(null)
         			.commit();
     			break;
         	case 2:
         		mTitle = getString(R.string.title_section3);
                 fragmentManager.beginTransaction()
             		.replace(R.id.main_container, new HistoryMainFragment())
-            		.commit();
+            		.addToBackStack(null)
+        			.commit();
         		break;
         }
     } 

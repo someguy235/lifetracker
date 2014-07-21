@@ -47,6 +47,7 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
     			fragment.setArguments(bundle);
         		fragmentManager.beginTransaction()
         			.replace(R.id.main_container, fragment)
+        			.addToBackStack(null)
         			.commit();
 	         }
 	    });
@@ -65,7 +66,8 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
         case R.id.metrics_main_button_new:
     		fragmentManager.beginTransaction()
         		.replace(R.id.main_container, new MetricsNewFragment())
-        		.commit();
+        		.addToBackStack(null)
+    			.commit();
     		break;
         }
     }

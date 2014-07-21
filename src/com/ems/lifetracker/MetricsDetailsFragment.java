@@ -2,9 +2,11 @@ package com.ems.lifetracker;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,13 +19,15 @@ import android.widget.Toast;
  
 public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	private Context ctx;
+	private Bundle bundle;
+	private FragmentManager fragmentManager;
 	
     public MetricsDetailsFragment(){}
      
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-    	Bundle bundle = this.getArguments();
+    	bundle = this.getArguments();
     	String metricName = bundle.getString("metricName");
 		View rootView = inflater.inflate(R.layout.fragment_metrics_details, container, false);
         ctx = getActivity();
@@ -49,33 +53,66 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     
     @Override
     public void onClick(View v) {
-        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager = getFragmentManager();
 
     	switch (v.getId()) {
         case R.id.metrics_details_button_cancel:
     		fragmentManager.beginTransaction()
         		.replace(R.id.main_container, new MetricsMainFragment())
-        		.commit();
+        		.addToBackStack(null)
+    			.commit();
     		break;
         case R.id.metrics_details_button_edit:
         	Toast.makeText(ctx, "Edit button doesn't work yet.", 
         			Toast.LENGTH_LONG).show();
 //    		fragmentManager.beginTransaction()
 //        		.replace(R.id.main_container, new MetricsNewFragment())
-//        		.commit();
+//        		.addToBackStack(null)
+//				.commit();
     		break;
         case R.id.metrics_details_button_delete:
-        	DataManager dm = new DataManager(ctx);
-        	Bundle bundle = this.getArguments();
-        	String metricName = bundle.getString("metricName");
-    		if(dm.deleteMetricByName(metricName)){
-	    		fragmentManager.beginTransaction()
-	        		.replace(R.id.main_container, new MetricsMainFragment())
-	        		.commit();
-    		}else{
-    			Toast.makeText(ctx, "Something went wrong!", 
-	        			Toast.LENGTH_LONG).show();
-    		}
+        	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+
+    	    builder.setTitle("Confirm");
+    	    builder.setMessage("Are you sure you want to delete this metric?");
+    	    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+    	        public void onClick(DialogInterface dialog, int which) {
+    	        	DataManager dm = new DataManager(ctx);
+    	        	//Bundle bundle = this.getArguments();
+    	        	String metricName = bundle.getString("metricName");
+    	    		if(dm.deleteMetricByName(metricName)){
+    		    		fragmentManager.beginTransaction()
+    		        		.replace(R.id.main_container, new MetricsMainFragment())
+    		        		.addToBackStack(null)
+    		        		.commit();
+    	    		}else{
+    	    			Toast.makeText(ctx, "Something went wrong!", 
+    		        			Toast.LENGTH_LONG).show();
+    	    		}
+    	        	dialog.dismiss();
+    	        }
+
+    	    });
+
+    	    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+    	        @Override
+    	        public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
+    	    });
+
+    	    AlertDialog alert = builder.create();
+    	    alert.show();
+
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        	
     		break;
         }
     }

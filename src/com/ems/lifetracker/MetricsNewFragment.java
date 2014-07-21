@@ -41,7 +41,7 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
 
     	switch (v.getId()) {
         case R.id.metrics_new_button_save:
-        	
+        	//TODO: add some common sense checks to entered fields
         	EditText metricNameText = (EditText) rootView.findViewById(R.id.metrics_new_name);
         	String metricName = metricNameText.getText().toString();
         	
@@ -75,7 +75,8 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
 	        if(dm.addMetric(metric)){
 	        	fragmentManager.beginTransaction()
 		    		.replace(R.id.main_container, new MetricsMainFragment())
-		    		.commit();
+		    		.addToBackStack(null)
+        			.commit();
 	        }else{
 	        	Toast.makeText(ctx, "Something went wrong!", 
 	        			Toast.LENGTH_LONG).show();
@@ -84,7 +85,8 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
 	    case R.id.metrics_new_button_cancel:
 			fragmentManager.beginTransaction()
 	    		.replace(R.id.main_container, new MetricsMainFragment())
-	    		.commit();
+	    		.addToBackStack(null)
+    			.commit();
 			break;
     	}
     }
