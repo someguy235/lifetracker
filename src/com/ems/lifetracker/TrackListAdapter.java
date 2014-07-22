@@ -3,6 +3,7 @@ package com.ems.lifetracker;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +25,6 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
        // Check if an existing view is being reused, otherwise inflate the view
        if (convertView == null) {
     	   convertView = LayoutInflater.from(getContext()).inflate(R.layout.track_list_item, parent, false);
-       }else{
        }
        
        // Lookup view for data population
@@ -38,6 +38,12 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
        mDesc.setText(metric.getDesc());
        mUnit.setText(metric.getUnit());
        mType.setText(metric.getType());
+       
+       if(metric.getType().equals("binary")){
+    	   convertView.setBackgroundColor(Color.RED);
+       }else{
+    	   convertView.setBackgroundColor(Color.GREEN);
+       }
        
        // Return the completed view to render on screen
        return convertView;

@@ -32,8 +32,8 @@ public class TrackMainFragment extends Fragment implements OnClickListener {
         DataManager dm = new DataManager(ctx);
         ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
         
-        //GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
-        ListView gridview = (ListView) rootView.findViewById(R.id.track_main_gridview);
+        GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
+//        SquareView gridview = (SquareView) rootView.findViewById(R.id.track_main_gridview);
 
         TrackListAdapter adapter = new TrackListAdapter(ctx, metrics);
         gridview.setAdapter(adapter);

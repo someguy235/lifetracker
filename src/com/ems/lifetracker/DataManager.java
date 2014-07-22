@@ -15,16 +15,21 @@ public class DataManager extends SQLiteOpenHelper{
 	    private static final int DATABASE_VERSION = 1;
 	    private static final String DATABASE_NAME = "lifetracker";
 	    private static final String TABLE_METRICS = "metrics";
+	    private static final String TABLE_INSTANCES = "instances";
 	 
 	    // Common Table Column Names
 	    private static final String KEY_ID = "id";
+	    private static final String KEY_NAME = "name";
 	    
 	    //Metrics Table Column Names
-	    private static final String KEY_NAME = "name";
 	    private static final String KEY_DESC = "desc";
 	    private static final String KEY_UNIT = "unit";
 	    private static final String KEY_TYPE = "type";
 	    
+	    //Instances Table Column Names
+	    private static final String KEY_DATE = "date";
+	    private static final String KEY_COUNT = "count";
+	    private static final String KEY_DETAILS = "details";
 		
 	    public DataManager(Context context) {
 	        super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -33,13 +38,21 @@ public class DataManager extends SQLiteOpenHelper{
 	    // Creating Tables
 	    @Override
 	    public void onCreate(SQLiteDatabase db) {
-	        String CREATE_CUSTOMERS_TABLE = "CREATE TABLE "	+ TABLE_METRICS + "("
+	        String CREATE_METRICS_TABLE = "CREATE TABLE " + TABLE_METRICS + "("
 	                + KEY_ID + " INTEGER PRIMARY KEY," 
 	                + KEY_NAME + " TEXT,"
 	                + KEY_DESC + " TEXT,"
 	                + KEY_UNIT + " TEXT,"
 	                + KEY_TYPE + " TEXT" + ")";
-	        db.execSQL(CREATE_CUSTOMERS_TABLE);
+	        db.execSQL(CREATE_METRICS_TABLE);
+	        
+	        String CREATE_INSTANCES_TABLE = "CREATE TABLE "	+ TABLE_INSTANCES + "("
+	                + KEY_ID + " INTEGER PRIMARY KEY," 
+	                + KEY_NAME + " TEXT,"
+	                + KEY_DATE + " TEXT,"
+	                + KEY_COUNT + " TEXT,"
+	                + KEY_DETAILS + " TEXT" + ")";
+	        db.execSQL(CREATE_INSTANCES_TABLE);
 	    }
 	    
 	    // Upgrading database
@@ -47,6 +60,7 @@ public class DataManager extends SQLiteOpenHelper{
 	    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	        // Drop older table if existed
 	        db.execSQL("DROP TABLE IF EXISTS " + TABLE_METRICS);
+	        db.execSQL("DROP TABLE IF EXISTS " + TABLE_INSTANCES);
 	    
 	        // Create tables again
 	        this.onCreate(db);
