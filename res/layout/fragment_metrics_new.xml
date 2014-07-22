@@ -87,12 +87,36 @@
             android:hint="@string/metrics_new_input_unit"
             android:inputType="text" />
     </LinearLayout>
+	
+	<LinearLayout
+        android:id="@+id/metrics_new_layout_dflt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/metrics_new_layout_desc"
+        android:orientation="horizontal"
+        android:weightSum="10" >
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="@string/metrics_new_label_dflt" />
+
+        <EditText
+            android:id="@+id/metrics_new_dflt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:ems="10"
+            android:hint="@string/metrics_new_input_dflt"
+            android:inputType="text" />
+    </LinearLayout>
+    
     <LinearLayout
         android:id="@+id/metrics_new_layout_type"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/metrics_new_layout_unit"
+        android:layout_below="@id/metrics_new_layout_dflt"
         android:orientation="vertical"
         android:weightSum="3" >
         <TextView

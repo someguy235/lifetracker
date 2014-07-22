@@ -17,4 +17,11 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    
+    <color name="tilered">#D1001C</color>
+    <color name="tileblue">#838ED6</color>
+	<color name="tilegreen">#78DE85</color>
+    
 </resources>

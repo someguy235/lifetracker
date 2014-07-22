@@ -56,6 +56,9 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         	View radioButton = radioGroup.findViewById(selectedType);
         	int typeIdx = radioGroup.indexOfChild(radioButton);
         	
+        	EditText metricDfltText = (EditText) rootView.findViewById(R.id.metrics_new_dflt);
+        	String metricDflt = metricUnitText.getText().toString();
+        	
         	String metricType = null;
         	switch(typeIdx){
         	case 0:
@@ -69,7 +72,7 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         		break;
         	}
  
-	        Metric metric = new Metric(metricName, metricDesc, metricUnit, metricType);
+	        Metric metric = new Metric(metricName, metricDesc, metricUnit, metricType, metricDflt);
 	        DataManager dm = new DataManager(ctx);
 	         
 	        if(dm.addMetric(metric)){

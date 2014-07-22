@@ -1,0 +1,31 @@
+<com.ems.lifetracker.SquareLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="wrap_content"
+ android:layout_height="match_parent"
+ android:orientation="vertical" > 
+	<TextView
+		android:id="@+id/track_list_binary_item_name"
+     	android:layout_width="match_parent"
+     	android:layout_height="0dp"
+     	android:layout_weight="1"
+     	android:paddingLeft="@dimen/track_horizontal_margin"
+    	android:textColor="@color/white" 
+     	android:textSize="32sp"/>
+	<ImageView
+    	android:id="@+id/track_list_binary_item_done"
+     	android:layout_height="0dp"
+    	android:layout_weight="1"
+    	android:layout_width="match_parent"
+    	android:src="@drawable/check" 
+    	android:contentDescription="@string/track_list_binary_item_done"/>
+	<TextView
+		android:id="@+id/track_list_binary_item_details"
+     	android:layout_width="match_parent"
+     	android:layout_height="0dp" 
+     	android:layout_weight="1"
+     	android:gravity="center_horizontal|center_vertical"
+     	android:paddingLeft="@dimen/track_horizontal_margin"
+    	android:textColor="@color/white" 
+     	android:textSize="16sp"
+     	android:text="@string/track_list_binary_item_details"/>
+
+</com.ems.lifetracker.SquareLinearLayout>

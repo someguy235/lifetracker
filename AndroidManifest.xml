@@ -43,10 +43,6 @@
             android:label="@string/title_activity_metrics_new_fragment" >
         </activity>
         <activity
-            android:name="com.ems.lifetracker.TestActivity"
-            android:label="@string/title_activity_test" >
-        </activity>
-        <activity
             android:name="com.ems.lifetracker.MetricsDetailsFragment"
             android:label="@string/title_activity_metrics_details" >
         </activity>

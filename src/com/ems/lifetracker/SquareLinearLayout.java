@@ -16,21 +16,9 @@ public class SquareLinearLayout extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    	int mScale = 1;
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        //TODO: lol
-        /*
-        if (width > (int)(mScale * height + 0.5)) {
-            width = (int)(mScale * height + 0.5);
-        } else {
-            height = (int)(width / mScale + 0.5);
-        }
-*/
-        height = width;
         super.onMeasure(
-                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+                MeasureSpec.makeMeasureSpec(widthMeasureSpec, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(widthMeasureSpec, MeasureSpec.EXACTLY)
         );
     }
 }

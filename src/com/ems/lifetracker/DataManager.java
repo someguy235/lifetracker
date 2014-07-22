@@ -12,7 +12,7 @@ import android.util.Log;
 
 public class DataManager extends SQLiteOpenHelper{
 		
-	    private static final int DATABASE_VERSION = 1;
+	    private static final int DATABASE_VERSION = 2;
 	    private static final String DATABASE_NAME = "lifetracker";
 	    private static final String TABLE_METRICS = "metrics";
 	    private static final String TABLE_INSTANCES = "instances";
@@ -25,6 +25,7 @@ public class DataManager extends SQLiteOpenHelper{
 	    private static final String KEY_DESC = "desc";
 	    private static final String KEY_UNIT = "unit";
 	    private static final String KEY_TYPE = "type";
+	    private static final String KEY_DFLT = "dflt";
 	    
 	    //Instances Table Column Names
 	    private static final String KEY_DATE = "date";
@@ -43,7 +44,8 @@ public class DataManager extends SQLiteOpenHelper{
 	                + KEY_NAME + " TEXT,"
 	                + KEY_DESC + " TEXT,"
 	                + KEY_UNIT + " TEXT,"
-	                + KEY_TYPE + " TEXT" + ")";
+	                + KEY_TYPE + " TEXT,"
+	                + KEY_DFLT + " TEXT" + ")";
 	        db.execSQL(CREATE_METRICS_TABLE);
 	        
 	        String CREATE_INSTANCES_TABLE = "CREATE TABLE "	+ TABLE_INSTANCES + "("
@@ -70,13 +72,14 @@ public class DataManager extends SQLiteOpenHelper{
 	    	Metric metric = null;
 	    	SQLiteDatabase db = this.getReadableDatabase();
 	    	Cursor cursor = db.query(TABLE_METRICS, new String[] { 
-	        		KEY_ID, KEY_NAME, KEY_DESC, KEY_UNIT, KEY_TYPE }, KEY_NAME + "=?",
+	        		KEY_ID, KEY_NAME, KEY_DESC, KEY_UNIT, KEY_TYPE, KEY_DFLT }, KEY_NAME + "=?",
 	                new String[] { name }, null, null, null, null);
 	    	
 	    	if (cursor != null && cursor.getCount() != 0){
 	            cursor.moveToFirst();
-    			metric = new Metric(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+    			metric = new Metric(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5));
 	    	}
+	    	cursor.close();
 	    	return metric;
 	    }
 	    
@@ -90,9 +93,10 @@ public class DataManager extends SQLiteOpenHelper{
 	    	
 	    	while(cursor.moveToNext()){
 	    		metrics.add(
-    				new Metric(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4))
+    				new Metric(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5))
 				);
 	    	}
+	    	cursor.close();
 	    	
 	    	return metrics;
 	    }
@@ -105,6 +109,7 @@ public class DataManager extends SQLiteOpenHelper{
 		    values.put(KEY_DESC, metric.getDesc()); 
 		    values.put(KEY_UNIT, metric.getUnit()); 
 		    values.put(KEY_TYPE, metric.getType());
+		    values.put(KEY_DFLT, metric.getDflt());
 		     
 		    //TODO: check for duplicates?
 		    long success = db.insert(TABLE_METRICS, null, values);
