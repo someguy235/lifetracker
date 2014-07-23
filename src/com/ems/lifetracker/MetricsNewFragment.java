@@ -1,5 +1,7 @@
 package com.ems.lifetracker;
 
+import java.util.Locale;
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -11,8 +13,10 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Toast;
  
 public class MetricsNewFragment extends Fragment implements OnClickListener {
@@ -31,7 +35,18 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         saveButton.setOnClickListener(this);
         Button cancelButton = (Button) rootView.findViewById(R.id.metrics_new_button_cancel);
         cancelButton.setOnClickListener(this);
-         
+        RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.metrics_new_radio_group);        
+        radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+            	if(checkedId == R.id.metrics_new_radio_binary){
+            		rootView.findViewById(R.id.metrics_new_dflt_text).setVisibility(LinearLayout.GONE);
+            		rootView.findViewById(R.id.metrics_new_binary_default_radio_group).setVisibility(LinearLayout.VISIBLE);
+            	}else{
+            		rootView.findViewById(R.id.metrics_new_binary_default_radio_group).setVisibility(LinearLayout.GONE);
+            		rootView.findViewById(R.id.metrics_new_dflt_text).setVisibility(LinearLayout.VISIBLE);
+            	}
+            }
+        });
         return rootView;
     }
     
@@ -56,13 +71,18 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         	View radioButton = radioGroup.findViewById(selectedType);
         	int typeIdx = radioGroup.indexOfChild(radioButton);
         	
-        	EditText metricDfltText = (EditText) rootView.findViewById(R.id.metrics_new_dflt);
-        	String metricDflt = metricUnitText.getText().toString();
+        	EditText metricDfltText = (EditText) rootView.findViewById(R.id.metrics_new_dflt_text);
+        	String metricDflt = metricDfltText.getText().toString();
         	
         	String metricType = null;
         	switch(typeIdx){
         	case 0:
         		metricType = "binary";
+            	
+            	RadioGroup g = (RadioGroup) rootView.findViewById(R.id.metrics_new_binary_default_radio_group); 
+            	int selected = g.getCheckedRadioButtonId();
+            	RadioButton b = (RadioButton) rootView.findViewById(selected);
+            	metricDflt = b.getText().toString().toLowerCase();
         		break;
         	case 1:
         		metricType = "count";

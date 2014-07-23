@@ -21,19 +21,19 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
        // Get the data item for this position
        Metric metric = getItem(position);    
        TextView mName, mDesc, mUnit, mType;
-
+       Log.d("NAME", metric.getName());
        //TODO: do this dynamically based on metric type?
        // Check if an existing view is being reused, otherwise inflate the view
        if (convertView == null) {
     	   if(metric.getType().equals("binary")){
 			   convertView = LayoutInflater.from(getContext()).inflate(R.layout.track_list_binary_item, parent, false);
-			   mName = (TextView) convertView.findViewById(R.id.track_list_item_name);
+			   mName = (TextView) convertView.findViewById(R.id.track_list_binary_item_name);
 			   // Populate the data into the template view using the data object
 		       mName.setText(metric.getName());
 		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));
     	   }else if(metric.getType().equals("increment")){
     		   convertView = LayoutInflater.from(getContext()).inflate(R.layout.track_list_increment_item, parent, false);
-			   mName = (TextView) convertView.findViewById(R.id.track_list_item_name);
+			   mName = (TextView) convertView.findViewById(R.id.track_list_increment_item_name);
 			   // Populate the data into the template view using the data object
 		       mName.setText(metric.getName());
 		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));

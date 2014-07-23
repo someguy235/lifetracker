@@ -26,6 +26,8 @@
     <string name="metrics_new_input_unit">miles/hours/etc.</string>
     <string name="metrics_new_label_dflt">Default:</string>
     <string name="metrics_new_input_dflt">default value</string>
+    <string name="metrics_new_radio_binary_yes">Yes</string>
+    <string name="metrics_new_radio_binary_no">No</string>
     <string name="metrics_new_label_type">Type:</string>
     <string name="metrics_new_radio_binary">binary (yes/no)</string>
     <string name="metrics_new_radio_count">count (enter an amount)</string>

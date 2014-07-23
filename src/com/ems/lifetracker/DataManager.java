@@ -12,7 +12,7 @@ import android.util.Log;
 
 public class DataManager extends SQLiteOpenHelper{
 		
-	    private static final int DATABASE_VERSION = 2;
+	    private static final int DATABASE_VERSION = 3;
 	    private static final String DATABASE_NAME = "lifetracker";
 	    private static final String TABLE_METRICS = "metrics";
 	    private static final String TABLE_INSTANCES = "instances";
@@ -103,7 +103,7 @@ public class DataManager extends SQLiteOpenHelper{
 	    
 	    public boolean addMetric(Metric metric){
 	    	SQLiteDatabase db = this.getWritableDatabase();
-
+	    	
 			ContentValues values = new ContentValues();
 		    values.put(KEY_NAME, metric.getName()); 
 		    values.put(KEY_DESC, metric.getDesc()); 
