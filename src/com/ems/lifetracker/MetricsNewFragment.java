@@ -66,23 +66,30 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         	EditText metricUnitText = (EditText) rootView.findViewById(R.id.metrics_new_unit);
         	String metricUnit = metricUnitText.getText().toString();
         	
+        	EditText metricDfltText = (EditText) rootView.findViewById(R.id.metrics_new_dflt_text);
+        	int metricDflt;
+        	if(metricDfltText.getText().toString().matches("")){
+        		metricDflt = 0;
+        	}else{
+        		metricDflt = Integer.parseInt(metricDfltText.getText().toString()); 
+        	}
+        	
         	RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.metrics_new_radio_group);
         	int selectedType = radioGroup.getCheckedRadioButtonId();
         	View radioButton = radioGroup.findViewById(selectedType);
         	int typeIdx = radioGroup.indexOfChild(radioButton);
         	
-        	EditText metricDfltText = (EditText) rootView.findViewById(R.id.metrics_new_dflt_text);
-        	String metricDflt = metricDfltText.getText().toString();
-        	
         	String metricType = null;
         	switch(typeIdx){
         	case 0:
         		metricType = "binary";
-            	
+
+        		//get default value from yes/no radio group
             	RadioGroup g = (RadioGroup) rootView.findViewById(R.id.metrics_new_binary_default_radio_group); 
             	int selected = g.getCheckedRadioButtonId();
             	RadioButton b = (RadioButton) rootView.findViewById(selected);
-            	metricDflt = b.getText().toString().toLowerCase();
+            	String metricDfltStr = b.getText().toString().toLowerCase();
+            	metricDflt = metricDfltStr.equals("yes") ? 1 : 0;
         		break;
         	case 1:
         		metricType = "count";
@@ -92,18 +99,25 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         		break;
         	}
  
-	        Metric metric = new Metric(metricName, metricDesc, metricUnit, metricType, metricDflt);
-	        DataManager dm = new DataManager(ctx);
-	         
-	        if(dm.addMetric(metric)){
-	        	fragmentManager.beginTransaction()
-		    		.replace(R.id.main_container, new MetricsMainFragment())
-		    		.addToBackStack(null)
-        			.commit();
-	        }else{
-	        	Toast.makeText(ctx, "Something went wrong!", 
+        	
+        	if(metricName.matches("")){
+        		Toast.makeText(ctx, "Metric must have a name", 
 	        			Toast.LENGTH_LONG).show();
-	        }
+        	}else{
+        	
+		        Metric metric = new Metric(metricName, metricDesc, metricUnit, metricType, metricDflt);
+		        DataManager dm = new DataManager(ctx);
+		         
+		        if(dm.addMetric(metric)){
+		        	fragmentManager.beginTransaction()
+			    		.replace(R.id.main_container, new MetricsMainFragment())
+			    		.addToBackStack(null)
+	        			.commit();
+		        }else{
+		        	Toast.makeText(ctx, "Something went wrong!", 
+		        			Toast.LENGTH_LONG).show();
+		        }
+        	}
         	break;
 	    case R.id.metrics_new_button_cancel:
 			fragmentManager.beginTransaction()

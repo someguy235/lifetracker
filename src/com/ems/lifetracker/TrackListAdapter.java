@@ -20,39 +20,53 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
     public View getView(int position, View convertView, ViewGroup parent) {
        // Get the data item for this position
        Metric metric = getItem(position);    
-       TextView mName, mDesc, mUnit, mType;
-       Log.d("NAME", metric.getName());
-       //TODO: do this dynamically based on metric type?
+       TextView mName, mCount, mDesc, mUnit, mType;
        // Check if an existing view is being reused, otherwise inflate the view
        if (convertView == null) {
     	   if(metric.getType().equals("binary")){
 			   convertView = LayoutInflater.from(getContext()).inflate(R.layout.track_list_binary_item, parent, false);
 			   mName = (TextView) convertView.findViewById(R.id.track_list_binary_item_name);
+			   mName.setText(metric.getName());
+			   
+			   mCount = (TextView) convertView.findViewById(R.id.track_list_binary_item_count);
+			   mCount.setText("Done? "+ (metric.getDflt() == 0 ? "No" : "Yes"));
+			   
 			   // Populate the data into the template view using the data object
-		       mName.setText(metric.getName());
 		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));
     	   }else if(metric.getType().equals("increment")){
     		   convertView = LayoutInflater.from(getContext()).inflate(R.layout.track_list_increment_item, parent, false);
-			   mName = (TextView) convertView.findViewById(R.id.track_list_increment_item_name);
-			   // Populate the data into the template view using the data object
-		       mName.setText(metric.getName());
-		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));
-    	   }else{
-			   convertView = LayoutInflater.from(getContext()).inflate(R.layout.track_list_item, parent, false);
-
-			   mName = (TextView) convertView.findViewById(R.id.track_list_item_name);
-			   mDesc = (TextView) convertView.findViewById(R.id.track_list_item_desc);
-		       mUnit = (TextView) convertView.findViewById(R.id.track_list_item_unit);
-		       mType = (TextView) convertView.findViewById(R.id.track_list_item_type);
-	   
-		       // Populate the data into the template view using the data object
-		       mName.setText(metric.getName());
-		       mDesc.setText(metric.getDesc());
-		       mUnit.setText(metric.getUnit());
-		       mType.setText(metric.getType());
 			   
-//			   convertView.setBackgroundColor(Color.GREEN);
-		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tilegreen));
+    		   mName = (TextView) convertView.findViewById(R.id.track_list_increment_item_name);
+			   mName.setText(metric.getName());
+		       
+//			   String mCountStr = metric.getUnit();
+//			   mCountStr += mCountStr == null ? "" : " : ";
+//			   mCountStr += metric.getDflt();
+//			   mCount.setText(mCountStr);
+
+			   mCount = (TextView) convertView.findViewById(R.id.track_list_increment_item_count);
+			   mCount.setText(metric.getDflt() +" "+ metric.getUnit());
+			   // Populate the data into the template view using the data object
+		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));
+    	   }else if(metric.getType().equals("count")){
+			   convertView = LayoutInflater.from(getContext()).inflate(R.layout.track_list_count_item, parent, false);
+
+			   mName = (TextView) convertView.findViewById(R.id.track_list_count_item_name);
+			   mName.setText(metric.getName());
+		       
+			   mCount = (TextView) convertView.findViewById(R.id.track_list_count_item_count);
+			   mCount.setText(metric.getDflt() +" "+ metric.getUnit());
+			   //mDesc = (TextView) convertView.findViewById(R.id.track_list_item_desc);
+		       //mUnit = (TextView) convertView.findViewById(R.id.track_list_item_unit);
+		       //mType = (TextView) convertView.findViewById(R.id.track_list_item_type);
+			   
+		       // Populate the data into the template view using the data object
+		       //mDesc.setText(metric.getDesc());
+		       //mUnit.setText(metric.getUnit());
+		       //mType.setText(metric.getType());
+			   
+		       //convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tilegreen));
+		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));
 
     	   }
     	   

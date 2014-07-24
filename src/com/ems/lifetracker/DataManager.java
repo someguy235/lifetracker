@@ -12,7 +12,7 @@ import android.util.Log;
 
 public class DataManager extends SQLiteOpenHelper{
 		
-	    private static final int DATABASE_VERSION = 3;
+	    private static final int DATABASE_VERSION = 4;
 	    private static final String DATABASE_NAME = "lifetracker";
 	    private static final String TABLE_METRICS = "metrics";
 	    private static final String TABLE_INSTANCES = "instances";
@@ -45,14 +45,14 @@ public class DataManager extends SQLiteOpenHelper{
 	                + KEY_DESC + " TEXT,"
 	                + KEY_UNIT + " TEXT,"
 	                + KEY_TYPE + " TEXT,"
-	                + KEY_DFLT + " TEXT" + ")";
+	                + KEY_DFLT + " INT" + ")";
 	        db.execSQL(CREATE_METRICS_TABLE);
 	        
 	        String CREATE_INSTANCES_TABLE = "CREATE TABLE "	+ TABLE_INSTANCES + "("
 	                + KEY_ID + " INTEGER PRIMARY KEY," 
 	                + KEY_NAME + " TEXT,"
 	                + KEY_DATE + " TEXT,"
-	                + KEY_COUNT + " TEXT,"
+	                + KEY_COUNT + " INT,"
 	                + KEY_DETAILS + " TEXT" + ")";
 	        db.execSQL(CREATE_INSTANCES_TABLE);
 	    }
@@ -77,7 +77,13 @@ public class DataManager extends SQLiteOpenHelper{
 	    	
 	    	if (cursor != null && cursor.getCount() != 0){
 	            cursor.moveToFirst();
-    			metric = new Metric(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5));
+    			metric = new Metric(
+    					cursor.getString(1), 
+    					cursor.getString(2), 
+    					cursor.getString(3), 
+    					cursor.getString(4), 
+    					Integer.parseInt(cursor.getString(5))
+    					);
 	    	}
 	    	cursor.close();
 	    	return metric;
@@ -93,7 +99,13 @@ public class DataManager extends SQLiteOpenHelper{
 	    	
 	    	while(cursor.moveToNext()){
 	    		metrics.add(
-    				new Metric(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5))
+    				new Metric(
+    						cursor.getString(1), 
+    						cursor.getString(2), 
+    						cursor.getString(3), 
+    						cursor.getString(4), 
+    						Integer.parseInt(cursor.getString(5))
+    						)
 				);
 	    	}
 	    	cursor.close();
@@ -104,7 +116,7 @@ public class DataManager extends SQLiteOpenHelper{
 	    public boolean addMetric(Metric metric){
 	    	SQLiteDatabase db = this.getWritableDatabase();
 	    	
-			ContentValues values = new ContentValues();
+	    	ContentValues values = new ContentValues();
 		    values.put(KEY_NAME, metric.getName()); 
 		    values.put(KEY_DESC, metric.getDesc()); 
 		    values.put(KEY_UNIT, metric.getUnit()); 

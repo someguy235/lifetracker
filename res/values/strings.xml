@@ -25,7 +25,7 @@
     <string name="metrics_new_label_unit">Unit:</string>
     <string name="metrics_new_input_unit">miles/hours/etc.</string>
     <string name="metrics_new_label_dflt">Default:</string>
-    <string name="metrics_new_input_dflt">default value</string>
+    <string name="metrics_new_input_dflt">daily start value</string>
     <string name="metrics_new_radio_binary_yes">Yes</string>
     <string name="metrics_new_radio_binary_no">No</string>
     <string name="metrics_new_label_type">Type:</string>
@@ -42,9 +42,10 @@
     <string name="metrics_details_button_save">Save</string>
     
     <!-- Tracking -->
-    <string name="track_list_binary_item_details">Add Details</string>
+    <string name="track_list_item_details">Add Details</string>
     <string name="track_list_binary_item_done">image</string>
-    <string name="track_list_increment_item_less">image</string>
-    <string name="track_list_increment_item_more">image</string>
-    <string name="track_list_increment_item_details">0</string>
+    <string name="track_list_increment_item_less">less</string>
+    <string name="track_list_increment_item_more">more</string>
+    <string name="track_list_count_item_edit">edit</string>
+    
 </resources>
