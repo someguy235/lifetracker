@@ -33,16 +33,15 @@ public class TrackMainFragment extends Fragment implements OnClickListener {
         ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
         
         GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
-//        SquareView gridview = (SquareView) rootView.findViewById(R.id.track_main_gridview);
 
         TrackListAdapter adapter = new TrackListAdapter(ctx, metrics);
         gridview.setAdapter(adapter);
 
-        gridview.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Toast.makeText(ctx, "" + position, Toast.LENGTH_SHORT).show();
-            }
-        });
+//        gridview.setOnItemClickListener(new OnItemClickListener() {
+//            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+//                Toast.makeText(ctx, "" + position, Toast.LENGTH_SHORT).show();
+//            }
+//        });
         
         return rootView;
     }
