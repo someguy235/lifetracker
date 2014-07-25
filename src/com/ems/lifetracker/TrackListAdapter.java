@@ -3,29 +3,37 @@ package com.ems.lifetracker;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class TrackListAdapter extends ArrayAdapter<Metric> {
-	private Metric metric;
+	private Metric metric; //TODO: need this?
+	private ArrayList<MetricEntry> entries;
+	int pos;
 	
     public TrackListAdapter(Context context, ArrayList<Metric> metrics) {
        super(context, R.layout.track_list_item, metrics);
+       //TODO: get these from the database
+       entries = new ArrayList<MetricEntry>();
+       //TODO: get the date being edited
+       MetricEntry e;
+       for(Metric m : metrics){
+    	   e = new MetricEntry(m.getName(), DateUtil.getFormattedDate("today"), m.getDflt(), "");
+    	   entries.add(e);
+       }
     }
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
        // Get the data item for this position
        metric = getItem(position);    
+       pos = position;
+       
        Log.d("METRIC", metric.getName());
        TextView mName, mCount, mDesc, mUnit, mType;
        
@@ -42,17 +50,19 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 			   // Set click listeners for interface components
 			   View mDone = convertView.findViewById(R.id.track_list_binary_item_done);
 			   mDone.setOnClickListener(new OnClickListener() {
+				   Metric m = metric;
 				   @Override
 				   public void onClick(View v) {
-					   Log.d("DONE", metric.getName());
+					   Log.d("DONE", m.getName());
 				   }
 		       });
 			   
 			   View mDetails = convertView.findViewById(R.id.track_list_binary_item_details);
 			   mDetails.setOnClickListener(new OnClickListener() {
+				   Metric m = metric;
 				   @Override
 				   public void onClick(View v) {
-					   Log.d("DETAILS", metric.getName());
+					   Log.d("DETAILS", m.getName());
 				   }
 		       });
 			   
@@ -70,23 +80,44 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 			   // Set click listeners for interface components
 			   View mMore = convertView.findViewById(R.id.track_list_increment_item_more);
 			   mMore.setOnClickListener(new OnClickListener() {
+				   int ePos = pos;
 				   @Override
 				   public void onClick(View v) {
-					   Log.d("MORE", metric.getName());
+					   MetricEntry e = entries.get(ePos);
+					   e.setCount(e.getCount() + 1);
+					   
+					   TextView mCount = (TextView)(((View)v.getTag()).findViewById(R.id.track_list_increment_item_count));
+					   Log.d("MORE", ""+e.getCount());
+					   mCount.setText(""+e.getCount());
+					   
 				   }
 		       });
+			   mMore.setTag(convertView);
+			   
 			   View mLess = convertView.findViewById(R.id.track_list_increment_item_less);
 			   mLess.setOnClickListener(new OnClickListener() {
+				   int ePos = pos;
 				   @Override
 				   public void onClick(View v) {
-					   Log.d("LESS", metric.getName());
+					   MetricEntry e = entries.get(ePos);
+					   if(e.getCount() > 0){
+						   e.setCount(e.getCount() - 1);
+					   }
+					   
+					   View parent = (View)v.getParent();
+					   TextView mCount = (TextView) parent.findViewById(R.id.track_list_increment_item_count);
+					   //mCount.setText(metric.getDflt() +" "+ metric.getUnit());
+					   mCount.setText(e.getCount());
+
+					   Log.d("LESS", ""+e.getCount());
 				   }
 		       });
 			   View mDetails = convertView.findViewById(R.id.track_list_increment_item_details);
 			   mDetails.setOnClickListener(new OnClickListener() {
+				   Metric m = metric;
 				   @Override
 				   public void onClick(View v) {
-					   Log.d("DETAILS", metric.getName());
+					   Log.d("DETAILS", m.getName());
 				   }
 		       });
 			   
@@ -104,16 +135,18 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 			   // Set click listeners for interface components
 			   View mEdit = convertView.findViewById(R.id.track_list_count_item_edit);
 			   mEdit.setOnClickListener(new OnClickListener() {
+				   Metric m = metric;
 				   @Override
 				   public void onClick(View v) {
-					   Log.d("EDIT", metric.getName());
+					   Log.d("EDIT", m.getName());
 				   }
-		       });
+		       }); 
 			   View mDetails = convertView.findViewById(R.id.track_list_count_item_details);
 			   mDetails.setOnClickListener(new OnClickListener() {
+				   Metric m = metric;
 				   @Override
 				   public void onClick(View v) {
-					   Log.d("DETAILS", metric.getName());
+					   Log.d("DETAILS", m.getName());
 				   }
 		       });
 
