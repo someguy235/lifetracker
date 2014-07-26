@@ -2,13 +2,17 @@ package com.ems.lifetracker;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class TrackListAdapter extends ArrayAdapter<Metric> {
@@ -75,7 +79,10 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 			   mName.setText(metric.getName());
 		       
 			   mCount = (TextView) convertView.findViewById(R.id.track_list_increment_item_count);
-			   mCount.setText(metric.getDflt() +" "+ metric.getUnit());
+			   mCount.setText(""+ metric.getDflt());
+			   
+			   mUnit = (TextView) convertView.findViewById(R.id.track_list_increment_item_unit);
+			   mUnit.setText(" "+ metric.getUnit());
 
 			   // Set click listeners for interface components
 			   View mMore = convertView.findViewById(R.id.track_list_increment_item_more);
@@ -85,14 +92,11 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 				   public void onClick(View v) {
 					   MetricEntry e = entries.get(ePos);
 					   e.setCount(e.getCount() + 1);
-					   
-					   TextView mCount = (TextView)(((View)v.getTag()).findViewById(R.id.track_list_increment_item_count));
-					   Log.d("MORE", ""+e.getCount());
-					   mCount.setText(""+e.getCount());
-					   
+					   TextView mCount = (TextView)v.getTag();
+					   mCount.setText("" + e.getCount());
 				   }
 		       });
-			   mMore.setTag(convertView);
+			   mMore.setTag(convertView.findViewById(R.id.track_list_increment_item_count));
 			   
 			   View mLess = convertView.findViewById(R.id.track_list_increment_item_less);
 			   mLess.setOnClickListener(new OnClickListener() {
@@ -103,23 +107,43 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 					   if(e.getCount() > 0){
 						   e.setCount(e.getCount() - 1);
 					   }
-					   
-					   View parent = (View)v.getParent();
-					   TextView mCount = (TextView) parent.findViewById(R.id.track_list_increment_item_count);
-					   //mCount.setText(metric.getDflt() +" "+ metric.getUnit());
-					   mCount.setText(e.getCount());
-
-					   Log.d("LESS", ""+e.getCount());
+					   TextView mCount = (TextView)v.getTag();
+					   mCount.setText("" + e.getCount());
 				   }
 		       });
+			   mLess.setTag(convertView.findViewById(R.id.track_list_increment_item_count));
+			   
 			   View mDetails = convertView.findViewById(R.id.track_list_increment_item_details);
 			   mDetails.setOnClickListener(new OnClickListener() {
-				   Metric m = metric;
+				   int ePos = pos;
 				   @Override
-				   public void onClick(View v) {
-					   Log.d("DETAILS", m.getName());
+				   public void onClick(final View v) {
+					   final MetricEntry e = entries.get(ePos);
+					   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+					   builder.setTitle("Details");
+
+					   final EditText input = new EditText(getContext());
+					   input.setInputType(InputType.TYPE_CLASS_TEXT);
+					   builder.setView(input);
+
+					   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
+					       @Override
+					       public void onClick(DialogInterface dialog, int which) {
+					    	   e.setDetails(input.getText().toString());
+							   TextView mDetails = (TextView)v.getTag();
+							   mDetails.setText("" + e.getDetails());
+					       }
+					   });
+					   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					       @Override
+					       public void onClick(DialogInterface dialog, int which) {
+					           dialog.cancel();
+					       }
+					   });
+					   builder.show();
 				   }
 		       });
+			   mDetails.setTag(convertView.findViewById(R.id.track_list_increment_item_details));
 			   
 			   // Populate the data into the template view using the data object
 		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));
