@@ -33,6 +33,10 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
        }
     }
     
+    public ArrayList<MetricEntry> getEntries(){
+    	return this.entries;
+    }
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
        // Get the data item for this position
