@@ -13,12 +13,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TrackListAdapter extends ArrayAdapter<Metric> {
 	private Metric metric; //TODO: need this?
 	private ArrayList<MetricEntry> entries;
-	int pos;
+	private int pos;
 	
     public TrackListAdapter(Context context, ArrayList<Metric> metrics) {
        super(context, R.layout.track_list_item, metrics);
@@ -38,8 +39,8 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
        metric = getItem(position);    
        pos = position;
        
-       Log.d("METRIC", metric.getName());
-       TextView mName, mCount, mDesc, mUnit, mType;
+       TextView mName, mCount, mUnit;
+       ImageView mDone;
        
        // Check if an existing view is being reused, otherwise inflate the view
        if (convertView == null) {
@@ -49,24 +50,55 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 			   mName.setText(metric.getName());
 			   
 			   mCount = (TextView) convertView.findViewById(R.id.track_list_binary_item_count);
-			   mCount.setText("Done? "+ (metric.getDflt() == 0 ? "No" : "Yes"));
+			   mCount.setText(metric.getDflt() == 0 ? "No" : "Yes");
+			   
+			   mDone = (ImageView) convertView.findViewById(R.id.track_list_binary_item_done);
+			   mDone.setImageResource(metric.getDflt() == 0 ? R.drawable.check : R.drawable.cross);
 			   
 			   // Set click listeners for interface components
-			   View mDone = convertView.findViewById(R.id.track_list_binary_item_done);
+			   //View mDone = convertView.findViewById(R.id.track_list_binary_item_done);
 			   mDone.setOnClickListener(new OnClickListener() {
-				   Metric m = metric;
+				   int ePos = pos;
 				   @Override
 				   public void onClick(View v) {
-					   Log.d("DONE", m.getName());
+					   MetricEntry e = entries.get(ePos);
+					   e.setCount(e.getCount() == 0 ? 1 : 0);
+					   TextView mCount = (TextView)v.getTag();
+					   mCount.setText(e.getCount() == 0 ? "No" : "Yes");
+					   ImageView mDone = (ImageView)v;
+					   mDone.setImageResource(e.getCount() == 0 ? R.drawable.check : R.drawable.cross);
 				   }
 		       });
+			   mDone.setTag(convertView.findViewById(R.id.track_list_binary_item_count));
 			   
 			   View mDetails = convertView.findViewById(R.id.track_list_binary_item_details);
 			   mDetails.setOnClickListener(new OnClickListener() {
-				   Metric m = metric;
+				   int ePos = pos;
 				   @Override
-				   public void onClick(View v) {
-					   Log.d("DETAILS", m.getName());
+				   public void onClick(final View v) {
+					   final MetricEntry e = entries.get(ePos);
+					   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+					   builder.setTitle("Details");
+
+					   final EditText input = new EditText(getContext());
+					   input.setInputType(InputType.TYPE_CLASS_TEXT);
+					   builder.setView(input);
+
+					   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
+					       @Override
+					       public void onClick(DialogInterface dialog, int which) {
+					    	   e.setDetails(input.getText().toString());
+							   TextView mDetails = (TextView)v;
+							   mDetails.setText("" + e.getDetails());
+					       }
+					   });
+					   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					       @Override
+					       public void onClick(DialogInterface dialog, int which) {
+					           dialog.cancel();
+					       }
+					   });
+					   builder.show();
 				   }
 		       });
 			   
@@ -130,7 +162,7 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 					       @Override
 					       public void onClick(DialogInterface dialog, int which) {
 					    	   e.setDetails(input.getText().toString());
-							   TextView mDetails = (TextView)v.getTag();
+					    	   TextView mDetails = (TextView)v;
 							   mDetails.setText("" + e.getDetails());
 					       }
 					   });
@@ -143,7 +175,6 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 					   builder.show();
 				   }
 		       });
-			   mDetails.setTag(convertView.findViewById(R.id.track_list_increment_item_details));
 			   
 			   // Populate the data into the template view using the data object
 		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));
@@ -154,26 +185,75 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 			   mName.setText(metric.getName());
 		       
 			   mCount = (TextView) convertView.findViewById(R.id.track_list_count_item_count);
-			   mCount.setText(metric.getDflt() +" "+ metric.getUnit());
+			   mCount.setText(""+metric.getDflt());
+
+			   mUnit = (TextView) convertView.findViewById(R.id.track_list_count_item_unit);
+			   mUnit.setText(" "+ metric.getUnit());
 
 			   // Set click listeners for interface components
 			   View mEdit = convertView.findViewById(R.id.track_list_count_item_edit);
 			   mEdit.setOnClickListener(new OnClickListener() {
-				   Metric m = metric;
+				   int ePos = pos;
 				   @Override
-				   public void onClick(View v) {
-					   Log.d("EDIT", m.getName());
+				   public void onClick(final View v) {
+					   final MetricEntry e = entries.get(ePos);
+					   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+					   builder.setTitle("Count");
+
+					   final EditText input = new EditText(getContext());
+					   input.setInputType(InputType.TYPE_CLASS_TEXT);
+					   builder.setView(input);
+
+					   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
+					       @Override
+					       public void onClick(DialogInterface dialog, int which) {
+					    	   e.setDetails(input.getText().toString());
+							   TextView mDetails = (TextView)v.getTag();
+							   mDetails.setText("" + e.getDetails());
+					       }
+					   });
+					   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					       @Override
+					       public void onClick(DialogInterface dialog, int which) {
+					           dialog.cancel();
+					       }
+					   });
+					   builder.show();
 				   }
 		       }); 
+			   mEdit.setTag(convertView.findViewById(R.id.track_list_count_item_count));
+			   
 			   View mDetails = convertView.findViewById(R.id.track_list_count_item_details);
 			   mDetails.setOnClickListener(new OnClickListener() {
-				   Metric m = metric;
+				   int ePos = pos;
 				   @Override
-				   public void onClick(View v) {
-					   Log.d("DETAILS", m.getName());
+				   public void onClick(final View v) {
+					   final MetricEntry e = entries.get(ePos);
+					   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+					   builder.setTitle("Details");
+
+					   final EditText input = new EditText(getContext());
+					   input.setInputType(InputType.TYPE_CLASS_TEXT);
+					   builder.setView(input);
+
+					   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
+					       @Override
+					       public void onClick(DialogInterface dialog, int which) {
+					    	   e.setDetails(input.getText().toString());
+							   TextView mDetails = (TextView)v;
+							   mDetails.setText("" + e.getDetails());
+					       }
+					   });
+					   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					       @Override
+					       public void onClick(DialogInterface dialog, int which) {
+					           dialog.cancel();
+					       }
+					   });
+					   builder.show();
 				   }
 		       });
-
+			   
 			   //convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tilegreen));
 		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));
     	   }

@@ -104,7 +104,6 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
         		Toast.makeText(ctx, "Metric must have a name", 
 	        			Toast.LENGTH_LONG).show();
         	}else{
-        	
 		        Metric metric = new Metric(metricName, metricDesc, metricUnit, metricType, metricDflt);
 		        DataManager dm = new DataManager(ctx);
 		         
