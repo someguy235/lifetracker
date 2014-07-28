@@ -30,11 +30,12 @@ public class TrackMainFragment extends Fragment {
         ctx = getActivity();
         
         dm = new DataManager(ctx);
-        ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
-        
+        //ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
+        ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByDate(DateUtil.getFormattedDate("today"));
+        Log.d("ENTRIES", entries.toString());
         GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
 
-        adapter = new TrackListAdapter(ctx, metrics);
+        adapter = new TrackListAdapter(ctx, entries);
         gridview.setAdapter(adapter);
 
         Button saveButton = (Button) rootView.findViewById(R.id.track_list_button_save);

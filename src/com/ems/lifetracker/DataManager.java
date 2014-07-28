@@ -1,6 +1,7 @@
 package com.ems.lifetracker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -12,7 +13,7 @@ import android.util.Log;
 
 public class DataManager extends SQLiteOpenHelper{
 		
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 6;
     private static final String DATABASE_NAME = "lifetracker";
     private static final String TABLE_METRICS = "metrics";
     private static final String TABLE_INSTANCES = "instances";
@@ -20,11 +21,11 @@ public class DataManager extends SQLiteOpenHelper{
     // Common Table Column Names
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
+    private static final String KEY_UNIT = "unit";
+    private static final String KEY_TYPE = "type";
     
     //Metrics Table Column Names
     private static final String KEY_DESC = "desc";
-    private static final String KEY_UNIT = "unit";
-    private static final String KEY_TYPE = "type";
     private static final String KEY_DFLT = "dflt";
     
     //Instances Table Column Names
@@ -45,14 +46,16 @@ public class DataManager extends SQLiteOpenHelper{
                 + KEY_DESC + " TEXT,"
                 + KEY_UNIT + " TEXT,"
                 + KEY_TYPE + " TEXT,"
-                + KEY_DFLT + " INT" + ")";
+                + KEY_DFLT + " REAL" + ")";
         db.execSQL(CREATE_METRICS_TABLE);
         
         String CREATE_INSTANCES_TABLE = "CREATE TABLE "	+ TABLE_INSTANCES + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," 
                 + KEY_NAME + " TEXT,"
                 + KEY_DATE + " TEXT,"
-                + KEY_COUNT + " INT,"
+                + KEY_UNIT + " TEXT,"
+                + KEY_TYPE + " TEXT,"
+                + KEY_COUNT + " REAL,"
                 + KEY_DETAILS + " TEXT" + ")";
         db.execSQL(CREATE_INSTANCES_TABLE);
     }
@@ -82,7 +85,7 @@ public class DataManager extends SQLiteOpenHelper{
 					cursor.getString(2), 
 					cursor.getString(3), 
 					cursor.getString(4), 
-					Integer.parseInt(cursor.getString(5))
+					cursor.getDouble(5)
 					);
     	}
     	cursor.close();
@@ -104,7 +107,7 @@ public class DataManager extends SQLiteOpenHelper{
 						cursor.getString(2), 
 						cursor.getString(3), 
 						cursor.getString(4), 
-						Integer.parseInt(cursor.getString(5))
+						cursor.getDouble(5)
 						)
 			);
     	}
@@ -136,13 +139,15 @@ public class DataManager extends SQLiteOpenHelper{
         return db.delete(TABLE_METRICS, KEY_NAME + "='" + name +"'", null) > 0;
     }
     
-    public boolean saveEntries(ArrayList<MetricEntry> entries, String date){
+    public boolean saveEntries(List<MetricEntry> entries, String date){
     	SQLiteDatabase db = this.getWritableDatabase();
         ContentValues args;
         for(MetricEntry e : entries){
         	args = new ContentValues();
         	args.put(KEY_NAME, e.getName());
         	args.put(KEY_DATE, date);
+        	args.put(KEY_UNIT, e.getUnit());
+        	args.put(KEY_TYPE, e.getType());
         	args.put(KEY_COUNT, e.getCount());
         	args.put(KEY_DETAILS, e.getDetails());
         	
@@ -161,5 +166,49 @@ public class DataManager extends SQLiteOpenHelper{
         	}
         }
     	return true;
+    }
+    
+    public List<MetricEntry> getEntriesByDate(String date){
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	List<MetricEntry> entries = new ArrayList<MetricEntry>();
+    	HashMap<String, MetricEntry> entriesHash = new HashMap<String, MetricEntry>();
+    	MetricEntry entry;
+    	
+    	Cursor cursor = db.query(TABLE_INSTANCES, new String[] { 
+        		KEY_NAME, KEY_UNIT, KEY_TYPE, KEY_COUNT, KEY_DETAILS }, KEY_DATE + "=?",
+                new String[] { date }, null, null, null, null);
+    	cursor.moveToPosition(-1);
+    	
+    	//	public MetricEntry(String name, String date, String unit, String type, int count, String details) {
+    	while(cursor.moveToNext()){
+			entry = new MetricEntry(
+					cursor.getString(0), 
+					date, 
+					cursor.getString(1), 
+					cursor.getString(2), 
+					cursor.getDouble(3),
+					cursor.getString(4)
+					);
+			entries.add(entry);
+			entriesHash.put(entry.getName(), entry);
+    	}
+    	cursor.close();
+    	
+    	List<Metric> metrics = getAllMetrics();
+    	for(Metric m : metrics){
+    		if(!entriesHash.containsKey(m.getName())){
+    			entries.add(new MetricEntry(
+    					m.getName(),
+    					date,
+    					m.getUnit(),
+    					m.getType(),
+    					m.getDflt(),
+    					null
+    					)
+    			);
+    		}
+    	}
+    	
+    	return entries;
     }
 }

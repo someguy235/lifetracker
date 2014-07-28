@@ -16,21 +16,25 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class TrackListAdapter extends ArrayAdapter<Metric> {
-	private Metric metric; //TODO: need this?
+public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
+	//private Metric metric; //TODO: need this?
+	//private MetricEntry entry;
 	private ArrayList<MetricEntry> entries;
 	private int pos;
 	
-    public TrackListAdapter(Context context, ArrayList<Metric> metrics) {
-       super(context, R.layout.track_list_item, metrics);
+    public TrackListAdapter(Context context, ArrayList<MetricEntry> entries) {
+       super(context, R.layout.track_list_item, entries);
        //TODO: get these from the database
-       entries = new ArrayList<MetricEntry>();
+       //entries = new ArrayList<MetricEntry>();
+       this.entries = entries;
        //TODO: get the date being edited
+       /*
        MetricEntry e;
        for(Metric m : metrics){
     	   e = new MetricEntry(m.getName(), DateUtil.getFormattedDate("today"), m.getDflt(), "");
     	   entries.add(e);
        }
+       */
     }
     
     public ArrayList<MetricEntry> getEntries(){
@@ -40,10 +44,10 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
        // Get the data item for this position
-       metric = getItem(position);    
+       MetricEntry metric = getItem(position);    
        pos = position;
        
-       TextView mName, mCount, mUnit;
+       TextView mName, mCount, mUnit, mDetails;
        ImageView mDone;
        
        // Check if an existing view is being reused, otherwise inflate the view
@@ -54,10 +58,10 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 			   mName.setText(metric.getName());
 			   
 			   mCount = (TextView) convertView.findViewById(R.id.track_list_binary_item_count);
-			   mCount.setText(metric.getDflt() == 0 ? "No" : "Yes");
+			   mCount.setText(metric.getCount() == 0 ? "No" : "Yes");
 			   
 			   mDone = (ImageView) convertView.findViewById(R.id.track_list_binary_item_done);
-			   mDone.setImageResource(metric.getDflt() == 0 ? R.drawable.check : R.drawable.cross);
+			   mDone.setImageResource(metric.getCount() == 0 ? R.drawable.check : R.drawable.cross);
 			   
 			   // Set click listeners for interface components
 			   //View mDone = convertView.findViewById(R.id.track_list_binary_item_done);
@@ -75,7 +79,10 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 		       });
 			   mDone.setTag(convertView.findViewById(R.id.track_list_binary_item_count));
 			   
-			   View mDetails = convertView.findViewById(R.id.track_list_binary_item_details);
+			   mDetails = (TextView)convertView.findViewById(R.id.track_list_binary_item_details);
+			   if(metric.getDetails() != null){
+				   mDetails.setText(metric.getDetails());
+			   }
 			   mDetails.setOnClickListener(new OnClickListener() {
 				   int ePos = pos;
 				   @Override
@@ -115,7 +122,14 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 			   mName.setText(metric.getName());
 		       
 			   mCount = (TextView) convertView.findViewById(R.id.track_list_increment_item_count);
-			   mCount.setText(""+ metric.getDflt());
+			   //TODO
+			   String mText;
+			   if(metric.getCount() % 1.0 == 0.0){
+				   mText = ""+ (int)metric.getCount();
+			   }else{
+				   mText = ""+ metric.getCount();
+			   }
+			   mCount.setText(mText);
 			   
 			   mUnit = (TextView) convertView.findViewById(R.id.track_list_increment_item_unit);
 			   mUnit.setText(" "+ metric.getUnit());
@@ -149,7 +163,10 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 		       });
 			   mLess.setTag(convertView.findViewById(R.id.track_list_increment_item_count));
 			   
-			   View mDetails = convertView.findViewById(R.id.track_list_increment_item_details);
+			   mDetails = (TextView)convertView.findViewById(R.id.track_list_increment_item_details);
+			   if(metric.getDetails() != null){
+				   mDetails.setText(metric.getDetails());
+			   }
 			   mDetails.setOnClickListener(new OnClickListener() {
 				   int ePos = pos;
 				   @Override
@@ -189,8 +206,14 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 			   mName.setText(metric.getName());
 		       
 			   mCount = (TextView) convertView.findViewById(R.id.track_list_count_item_count);
-			   mCount.setText(""+metric.getDflt());
-
+			   //TODO: figure this out
+			   String mText;
+			   if(metric.getCount() % 1.0 == 0.0){
+				   mText = ""+ (int)metric.getCount();
+			   }else{
+				   mText = ""+ metric.getCount();
+			   }
+			   mCount.setText(mText);
 			   mUnit = (TextView) convertView.findViewById(R.id.track_list_count_item_unit);
 			   mUnit.setText(" "+ metric.getUnit());
 
@@ -211,9 +234,9 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 					   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
 					       @Override
 					       public void onClick(DialogInterface dialog, int which) {
-					    	   e.setDetails(input.getText().toString());
-							   TextView mDetails = (TextView)v.getTag();
-							   mDetails.setText("" + e.getDetails());
+					    	   e.setCount(Double.parseDouble(input.getText().toString()));
+							   TextView mCount = (TextView)v.getTag();
+							   mCount.setText("" + (e.getCount() % 1.0 == 0.0 ? (int)e.getCount() : e.getCount()));
 					       }
 					   });
 					   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -227,7 +250,10 @@ public class TrackListAdapter extends ArrayAdapter<Metric> {
 		       }); 
 			   mEdit.setTag(convertView.findViewById(R.id.track_list_count_item_count));
 			   
-			   View mDetails = convertView.findViewById(R.id.track_list_count_item_details);
+			   mDetails = (TextView)convertView.findViewById(R.id.track_list_count_item_details);
+			   if(metric.getDetails() != null){
+				   mDetails.setText(metric.getDetails());
+			   }
 			   mDetails.setOnClickListener(new OnClickListener() {
 				   int ePos = pos;
 				   @Override

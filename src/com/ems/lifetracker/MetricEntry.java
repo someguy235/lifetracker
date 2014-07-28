@@ -3,12 +3,16 @@ package com.ems.lifetracker;
 public class MetricEntry {
 	private String name;
 	private String date;
-	private int count;
+	private String unit;
+	private String type;
+	private double count;
 	private String details;
 
-	public MetricEntry(String name, String date, int count, String details) {
+	public MetricEntry(String name, String date, String unit, String type, double count, String details) {
 		this.name = name;
 		this.date = date;
+		this.unit = unit;
+		this.type = type;
 		this.count = count;
 		this.details = details;
 	}
@@ -25,10 +29,22 @@ public class MetricEntry {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public int getCount() {
+	public String getUnit(){
+		return unit;
+	}
+	public void setUnit(String unit){
+		this.unit = unit;
+	}
+	public String getType(){
+		return type;
+	}
+	public void setType(String type){
+		this.type = type;
+	}
+	public double getCount() {
 		return count;
 	}
-	public void setCount(int count) {
+	public void setCount(double count) {
 		this.count = count;
 	}
 	public String getDetails() {
