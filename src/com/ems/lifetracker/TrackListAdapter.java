@@ -17,24 +17,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
-	//private Metric metric; //TODO: need this?
-	//private MetricEntry entry;
 	private ArrayList<MetricEntry> entries;
 	private int pos;
 	
     public TrackListAdapter(Context context, ArrayList<MetricEntry> entries) {
        super(context, R.layout.track_list_item, entries);
-       //TODO: get these from the database
-       //entries = new ArrayList<MetricEntry>();
        this.entries = entries;
-       //TODO: get the date being edited
-       /*
-       MetricEntry e;
-       for(Metric m : metrics){
-    	   e = new MetricEntry(m.getName(), DateUtil.getFormattedDate("today"), m.getDflt(), "");
-    	   entries.add(e);
-       }
-       */
     }
     
     public ArrayList<MetricEntry> getEntries(){

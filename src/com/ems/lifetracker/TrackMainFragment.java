@@ -1,6 +1,7 @@
 package com.ems.lifetracker;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -13,12 +14,14 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ListView;
  
 public class TrackMainFragment extends Fragment {
 	private Context ctx;
 	private DataManager dm;
 	//private ArrayList<MetricEntry> entries;
-	private TrackListAdapter adapter;
+	private TrackListAdapter entriesAdapter;
+	private DateBarAdapter dateAdapter;
 	
     public TrackMainFragment(){}
      
@@ -30,19 +33,22 @@ public class TrackMainFragment extends Fragment {
         ctx = getActivity();
         
         dm = new DataManager(ctx);
-        //ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
+
         ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByDate(DateUtil.getFormattedDate("today"));
-        Log.d("ENTRIES", entries.toString());
         GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
-
-        adapter = new TrackListAdapter(ctx, entries);
-        gridview.setAdapter(adapter);
-
+        entriesAdapter = new TrackListAdapter(ctx, entries);
+        gridview.setAdapter(entriesAdapter);
+/*
+        ArrayList<Date> dates = (ArrayList<Date>)DateUtil.getLastTenDays();
+        ListView datelist = (ListView) rootView.findViewById(R.id.track_date_bar);
+        dateAdapter = new DateBarAdapter(ctx, dates);
+        datelist.setAdapter(dateAdapter);
+  */      
         Button saveButton = (Button) rootView.findViewById(R.id.track_list_button_save);
         saveButton.setOnClickListener(new OnClickListener() {
         	@Override
         	public void onClick(View v) {
-        		ArrayList<MetricEntry> entries = adapter.getEntries();
+        		ArrayList<MetricEntry> entries = entriesAdapter.getEntries();
         		//TODO: get real date
         		dm.saveEntries(entries, DateUtil.getFormattedDate("today"));
         	}

@@ -102,17 +102,6 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     	    AlertDialog alert = builder.create();
     	    alert.show();
 
-        	
-        	
-        	
-        	
-        	
-        	
-        	
-        	
-        	
-        	
-        	
     		break;
         }
     }
