@@ -25,7 +25,7 @@ public class TrackMainFragment extends Fragment {
 	private Context ctx;
 	private DataManager dm;
 	private TrackListAdapter entriesAdapter;
-	private String activeDate;
+	private String activeDate, activeDay;
 	private View rootView;
 	private TextView datePicker;
 	private int mYear, mMonth, mDay;
@@ -38,7 +38,7 @@ public class TrackMainFragment extends Fragment {
         GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
         entriesAdapter = new TrackListAdapter(ctx, entries);
         gridview.setAdapter(entriesAdapter);
-        datePicker.setText(activeDate);
+        datePicker.setText(activeDay);
     }
     
     @Override
@@ -48,7 +48,8 @@ public class TrackMainFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_track_main, container, false);
         ctx = getActivity();
         activeDate = DateUtil.getFormattedDate(null);
-        
+        activeDay = DateUtil.getFormattedDay(activeDate);
+
         dm = new DataManager(ctx);
 
         // Set up the date picker and buttons
@@ -64,8 +65,9 @@ public class TrackMainFragment extends Fragment {
         	@Override
         	public void onClick(View v) {
         		activeDate = DateUtil.getOffsetDate(activeDate, -1);
+        		activeDay = DateUtil.getFormattedDay(activeDate);
         		updateGrid();
-        		datePicker.setText(activeDate);
+        		datePicker.setText(activeDay);
         	}
         });
         
@@ -74,8 +76,9 @@ public class TrackMainFragment extends Fragment {
         	@Override
         	public void onClick(View v) {
         		activeDate = DateUtil.getOffsetDate(activeDate, 1);
+        		activeDay = DateUtil.getFormattedDay(activeDate);
         		updateGrid();
-        		datePicker.setText(activeDate);
+        		datePicker.setText(activeDay);
         	}
         });
         
@@ -85,7 +88,6 @@ public class TrackMainFragment extends Fragment {
         	@Override
         	public void onClick(View v) {
         		ArrayList<MetricEntry> entries = entriesAdapter.getEntries();
-        		//TODO: get real date
         		dm.saveEntries(entries, activeDate);
         	}
         });

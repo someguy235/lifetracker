@@ -13,7 +13,7 @@ import android.util.Log;
 
 public class DataManager extends SQLiteOpenHelper{
 		
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 8;
     private static final String DATABASE_NAME = "lifetracker";
     private static final String TABLE_METRICS = "metrics";
     private static final String TABLE_INSTANCES = "instances";
@@ -89,6 +89,7 @@ public class DataManager extends SQLiteOpenHelper{
 					);
     	}
     	cursor.close();
+    	db.close();
     	return metric;
     }
     
@@ -112,7 +113,7 @@ public class DataManager extends SQLiteOpenHelper{
 			);
     	}
     	cursor.close();
-    	
+    	db.close();
     	return metrics;
     }
     
@@ -136,7 +137,14 @@ public class DataManager extends SQLiteOpenHelper{
     public boolean deleteMetricByName(String name){
     	SQLiteDatabase db = this.getWritableDatabase();
 
-        return db.delete(TABLE_METRICS, KEY_NAME + "='" + name +"'", null) > 0;
+    	
+		long success = db.delete(TABLE_METRICS, KEY_NAME + "='" + name +"'", null);
+		if(success >= -1){
+			success = db.delete(TABLE_INSTANCES, KEY_NAME + "='" + name +"'", null);
+		}
+		db.close();
+        		
+		return success >= -1;
     }
     
     public boolean saveEntries(List<MetricEntry> entries, String date){
@@ -165,6 +173,9 @@ public class DataManager extends SQLiteOpenHelper{
         		Log.d("UPDATED", args.toString());
         	}
         }
+
+        db.close();
+    	
     	return true;
     }
     
@@ -193,7 +204,7 @@ public class DataManager extends SQLiteOpenHelper{
 			entriesHash.put(entry.getName(), entry);
     	}
     	cursor.close();
-    	
+    	db.close();
     	List<Metric> metrics = getAllMetrics();
     	for(Metric m : metrics){
     		if(!entriesHash.containsKey(m.getName())){

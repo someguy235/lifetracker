@@ -31,15 +31,16 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-       // Get the data item for this position
-       MetricEntry metric = getItem(position);    
-       pos = position;
-       
-       TextView mName, mCount, mUnit, mDetails;
-       ImageView mDone;
+    	// Get the data item for this position
+    	
+    	MetricEntry metric = getItem(position);    
+    	pos = position;
+    	
+   		TextView mName, mCount, mUnit, mDetails;
+   		ImageView mDone;
        
        // Check if an existing view is being reused, otherwise inflate the view
-       if (convertView == null) {
+       //if (convertView == null) {
     	   if(metric.getType().equals("binary")){
 			   convertView = LayoutInflater.from(getContext()).inflate(R.layout.track_list_binary_item, parent, false);
 			   mName = (TextView) convertView.findViewById(R.id.track_list_binary_item_name);
@@ -52,7 +53,6 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 			   mDone.setImageResource(metric.getCount() == 0 ? R.drawable.check : R.drawable.cross);
 			   
 			   // Set click listeners for interface components
-			   //View mDone = convertView.findViewById(R.id.track_list_binary_item_done);
 			   mDone.setOnClickListener(new OnClickListener() {
 				   int ePos = pos;
 				   @Override
@@ -110,14 +110,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 			   mName.setText(metric.getName());
 		       
 			   mCount = (TextView) convertView.findViewById(R.id.track_list_increment_item_count);
-			   //TODO
-			   String mText;
-			   if(metric.getCount() % 1.0 == 0.0){
-				   mText = ""+ (int)metric.getCount();
-			   }else{
-				   mText = ""+ metric.getCount();
-			   }
-			   mCount.setText(mText);
+			   mCount.setText((metric.getCount() % 1.0 == 0.0) ? ""+ (int)metric.getCount() : ""+ metric.getCount());
 			   
 			   mUnit = (TextView) convertView.findViewById(R.id.track_list_increment_item_unit);
 			   mUnit.setText(" "+ metric.getUnit());
@@ -131,7 +124,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 					   MetricEntry e = entries.get(ePos);
 					   e.setCount(e.getCount() + 1);
 					   TextView mCount = (TextView)v.getTag();
-					   mCount.setText("" + e.getCount());
+					   mCount.setText((e.getCount() % 1.0 == 0.0) ? ""+ (int)e.getCount() : ""+ e.getCount());
 				   }
 		       });
 			   mMore.setTag(convertView.findViewById(R.id.track_list_increment_item_count));
@@ -144,9 +137,9 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 					   MetricEntry e = entries.get(ePos);
 					   if(e.getCount() > 0){
 						   e.setCount(e.getCount() - 1);
+						   TextView mCount = (TextView)v.getTag();
+						   mCount.setText((e.getCount() % 1.0 == 0.0) ? ""+ (int)e.getCount() : ""+ e.getCount());
 					   }
-					   TextView mCount = (TextView)v.getTag();
-					   mCount.setText("" + e.getCount());
 				   }
 		       });
 			   mLess.setTag(convertView.findViewById(R.id.track_list_increment_item_count));
@@ -194,14 +187,8 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 			   mName.setText(metric.getName());
 		       
 			   mCount = (TextView) convertView.findViewById(R.id.track_list_count_item_count);
-			   //TODO: figure this out
-			   String mText;
-			   if(metric.getCount() % 1.0 == 0.0){
-				   mText = ""+ (int)metric.getCount();
-			   }else{
-				   mText = ""+ metric.getCount();
-			   }
-			   mCount.setText(mText);
+			   mCount.setText((metric.getCount() % 1.0 == 0.0) ? ""+ (int)metric.getCount() : ""+ metric.getCount());
+			   
 			   mUnit = (TextView) convertView.findViewById(R.id.track_list_count_item_unit);
 			   mUnit.setText(" "+ metric.getUnit());
 
@@ -224,7 +211,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 					       public void onClick(DialogInterface dialog, int which) {
 					    	   e.setCount(Double.parseDouble(input.getText().toString()));
 							   TextView mCount = (TextView)v.getTag();
-							   mCount.setText("" + (e.getCount() % 1.0 == 0.0 ? (int)e.getCount() : e.getCount()));
+							   mCount.setText((e.getCount() % 1.0 == 0.0) ? ""+ (int)e.getCount() : ""+ e.getCount());
 					       }
 					   });
 					   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -275,7 +262,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 			   //convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tilegreen));
 		       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tileblue));
     	   }
-       }
+       //}
        // Return the completed view to render on screen
        return convertView;
    }

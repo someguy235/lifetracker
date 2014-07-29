@@ -19,6 +19,7 @@ public class DateUtil {
 	private DateUtil(){
 	}
 	
+	// Get date in format used by the db
 	public static String getFormattedDate(Date inDate){
 		formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 		String date;
@@ -30,6 +31,18 @@ public class DateUtil {
 			date = formatter.format(inDate);
 		}
 	    return date;
+	}
+	
+	// Get date in format for display on track screen
+	public static String getFormattedDay(String inDate){
+		formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+		cal = Calendar.getInstance();
+		try{
+			cal.setTime(formatter.parse(inDate));
+		}catch(ParseException p){
+			//calendar still set to today
+		}
+		return new SimpleDateFormat("EE M/dd", Locale.US).format(cal.getTime());
 	}
 	
 	public static String getOffsetDate(String inDate, int offset){
