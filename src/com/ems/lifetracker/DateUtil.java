@@ -1,6 +1,7 @@
 package com.ems.lifetracker;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,11 +19,11 @@ public class DateUtil {
 	private DateUtil(){
 	}
 	
-	public static String getFormattedDate(String inDate){
+	public static String getFormattedDate(Date inDate){
 		formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 		String date;
 		
-		if(inDate.equals("today")){
+		if(inDate == null){
 			cal = Calendar.getInstance();
 			date = formatter.format(cal.getTime()); 
 		}else{
@@ -31,6 +32,19 @@ public class DateUtil {
 	    return date;
 	}
 	
+	public static String getOffsetDate(String inDate, int offset){
+		formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+		cal = Calendar.getInstance();
+		try{
+			cal.setTime(formatter.parse(inDate));
+		}catch(ParseException p){
+			//calendar still set to today
+		}
+		cal.set(Calendar.DATE, cal.get(Calendar.DATE) + offset);
+		return formatter.format(cal.getTime());
+	}
+	
+	/*
 	public static List<Date> getLastTenDays(){
 		//formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 		List<Date> dates = new ArrayList<Date>();
@@ -43,4 +57,5 @@ public class DateUtil {
 		}
 		return dates;
 	}
+	*/
 }

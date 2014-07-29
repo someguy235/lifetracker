@@ -48,5 +48,7 @@
     <string name="track_list_increment_item_more">more</string>
     <string name="track_list_count_item_edit">edit</string>
     <string name="track_list_button_save">Save</string>
+    <string name="track_list_date_down">Earlier</string>
+    <string name="track_list_date_up">Later</string>
     
 </resources>

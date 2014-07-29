@@ -8,36 +8,40 @@
     android:paddingRight="@dimen/track_horizontal_margin"
     android:paddingTop="@dimen/track_top_margin"
     tools:context="com.ems.lifetracker.TrackActivity$PlaceholderFragment" >
-<!-- 
-    <ScrollView 
-      	android:id="@+id/track_list_datebar" 
-      	android:layout_alignParentTop="true"
-	  	android:layout_width="match_parent"
-      	android:layout_height="wrap_content">
-		<LinearLayout 
-	      	android:id="@+id/track_date_bar"
-	      	android:orientation="horizontal" 
-	      	android:layout_width="wrap_content"
-	      	android:layout_height="wrap_content">
-		</LinearLayout>
- 	</ScrollView>
- 	 -->
- 	<HorizontalScrollView 
- 	    android:id="@+id/track_list_datebar" 
-      	android:layout_alignParentTop="true"
-	  	android:layout_width="match_parent"
-      	android:layout_height="wrap_content">
-	   	<LinearLayout 
-		   	android:orientation="horizontal" 
-		   	android:layout_width="wrap_content"
-		   	android:layout_height="wrap_content">
-		   	<ListView 
-		   	    android:id="@+id/track_date_bar"
-			   	android:layout_width="wrap_content"
-			   	android:layout_height="wrap_content">
-		   	</ListView>
-		</LinearLayout>
-	</HorizontalScrollView>
+   	<LinearLayout 
+   	    android:id="@+id/track_list_datebar"
+   	    android:layout_alignParentTop="true"
+		android:paddingBottom="@dimen/track_bottom_margin"
+    	android:paddingTop="@dimen/track_top_margin"
+       	android:orientation="horizontal" 
+	   	android:layout_width="match_parent"
+	   	android:layout_height="wrap_content"
+	   	android:weightSum="4">
+	   	<ImageView
+	    	android:id="@+id/track_list_date_down"
+	     	android:gravity="center_horizontal"
+	     	android:layout_height="match_parent"
+	    	android:layout_width="0dp"
+	    	android:layout_weight="1"
+	    	android:src="@drawable/left" 
+	    	android:contentDescription="@string/track_list_date_down"/>
+	    <TextView
+			android:id="@+id/track_list_date"
+			android:gravity="center_horizontal"
+	     	android:layout_width="0dp"
+	     	android:layout_height="wrap_content"
+	     	android:layout_weight="2"
+	    	android:textColor="@color/white" 
+	     	android:textSize="24sp"/>
+	    <ImageView
+	    	android:id="@+id/track_list_date_up"
+	     	android:gravity="center_horizontal"
+	     	android:layout_height="match_parent"
+	    	android:layout_width="0dp"
+	    	android:layout_weight="1"
+	    	android:src="@drawable/right" 
+	    	android:contentDescription="@string/track_list_date_up"/>
+	</LinearLayout>
  	
     <GridView 
 	    android:id="@+id/track_main_gridview"
