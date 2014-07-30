@@ -190,7 +190,6 @@ public class DataManager extends SQLiteOpenHelper{
                 new String[] { date }, null, null, null, null);
     	cursor.moveToPosition(-1);
     	
-    	//	public MetricEntry(String name, String date, String unit, String type, int count, String details) {
     	while(cursor.moveToNext()){
 			entry = new MetricEntry(
 					cursor.getString(0), 
@@ -220,6 +219,32 @@ public class DataManager extends SQLiteOpenHelper{
     		}
     	}
     	
+    	return entries;
+    }
+    
+    public List<MetricEntry> getEntriesByName(String name){
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	List<MetricEntry> entries = new ArrayList<MetricEntry>();
+    	MetricEntry entry;
+    	
+    	Cursor cursor = db.query(TABLE_INSTANCES, new String[] { 
+        		KEY_DATE, KEY_UNIT, KEY_TYPE, KEY_COUNT, KEY_DETAILS }, KEY_NAME + "=?",
+                new String[] { name }, null, null, KEY_DATE, null);
+    	cursor.moveToPosition(-1);
+    	
+    	while(cursor.moveToNext()){
+			entry = new MetricEntry(
+					name,
+					cursor.getString(0), 
+					cursor.getString(1), 
+					cursor.getString(2), 
+					cursor.getDouble(3),
+					cursor.getString(4)
+					);
+			entries.add(entry);
+    	}
+    	cursor.close();
+    	db.close();
     	return entries;
     }
 }

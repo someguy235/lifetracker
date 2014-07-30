@@ -19,6 +19,19 @@ public class DateUtil {
 	private DateUtil(){
 	}
 	
+	
+	public static Date dateFromString(String inDate){
+		formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+		cal = Calendar.getInstance();
+		try{
+			cal.setTime(formatter.parse(inDate));
+		}catch(ParseException p){
+			//calendar still set to today
+		}
+		cal.set(Calendar.DATE, cal.get(Calendar.DATE));
+		return cal.getTime();
+	}
+	
 	// Get date in format used by the db
 	public static String getFormattedDate(Date inDate){
 		formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));

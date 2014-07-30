@@ -203,7 +203,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 					   builder.setTitle("Count");
 
 					   final EditText input = new EditText(getContext());
-					   input.setInputType(InputType.TYPE_CLASS_TEXT);
+					   input.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
 					   builder.setView(input);
 
 					   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 

@@ -111,7 +111,7 @@
             android:layout_weight="7"
             android:ems="10"
             android:hint="@string/metrics_new_input_dflt"
-            android:inputType="text" 
+            android:inputType="number|numberDecimal" 
             android:visibility="gone" />
          <RadioGroup
 		    android:id="@+id/metrics_new_binary_default_radio_group"
