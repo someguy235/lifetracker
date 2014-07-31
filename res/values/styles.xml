@@ -21,7 +21,7 @@
     <color name="white">#FFFFFF</color>
     
     <color name="tilered">#D1001C</color>
-    <color name="tileblue">#838ED6</color>
-	<color name="tilegreen">#78DE85</color>
+    <color name="tile_default">#838ED6</color>
+	<color name="tile_changed">#78DE85</color>
     
 </resources>

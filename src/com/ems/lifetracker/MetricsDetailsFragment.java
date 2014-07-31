@@ -1,6 +1,7 @@
 package com.ems.lifetracker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -61,10 +62,6 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 		
         ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
         
-        EntriesListAdapter eAdapter = new EntriesListAdapter(ctx, entries);
-        final ListView eventsListView = (ListView)rootView.findViewById(R.id.metrics_details_events);
-        eventsListView.setAdapter(eAdapter);
-        
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
         renderer.setAxisTitleTextSize(32);
         renderer.setChartTitleTextSize(40);
@@ -99,6 +96,11 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         	}
         }
         dataset.addSeries(series);
+        
+        Collections.reverse(entries);
+        EntriesListAdapter eAdapter = new EntriesListAdapter(ctx, entries);
+        final ListView eventsListView = (ListView)rootView.findViewById(R.id.metrics_details_events);
+        eventsListView.setAdapter(eAdapter);
         
         mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);

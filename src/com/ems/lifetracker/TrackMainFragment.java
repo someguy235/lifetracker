@@ -20,6 +20,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
  
 public class TrackMainFragment extends Fragment {
 	private Context ctx;
@@ -89,6 +90,11 @@ public class TrackMainFragment extends Fragment {
         	public void onClick(View v) {
         		ArrayList<MetricEntry> entries = entriesAdapter.getEntries();
         		dm.saveEntries(entries, activeDate);
+        		GridView gv = (GridView)rootView.findViewById(R.id.track_main_gridview);
+        		for(int i=0; i<gv.getChildCount(); i++){
+        			gv.getChildAt(i).setBackgroundColor(ctx.getResources().getColor(R.color.tile_default));
+        		}
+        		Toast.makeText(ctx, "Saved", Toast.LENGTH_LONG).show();
         	}
         });
         
