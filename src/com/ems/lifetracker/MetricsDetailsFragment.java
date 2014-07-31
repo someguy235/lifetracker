@@ -7,10 +7,9 @@ import java.util.Random;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
+import org.achartengine.chart.BarChart.Type;
 import org.achartengine.chart.PointStyle;
 import org.achartengine.chart.TimeChart;
-//import org.achartengine.chartdemo.demo.R;
-//import org.achartengine.chartdemo.demo.R;
 import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
@@ -62,6 +61,10 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 		
         ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
         
+        EntriesListAdapter eAdapter = new EntriesListAdapter(ctx, entries);
+        final ListView eventsListView = (ListView)rootView.findViewById(R.id.metrics_details_events);
+        eventsListView.setAdapter(eAdapter);
+        
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
         renderer.setAxisTitleTextSize(32);
         renderer.setChartTitleTextSize(40);
@@ -97,7 +100,6 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         }
         dataset.addSeries(series);
         
-        //mChartView = ChartFactory.getLineChartView(ctx, dataset, renderer);
         mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);
         layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -166,147 +168,4 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     		break;
         }
     }
-    
-    
-    
-    //TODO: pull all this out to a ChartFragment class to extend
-    /**
-     * Builds an XY multiple series renderer.
-     * 
-     * @param colors the series rendering colors
-     * @param styles the series point styles
-     * @return the XY multiple series renderers
-     */
-//    protected XYMultipleSeriesRenderer buildRenderer(int[] colors, PointStyle[] styles) {
-//	  XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-//	  setRenderer(renderer, colors, styles);
-//	  return renderer;
-//    }
-//    
-//    protected void setRenderer(XYMultipleSeriesRenderer renderer, int[] colors, PointStyle[] styles) {
-//	    renderer.setAxisTitleTextSize(16);
-//	    renderer.setChartTitleTextSize(20);
-//	    renderer.setLabelsTextSize(15);
-//	    renderer.setLegendTextSize(15);
-//	    renderer.setPointSize(5f);
-//	    renderer.setMargins(new int[] { 20, 30, 15, 20 });
-//	    int length = colors.length;
-//	    for (int i = 0; i < length; i++) {
-//	      XYSeriesRenderer r = new XYSeriesRenderer();
-//	      r.setColor(colors[i]);
-//	      r.setPointStyle(styles[i]);
-//	      renderer.addSeriesRenderer(r);
-//	    }
-//    }
-//
-//    /**
-//     * Sets a few of the series renderer settings.
-//     * 
-//     * @param renderer the renderer to set the properties to
-//     * @param title the chart title
-//     * @param xTitle the title for the X axis
-//     * @param yTitle the title for the Y axis
-//     * @param xMin the minimum value on the X axis
-//     * @param xMax the maximum value on the X axis
-//     * @param yMin the minimum value on the Y axis
-//     * @param yMax the maximum value on the Y axis
-//     * @param axesColor the axes color
-//     * @param labelsColor the labels color
-//     */
-//    protected void setChartSettings(XYMultipleSeriesRenderer renderer, String title, String xTitle,
-//        String yTitle, double xMin, double xMax, double yMin, double yMax, int axesColor,
-//        int labelsColor) {
-//      renderer.setChartTitle(title);
-//      renderer.setXTitle(xTitle);
-//      renderer.setYTitle(yTitle);
-//      renderer.setXAxisMin(xMin);
-//      renderer.setXAxisMax(xMax);
-//      renderer.setYAxisMin(yMin);
-//      renderer.setYAxisMax(yMax);
-//      renderer.setAxesColor(axesColor);
-//      renderer.setLabelsColor(labelsColor);
-//    }
-//
-//    /**
-//     * Builds an XY multiple dataset using the provided values.
-//     * 
-//     * @param titles the series titles
-//     * @param xValues the values for the X axis
-//     * @param yValues the values for the Y axis
-//     * @return the XY multiple dataset
-//     */
-//    protected XYMultipleSeriesDataset buildDataset(String[] titles, List<double[]> xValues,
-//        List<double[]> yValues) {
-//      XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-//      addXYSeries(dataset, titles, xValues, yValues, 0);
-//      return dataset;
-//    }
-//
-//    public void addXYSeries(XYMultipleSeriesDataset dataset, String[] titles, List<double[]> xValues,
-//	      List<double[]> yValues, int scale) {
-//	    int length = titles.length;
-//	    for (int i = 0; i < length; i++) {
-//	      XYSeries series = new XYSeries(titles[i], scale);
-//	      double[] xV = xValues.get(i);
-//	      double[] yV = yValues.get(i);
-//	      int seriesLength = xV.length;
-//	      for (int k = 0; k < seriesLength; k++) {
-//	        series.add(xV[k], yV[k]);
-//	      }
-//	      dataset.addSeries(series);
-//	    }
-//	  }
-//
-//    private XYMultipleSeriesRenderer getDemoRenderer() {
-//        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-//        renderer.setAxisTitleTextSize(16);
-//        renderer.setChartTitleTextSize(20);
-//        renderer.setLabelsTextSize(15);
-//        renderer.setLegendTextSize(15);
-//        renderer.setPointSize(5f);
-//        renderer.setMargins(new int[] {20, 30, 15, 0});
-//        XYSeriesRenderer r = new XYSeriesRenderer();
-//        r.setColor(Color.BLUE);
-//        r.setPointStyle(PointStyle.SQUARE);
-//        r.setFillBelowLine(true);
-//        r.setFillBelowLineColor(Color.WHITE);
-//        r.setFillPoints(true);
-//        renderer.addSeriesRenderer(r);
-////        r = new XYSeriesRenderer();
-////        r.setPointStyle(PointStyle.CIRCLE);
-////        r.setColor(Color.GREEN);
-////        r.setFillPoints(true);
-////        renderer.addSeriesRenderer(r);
-//        renderer.setAxesColor(Color.DKGRAY);
-//        renderer.setLabelsColor(Color.LTGRAY);
-//        return renderer;
-//      }
-//    
-//    private XYSeriesRenderer getDemoXYRenderer() {
-////        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-////        renderer.setAxisTitleTextSize(16);
-////        renderer.setChartTitleTextSize(20);
-////        renderer.setLabelsTextSize(15);
-////        renderer.setLegendTextSize(15);
-////        renderer.setPointSize(5f);
-////        renderer.setMargins(new int[] {20, 30, 15, 0});
-//        XYSeriesRenderer r = new XYSeriesRenderer();
-//        r.setColor(Color.BLUE);
-//        r.setPointStyle(PointStyle.SQUARE);
-//        r.setFillBelowLine(true);
-//        r.setFillBelowLineColor(Color.WHITE);
-//        r.setFillPoints(true);
-////        renderer.addSeriesRenderer(r);
-//        r = new XYSeriesRenderer();
-//        r.setPointStyle(PointStyle.CIRCLE);
-//        r.setColor(Color.GREEN);
-//        r.setFillPoints(true);
-////        renderer.addSeriesRenderer(r);
-////        renderer.setAxesColor(Color.DKGRAY);
-////        renderer.setLabelsColor(Color.LTGRAY);
-////        return renderer;
-//        return r;
-//      }
-    
-    
 }

@@ -33,8 +33,6 @@ public class MetricsListAdapter extends ArrayAdapter<Metric> {
         
        // Populate the data into the template view using the data object
        mName.setText(metric.getName());
-       Log.d("mDesc", metric.getDesc());
-       Log.d("mUnit", metric.getUnit());
        if(metric.getDesc().equals("") || metric.getUnit().equals("")){
    		   mDesc.setText(metric.getDesc());
    	   }else{

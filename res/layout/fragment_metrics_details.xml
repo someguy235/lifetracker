@@ -13,17 +13,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
-        >
-	</ListView>
+        />
 	<LinearLayout 
-	    android:id="@+id/metrics_details_chart"
-	    android:orientation="horizontal"
-        android:layout_width="match_parent" 
-        android:layout_height="0dip" 
-        android:layout_below="@+id/metrics_details_list"
-		android:layout_above="@+id/metrics_details_layout_defaultbuttons" 
-		/>
-    <LinearLayout
+	    android:layout_below="@+id/metrics_details_list"
+		android:layout_above="@+id/metrics_details_layout_defaultbuttons"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent" 
+		android:orientation="vertical"
+	    >
+	    <LinearLayout 
+		    android:id="@+id/metrics_details_chart"
+		    android:orientation="horizontal"
+		    android:layout_height="0dp"
+	        android:layout_width="match_parent" 
+	        android:layout_weight=".5" 
+	    	/>
+		<ListView
+		    android:id="@+id/metrics_details_events"
+		    android:orientation="vertical"
+	        android:layout_height="0dp"
+	        android:layout_width="match_parent" 
+	        android:layout_weight=".5" 
+	    	/>
+    </LinearLayout>
+	<LinearLayout
         style="?android:attr/buttonBarStyle"
         android:id="@+id/metrics_details_layout_defaultbuttons"
         android:layout_width="fill_parent"
