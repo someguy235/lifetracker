@@ -45,6 +45,7 @@
 	        android:layout_height="0dp"
 	        android:orientation="horizontal"
 	        android:paddingBottom="10dp"
+           	android:gravity="center_horizontal"
 	        android:layout_weight=".15" >
 	        <ToggleButton
 		        android:id="@+id/metrics_details_button_average"
@@ -65,11 +66,11 @@
 	        android:layout_height="0dp"
 	        android:orientation="vertical"
 	        android:layout_weight=".4"  >
-	   			<TextView
-					android:id="@+id/track_list_item_type"
-			     	android:layout_width="wrap_content"
-			     	android:layout_height="wrap_content"
-			     	android:text="Events:" />
+<!-- 	   			<TextView -->
+<!-- 					android:id="@+id/track_list_item_type" -->
+<!-- 			     	android:layout_width="wrap_content" -->
+<!-- 			     	android:layout_height="wrap_content" -->
+<!-- 			     	android:text="Events:" /> -->
 		    	<ListView
 				    android:id="@+id/metrics_details_events"
 				    android:orientation="vertical"
