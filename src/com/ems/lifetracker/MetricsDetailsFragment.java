@@ -8,7 +8,9 @@ import java.util.Random;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
+import org.achartengine.chart.BarChart;
 import org.achartengine.chart.BarChart.Type;
+import org.achartengine.chart.LineChart;
 import org.achartengine.chart.PointStyle;
 import org.achartengine.chart.TimeChart;
 import org.achartengine.model.TimeSeries;
@@ -51,84 +53,96 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 		View rootView = inflater.inflate(R.layout.fragment_metrics_details, container, false);
         ctx = getActivity();
         DataManager dm = new DataManager(ctx);
-
+        ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
+        
+        // Create header area
         Metric metric = dm.getMetricByName(metricName);
         ArrayList<Metric> metrics = new ArrayList<Metric>();
         metrics.add(metric);
         MetricsListAdapter adapter = new MetricsListAdapter(ctx, metrics);
-        
         final ListView listView = (ListView) rootView.findViewById(R.id.metrics_details_list);
 		listView.setAdapter(adapter);
 		
-        ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
-        
-        XYMultipleSeriesRenderer renderer = getMultipleSeriesRenderer();
+		// Get chart container and add default data series
+		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+    	XYMultipleSeriesRenderer renderer = getMultipleSeriesRenderer();
         XYSeriesRenderer r = getSeriesRenderer();
         renderer.addSeriesRenderer(r);
         renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(entries.get(0).getDate(), -1)).getTime());
+        
+        XYSeries series = new XYSeries(metric.getUnit());
+        
+        // Set up average series
+    	XYSeriesRenderer ravg = getSeriesRenderer();;
+    	ravg.setColor(ctx.getResources().getColor(R.color.lt_green));
+    	ravg.setFillPoints(false);
+    	//TimeSeries avgSeries = new TimeSeries("average");
+    	XYSeries avgSeries = new XYSeries("average");
     	
-    	XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+    	double avg = 0.0;
+    	for(MetricEntry e : entries){
+    		avg += e.getCount();
+    	}
+    	avg = avg / entries.size();
 
-        double ymin = entries.get(0).getCount();
+    	double ymin = entries.get(0).getCount();
         double ymax = entries.get(0).getCount();
         
         if(metric.getType().equals("count")){
-        	XYSeriesRenderer ravg = getSeriesRenderer();
-        	ravg.setColor(ctx.getResources().getColor(R.color.lt_green));
         	renderer.addSeriesRenderer(ravg);
         	 
-        	TimeSeries series = new TimeSeries(metric.getUnit());
-        	TimeSeries avgSeries = new TimeSeries("average");
-        	double avg = 0.0;
-        	for(MetricEntry e : entries){
-        		avg += e.getCount();
-        	}
-        	avg = avg / entries.size();
-        	
-        	for(MetricEntry e : entries){
-	        	series.add(DateUtil.dateFromString(e.getDate()), e.getCount());
-	        	avgSeries.add(DateUtil.dateFromString(e.getDate()), avg);
+        	for(int i=0; i<entries.size(); i++){
+        		MetricEntry e = entries.get(i);
+        		long t = DateUtil.dateFromString(e.getDate()).getTime();
+	        	
+        		series.add(t, e.getCount());
+	        	avgSeries.add(DateUtil.dateFromString(e.getDate()).getTime(), avg);
+	        	
+	        	if(i % (entries.size() / 4) == 1) renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
 	        	if(e.getCount() >= ymax) ymax = e.getCount();
 	        	if(e.getCount() <= ymin) ymin = e.getCount();
-	        }
+        	}
 	        renderer.setYAxisMin(ymin * 0.9);
 	        renderer.setYAxisMax(ymax * 1.1);
+	        
 	        dataset.addSeries(series);
 	        dataset.addSeries(avgSeries);
+
 	        mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
         }else if(metric.getType().equals("increment")){
-        	XYSeriesRenderer ravg = getSeriesRenderer();
-        	ravg.setColor(ctx.getResources().getColor(R.color.lt_green));
         	renderer.addSeriesRenderer(ravg);
         	
-        	XYSeries series = new XYSeries(metric.getUnit());
-        	TimeSeries avgSeries = new TimeSeries("average");
-        	double avg = 0.0;
-        	for(MetricEntry e : entries){
-        		avg += e.getCount();
-        	}
-        	avg = avg / entries.size();
-        	
-	        for(MetricEntry e : entries){
-	        	series.add(DateUtil.dateFromString(e.getDate()).getTime(), e.getCount());
+        	for(int i=0; i<entries.size(); i++){
+        		MetricEntry e = entries.get(i);
+        		long t = DateUtil.dateFromString(e.getDate()).getTime();
+	        	
+        		series.add(t, e.getCount());
 	        	avgSeries.add(DateUtil.dateFromString(e.getDate()).getTime(), avg);
+	        	
+	        	if(i % (entries.size() / 4) == 1) renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
 	        	if(e.getCount() >= ymax) ymax = e.getCount();
 	        	if(e.getCount() <= ymin) ymin = e.getCount();
-	        }
-	        
+        	}
+
 	        renderer.setYAxisMin(ymin * 0.9);
 	        renderer.setYAxisMax(ymax * 1.1);
+	        
 	        dataset.addSeries(series);
 	        dataset.addSeries(avgSeries);
-            mChartView = ChartFactory.getBarChartView(ctx, dataset, renderer, null);
+	        
+	        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
+	        		new String[] { BarChart.TYPE, LineChart.TYPE } );
         }else if(metric.getType().equals("binary")){
         	renderer.setYLabels(1);
         	renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(entries.get(0).getDate(), -1)).getTime());
-        	XYSeries series = new XYSeries(metric.getUnit());
-	        for(MetricEntry e : entries){
-	        	series.add(DateUtil.dateFromString(e.getDate()).getTime(), e.getCount());
-	        }
-	        
+        	
+        	for(int i=0; i<entries.size(); i++){
+        		MetricEntry e = entries.get(i);
+        		long t = DateUtil.dateFromString(e.getDate()).getTime();
+	        	series.add(t, e.getCount());
+	        	if(i % (entries.size() / 4) == 1) renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
+        	}
+
 	        dataset.addSeries(series);
 	        mChartView = ChartFactory.getBarChartView(ctx, dataset, renderer, null);
         }
@@ -221,6 +235,8 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
         renderer.setYLabelsPadding(3);
         renderer.setBarSpacing(0.25);
+        renderer.setXLabels(0);
+        
         //renderer.setLegendTextSize(30);
         //renderer.setChartTitle(metric.getName());
         return renderer;
