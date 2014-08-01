@@ -20,8 +20,13 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     
-    <color name="tilered">#D1001C</color>
-    <color name="tile_default">#838ED6</color>
-	<color name="tile_changed">#78DE85</color>
-    
+    <color name="tile_default">#4986E7</color>
+	<color name="tile_changed">#42D692</color>
+	
+	<color name="lt_red">#D96666</color>
+	<color name="lt_orange">#E6804D</color>
+	<color name="lt_yellow">#D1BC36</color>
+	<color name="lt_green">#42D692</color>
+    <color name="lt_blue">#4986E7</color>
+	<color name="lt_purple">#8C66D9</color>	
 </resources>

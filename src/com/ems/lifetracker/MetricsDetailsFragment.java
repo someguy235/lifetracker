@@ -62,49 +62,84 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 		
         ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
         
-        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-        renderer.setAxisTitleTextSize(32);
-        renderer.setChartTitleTextSize(40);
-        renderer.setLabelsTextSize(30);
-        renderer.setShowLegend(false);
-        renderer.setPointSize(8f);
-        renderer.setMargins(new int[] {40, 20, 40, 20});
-        renderer.setAxesColor(Color.DKGRAY);
-        renderer.setLabelsColor(Color.LTGRAY);
-        renderer.setYAxisMin(0);
-        renderer.setYAxisMax(1);
-        renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
-        //renderer.setLegendTextSize(30);
-        //renderer.setChartTitle(metric.getName());
-        
-        XYSeriesRenderer r = new XYSeriesRenderer();
-        r.setColor(Color.BLUE);
-        r.setPointStyle(PointStyle.CIRCLE);
-        r.setLineWidth(4f);
-        r.setFillPoints(true);
-        //r.setFillBelowLine(true);
-        //r.setFillBelowLineColor(Color.WHITE);
-        
+        XYMultipleSeriesRenderer renderer = getMultipleSeriesRenderer();
+        XYSeriesRenderer r = getSeriesRenderer();
         renderer.addSeriesRenderer(r);
+        renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(entries.get(0).getDate(), -1)).getTime());
+    	
+    	XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+
+        double ymin = entries.get(0).getCount();
+        double ymax = entries.get(0).getCount();
         
-        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        TimeSeries series = new TimeSeries(metric.getUnit());
-        for(MetricEntry e : entries){
-        	series.add(DateUtil.dateFromString(e.getDate()), e.getCount());
-        	if(e.getCount() >= renderer.getYAxisMax()){
-        		renderer.setYAxisMax(e.getCount() + 1);
+        if(metric.getType().equals("count")){
+        	XYSeriesRenderer ravg = getSeriesRenderer();
+        	ravg.setColor(ctx.getResources().getColor(R.color.lt_green));
+        	renderer.addSeriesRenderer(ravg);
+        	 
+        	TimeSeries series = new TimeSeries(metric.getUnit());
+        	TimeSeries avgSeries = new TimeSeries("average");
+        	double avg = 0.0;
+        	for(MetricEntry e : entries){
+        		avg += e.getCount();
         	}
+        	avg = avg / entries.size();
+        	
+        	for(MetricEntry e : entries){
+	        	series.add(DateUtil.dateFromString(e.getDate()), e.getCount());
+	        	avgSeries.add(DateUtil.dateFromString(e.getDate()), avg);
+	        	if(e.getCount() >= ymax) ymax = e.getCount();
+	        	if(e.getCount() <= ymin) ymin = e.getCount();
+	        }
+	        renderer.setYAxisMin(ymin * 0.9);
+	        renderer.setYAxisMax(ymax * 1.1);
+	        dataset.addSeries(series);
+	        dataset.addSeries(avgSeries);
+	        mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
+        }else if(metric.getType().equals("increment")){
+        	XYSeriesRenderer ravg = getSeriesRenderer();
+        	ravg.setColor(ctx.getResources().getColor(R.color.lt_green));
+        	renderer.addSeriesRenderer(ravg);
+        	
+        	XYSeries series = new XYSeries(metric.getUnit());
+        	TimeSeries avgSeries = new TimeSeries("average");
+        	double avg = 0.0;
+        	for(MetricEntry e : entries){
+        		avg += e.getCount();
+        	}
+        	avg = avg / entries.size();
+        	
+	        for(MetricEntry e : entries){
+	        	series.add(DateUtil.dateFromString(e.getDate()).getTime(), e.getCount());
+	        	avgSeries.add(DateUtil.dateFromString(e.getDate()).getTime(), avg);
+	        	if(e.getCount() >= ymax) ymax = e.getCount();
+	        	if(e.getCount() <= ymin) ymin = e.getCount();
+	        }
+	        
+	        renderer.setYAxisMin(ymin * 0.9);
+	        renderer.setYAxisMax(ymax * 1.1);
+	        dataset.addSeries(series);
+	        dataset.addSeries(avgSeries);
+            mChartView = ChartFactory.getBarChartView(ctx, dataset, renderer, null);
+        }else if(metric.getType().equals("binary")){
+        	renderer.setYLabels(1);
+        	renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(entries.get(0).getDate(), -1)).getTime());
+        	XYSeries series = new XYSeries(metric.getUnit());
+	        for(MetricEntry e : entries){
+	        	series.add(DateUtil.dateFromString(e.getDate()).getTime(), e.getCount());
+	        }
+	        
+	        dataset.addSeries(series);
+	        mChartView = ChartFactory.getBarChartView(ctx, dataset, renderer, null);
         }
-        dataset.addSeries(series);
+
+        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);
+        layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         
         Collections.reverse(entries);
         EntriesListAdapter eAdapter = new EntriesListAdapter(ctx, entries);
         final ListView eventsListView = (ListView)rootView.findViewById(R.id.metrics_details_events);
         eventsListView.setAdapter(eAdapter);
-        
-        mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
-        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);
-        layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         
         Button b = (Button) rootView.findViewById(R.id.metrics_details_button_cancel);
         b.setOnClickListener(this);
@@ -169,5 +204,35 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 
     		break;
         }
+    }
+    
+    private XYMultipleSeriesRenderer getMultipleSeriesRenderer(){
+    	XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+        renderer.setAxisTitleTextSize(32);
+        renderer.setChartTitleTextSize(40);
+        renderer.setLabelsTextSize(30);
+        renderer.setShowLegend(false);
+        renderer.setPointSize(8f);
+        renderer.setMargins(new int[] {40, 20, 40, 20});
+        renderer.setAxesColor(Color.DKGRAY);
+        renderer.setLabelsColor(Color.LTGRAY);
+        renderer.setYAxisMin(0);
+        renderer.setYAxisMax(1);
+        renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
+        renderer.setYLabelsPadding(3);
+        renderer.setBarSpacing(0.25);
+        //renderer.setLegendTextSize(30);
+        //renderer.setChartTitle(metric.getName());
+        return renderer;
+    }
+    private XYSeriesRenderer getSeriesRenderer(){
+    	XYSeriesRenderer r = new XYSeriesRenderer();
+        r.setColor(ctx.getResources().getColor(R.color.lt_blue));
+        r.setPointStyle(PointStyle.CIRCLE);
+        r.setLineWidth(4f);
+        r.setFillPoints(true);
+        //r.setFillBelowLine(true);
+        //r.setFillBelowLineColor(Color.WHITE);
+        return r;
     }
 }
