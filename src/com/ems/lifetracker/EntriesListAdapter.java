@@ -29,7 +29,11 @@ public class EntriesListAdapter extends ArrayAdapter<MetricEntry> {
         
        // Populate the data into the template view using the data object
        eDate.setText(DateUtil.getFormattedDay(entry.getDate()));
-       eCount.setText((entry.getCount() % 1.0 == 0.0) ? ": "+ (int)entry.getCount() : ": "+ entry.getCount());
+       if(entry.getType().equals("binary")){
+    	   eCount.setText(entry.getCount() == 1 ? ": yes" : ": no");
+       }else{
+    	   eCount.setText((entry.getCount() % 1.0 == 0.0) ? ": "+ (int)entry.getCount() : ": "+ entry.getCount());
+       }
        if(entry.getDetails() == null || entry.getDetails().equals("")){
     	   eDetails.setVisibility(View.GONE);
        }else{
