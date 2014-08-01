@@ -14,7 +14,17 @@
         android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
         />
+   	<TextView
+		android:id="@+id/metrics_details_empty_msg"
+	    android:layout_below="@+id/metrics_details_list"
+     	android:layout_width="match_parent"
+     	android:layout_height="wrap_content"
+     	android:paddingTop="40dp"
+     	android:textSize="24sp"
+     	android:gravity="center_horizontal"
+     	android:text="No entries yet" />
 	<LinearLayout 
+	    android:id="@+id/metrics_details_content"
 	    android:layout_below="@+id/metrics_details_list"
 		android:layout_above="@+id/metrics_details_layout_defaultbuttons"
 		android:layout_height="wrap_content"

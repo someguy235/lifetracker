@@ -37,6 +37,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
  
@@ -70,81 +71,89 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         final ListView listView = (ListView) rootView.findViewById(R.id.metrics_details_list);
 		listView.setAdapter(adapter);
 		
-		// Get chart container and add default data series
-		dataset = new XYMultipleSeriesDataset();
-    	renderer = getMultipleSeriesRenderer();
-        
-    	// Set up the data renderer
-    	XYSeriesRenderer r = getSeriesRenderer();
-        renderer.addSeriesRenderer(r);
-        renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(entries.get(0).getDate(), -1)).getTime());
-        
-        // Set up average renderer
-    	ravg = getSeriesRenderer();;
-    	ravg.setColor(ctx.getResources().getColor(R.color.lt_green));
-    	ravg.setFillPoints(false);
-    	renderer.addSeriesRenderer(ravg);
-    	
-        XYSeries series = new XYSeries(metric.getUnit());
-        avgSeries = new XYSeries("average");
-    	
-    	for(MetricEntry e : entries){
-    		avg += e.getCount();
-    	}
-    	avg = avg / entries.size();
-
-    	double ymin = entries.get(0).getCount();
-        double ymax = entries.get(0).getCount();
-    	 
-    	for(int i=0; i<entries.size(); i++){
-    		MetricEntry e = entries.get(i);
-    		long t = DateUtil.dateFromString(e.getDate()).getTime();
-        	
-    		series.add(t, e.getCount());
-        	avgSeries.add(DateUtil.dateFromString(e.getDate()).getTime(), avg);
-        	
-        	if(i % (entries.size() / 4) == 1) renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
-        	if(e.getCount() >= ymax) ymax = e.getCount();
-        	if(e.getCount() <= ymin) ymin = e.getCount();
-    	}
-        
-        dataset.addSeries(series);
-        dataset.addSeries(avgSeries);
-        
-        if(metric.getType().equals("count")){
-	        renderer.setYAxisMin(ymin * 0.9);
-	        renderer.setYAxisMax(ymax * 1.1);
-	        mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
-        }else if(metric.getType().equals("increment")){
-	        renderer.setYAxisMin(ymin * 0.9);
-	        renderer.setYAxisMax(ymax * 1.1);
-	        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
-	        		new String[] { BarChart.TYPE, LineChart.TYPE } );
-        }else if(metric.getType().equals("binary")){
-	        renderer.setYLabels(1);
-	        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
-	        		new String[] { BarChart.TYPE, LineChart.TYPE } );
-        }
-
-        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);
-        layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        
-        Collections.reverse(entries);
-        EntriesListAdapter eAdapter = new EntriesListAdapter(ctx, entries);
-        final ListView eventsListView = (ListView)rootView.findViewById(R.id.metrics_details_events);
-        eventsListView.setAdapter(eAdapter);
-        
-        Button b = (Button) rootView.findViewById(R.id.metrics_details_button_cancel);
+		if(entries.size() > 0){
+			final TextView emptyMsg = (TextView) rootView.findViewById(R.id.metrics_details_empty_msg);
+			emptyMsg.setVisibility(View.GONE);
+			// Get chart container and add default data series
+			dataset = new XYMultipleSeriesDataset();
+	    	renderer = getMultipleSeriesRenderer();
+	        
+	    	// Set up the data renderer
+	    	XYSeriesRenderer r = getSeriesRenderer();
+	        renderer.addSeriesRenderer(r);
+	        renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(entries.get(0).getDate(), -1)).getTime());
+	        
+	        // Set up average renderer
+	    	ravg = getSeriesRenderer();;
+	    	ravg.setColor(ctx.getResources().getColor(R.color.lt_green));
+	    	ravg.setFillPoints(false);
+	    	renderer.addSeriesRenderer(ravg);
+	    	
+	        XYSeries series = new XYSeries(metric.getUnit());
+	        avgSeries = new XYSeries("average");
+	    	
+	    	for(MetricEntry e : entries){
+	    		avg += e.getCount();
+	    	}
+	    	avg = avg / entries.size();
+	
+	    	double ymin = entries.get(0).getCount();
+	        double ymax = entries.get(0).getCount();
+	    	 
+	    	for(int i=0; i<entries.size(); i++){
+	    		MetricEntry e = entries.get(i);
+	    		long t = DateUtil.dateFromString(e.getDate()).getTime();
+	        	
+	    		series.add(t, e.getCount());
+	        	avgSeries.add(DateUtil.dateFromString(e.getDate()).getTime(), avg);
+	        	
+	        	if(i % (entries.size() / 4) == 1) renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
+	        	if(e.getCount() >= ymax) ymax = e.getCount();
+	        	if(e.getCount() <= ymin) ymin = e.getCount();
+	    	}
+	        
+	        dataset.addSeries(series);
+	        dataset.addSeries(avgSeries);
+	        
+	        if(metric.getType().equals("count")){
+		        renderer.setYAxisMin(ymin * 0.9);
+		        renderer.setYAxisMax(ymax * 1.1);
+		        mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
+	        }else if(metric.getType().equals("increment")){
+		        renderer.setYAxisMin(ymin * 0.9);
+		        renderer.setYAxisMax(ymax * 1.1);
+		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
+		        		new String[] { BarChart.TYPE, LineChart.TYPE } );
+	        }else if(metric.getType().equals("binary")){
+		        renderer.setYLabels(1);
+		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
+		        		new String[] { BarChart.TYPE, LineChart.TYPE } );
+	        }
+	
+	        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);
+	        layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+	        
+	        Collections.reverse(entries);
+	        EntriesListAdapter eAdapter = new EntriesListAdapter(ctx, entries);
+	        final ListView eventsListView = (ListView)rootView.findViewById(R.id.metrics_details_events);
+	        eventsListView.setAdapter(eAdapter);
+	        
+	        ToggleButton tb = (ToggleButton) rootView.findViewById(R.id.metrics_details_button_average);
+	        tb.setOnClickListener(this);
+	        tb.setText("Avg: "+ new DecimalFormat("#.##").format(avg));
+	        tb.setTextOn("Avg: "+ new DecimalFormat("#.##").format(avg));
+	        tb.setTextOff("Avg Off");
+		}else{
+			final LinearLayout l = (LinearLayout) rootView.findViewById(R.id.metrics_details_content);
+			l.setVisibility(View.GONE);
+		}
+		
+		Button b = (Button) rootView.findViewById(R.id.metrics_details_button_cancel);
         b.setOnClickListener(this);
         b = (Button) rootView.findViewById(R.id.metrics_details_button_edit);
         b.setOnClickListener(this);
         b = (Button) rootView.findViewById(R.id.metrics_details_button_delete);
         b.setOnClickListener(this);
-        ToggleButton tb = (ToggleButton) rootView.findViewById(R.id.metrics_details_button_average);
-        tb.setOnClickListener(this);
-        tb.setText("Avg: "+ new DecimalFormat("#.##").format(avg));
-        tb.setTextOn("Avg: "+ new DecimalFormat("#.##").format(avg));
-        tb.setTextOff("Avg Off");
         
         return rootView;
     }
