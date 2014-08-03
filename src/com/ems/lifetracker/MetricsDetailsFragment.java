@@ -99,15 +99,17 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	
 	    	double ymin = entries.get(0).getCount();
 	        double ymax = entries.get(0).getCount();
-	    	 
 	    	for(int i=0; i<entries.size(); i++){
 	    		MetricEntry e = entries.get(i);
+	    		
 	    		long t = DateUtil.dateFromString(e.getDate()).getTime();
 	        	
 	    		series.add(t, e.getCount());
 	        	avgSeries.add(DateUtil.dateFromString(e.getDate()).getTime(), avg);
 	        	
-	        	if(i % (entries.size() / 4) == 1) renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
+	        	if((entries.size() <= 4) || (i % (entries.size() / 4) == 1)){
+	        		renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
+	        	}
 	        	if(e.getCount() >= ymax) ymax = e.getCount();
 	        	if(e.getCount() <= ymin) ymin = e.getCount();
 	    	}

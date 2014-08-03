@@ -14,7 +14,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
  
 public class MetricsMainFragment extends Fragment implements OnClickListener{
 	private Context ctx;
@@ -31,27 +33,35 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
         DataManager dm = new DataManager(ctx);
         ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
         
-        final ListView listView = (ListView) rootView.findViewById(R.id.metrics_main_list);
-		MetricsListAdapter adapter = new MetricsListAdapter(ctx, metrics);
-		listView.setAdapter(adapter);
+        if(metrics.size() > 0){
+        	final TextView emptyMsg = (TextView) rootView.findViewById(R.id.metrics_main_empty_msg);
+			emptyMsg.setVisibility(View.GONE);
+			
+			final ListView listView = (ListView) rootView.findViewById(R.id.metrics_main_list);
+			MetricsListAdapter adapter = new MetricsListAdapter(ctx, metrics);
+			listView.setAdapter(adapter);
 		
-		listView.setOnItemClickListener(new OnItemClickListener() {
-			FragmentManager fragmentManager = getFragmentManager();
-			Fragment fragment;
-	        @Override
-	        public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-    			Metric metric = (Metric)parent.getItemAtPosition(pos);
-    			Bundle bundle = new Bundle();
-    			bundle.putString("metricName", metric.getName());
-    			fragment = new MetricsDetailsFragment();
-    			fragment.setArguments(bundle);
-        		fragmentManager.beginTransaction()
-        			.replace(R.id.main_container, fragment)
-        			.addToBackStack(null)
-        			.commit();
-	         }
-	    });
-		
+			listView.setOnItemClickListener(new OnItemClickListener() {
+				FragmentManager fragmentManager = getFragmentManager();
+				Fragment fragment;
+		        @Override
+		        public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+	    			Metric metric = (Metric)parent.getItemAtPosition(pos);
+	    			Bundle bundle = new Bundle();
+	    			bundle.putString("metricName", metric.getName());
+	    			fragment = new MetricsDetailsFragment(); 
+	    			fragment.setArguments(bundle);
+	        		fragmentManager.beginTransaction()
+	        			.replace(R.id.main_container, fragment)
+	        			.addToBackStack(null)
+	        			.commit();
+		         } 
+		    });
+        }else{
+        	final ListView l = (ListView) rootView.findViewById(R.id.metrics_main_list);
+			l.setVisibility(View.GONE);
+        }
+        
         Button b = (Button) rootView.findViewById(R.id.metrics_main_button_new);
         b.setOnClickListener(this);
         

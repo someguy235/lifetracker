@@ -1,5 +1,7 @@
 package com.ems.lifetracker;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
@@ -46,8 +48,13 @@ public class MainActivity extends Activity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
         
-        //TODO: do this dynamically
-        onNavigationDrawerItemSelected(0);
+        DataManager dm = new DataManager(this);
+        ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
+        if(metrics.size() > 0){
+        	onNavigationDrawerItemSelected(0);
+        }else{
+        	onNavigationDrawerItemSelected(1);
+        }
     }
 
     @Override

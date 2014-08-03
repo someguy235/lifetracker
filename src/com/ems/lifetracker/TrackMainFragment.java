@@ -29,7 +29,7 @@ public class TrackMainFragment extends Fragment {
 	private String activeDate, activeDay;
 	private View rootView;
 	private TextView datePicker;
-	private int mYear, mMonth, mDay;
+//	private int mYear, mMonth, mDay;
 
     public TrackMainFragment(){}
      
