@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -79,11 +80,9 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 			   public void onClick(final View v) {
 				   final MetricEntry e = entries.get(ePos);
 				   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-				   builder.setTitle("Details");
-
 				   final EditText input = new EditText(getContext());
 				   input.setInputType(InputType.TYPE_CLASS_TEXT);
-				   builder.setView(input);
+				   
 				   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
 				       @Override
 				       public void onClick(DialogInterface dialog, int which) {
@@ -99,13 +98,29 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				           dialog.cancel();
 				       }
 				   });
-				   builder.show();
+	
+				   final AlertDialog dialog = builder.create();
+				   dialog.setTitle("Details");
+
+				   input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+					   @Override
+					   public void onFocusChange(View v, boolean hasFocus) {
+						   if (hasFocus) {
+							   dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+						   }
+					   }
+				   });
+				   input.setText(e.getDetails());
+				   dialog.setView(input);
+				   
+				   dialog.show();
 			   }
 	       });
 		   mDetails.setTag(convertView);
 		   
 		   // Populate the data into the template view using the data object
 	       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_default));
+	       
        /*
         *  Increment-based metrics 
         */
@@ -162,17 +177,14 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 			   public void onClick(final View v) {
 				   final MetricEntry e = entries.get(ePos);
 				   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-				   builder.setTitle("Details");
-
 				   final EditText input = new EditText(getContext());
 				   input.setInputType(InputType.TYPE_CLASS_TEXT);
-				   builder.setView(input);
-
+				   
 				   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
 				       @Override
 				       public void onClick(DialogInterface dialog, int which) {
 				    	   e.setDetails(input.getText().toString());
-				    	   TextView mDetails = (TextView)v;
+						   TextView mDetails = (TextView)v;
 						   mDetails.setText("" + e.getDetails());
 						   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
 				       }
@@ -183,7 +195,22 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				           dialog.cancel();
 				       }
 				   });
-				   builder.show();
+	
+				   final AlertDialog dialog = builder.create();
+				   dialog.setTitle("Details");
+
+				   input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+					   @Override
+					   public void onFocusChange(View v, boolean hasFocus) {
+						   if (hasFocus) {
+							   dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+						   }
+					   }
+				   });
+				   input.setText(e.getDetails());
+				   dialog.setView(input);
+				   
+				   dialog.show();
 			   }
 	       });
 		   mDetails.setTag(convertView);
@@ -214,11 +241,11 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 			   public void onClick(final View v) {
 				   final MetricEntry e = entries.get(ePos);
 				   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-				   builder.setTitle("Count");
-
 				   final EditText input = new EditText(getContext());
 				   input.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-				   builder.setView(input);
+				   
+				   
+				   
 
 				   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
 				       @Override
@@ -235,7 +262,24 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				           dialog.cancel();
 				       }
 				   });
-				   builder.show();
+				   
+				   final AlertDialog dialog = builder.create();
+				   dialog.setTitle("Count");
+
+				   input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+					   @Override
+					   public void onFocusChange(View v, boolean hasFocus) {
+						   if (hasFocus) {
+							   dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+						   }
+					   }
+				   });
+				   if(e.getCount() != 0.0)
+					   input.setText(""+ e.getCount());
+				   
+				   dialog.setView(input);
+				   
+				   dialog.show();
 			   }
 	       });
 		   mEdit.setTag(convertView);
@@ -250,12 +294,9 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 			   public void onClick(final View v) {
 				   final MetricEntry e = entries.get(ePos);
 				   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-				   builder.setTitle("Details");
-
 				   final EditText input = new EditText(getContext());
 				   input.setInputType(InputType.TYPE_CLASS_TEXT);
-				   builder.setView(input);
-
+				   
 				   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
 				       @Override
 				       public void onClick(DialogInterface dialog, int which) {
@@ -271,7 +312,22 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				           dialog.cancel();
 				       }
 				   });
-				   builder.show();
+	
+				   final AlertDialog dialog = builder.create();
+				   dialog.setTitle("Details");
+
+				   input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+					   @Override
+					   public void onFocusChange(View v, boolean hasFocus) {
+						   if (hasFocus) {
+							   dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+						   }
+					   }
+				   });
+				   input.setText(e.getDetails());
+				   dialog.setView(input);
+				   
+				   dialog.show();
 			   }
 	       });
 		   mDetails.setTag(convertView);
