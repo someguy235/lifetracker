@@ -128,7 +128,9 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
 		        		new String[] { BarChart.TYPE, LineChart.TYPE } );
 	        }else if(metric.getType().equals("binary")){
-		        renderer.setYLabels(1);
+	        	renderer.addYTextLabel(0, "no");
+	        	renderer.addYTextLabel(1, "yes");
+		        renderer.setYLabels(0);
 		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
 		        		new String[] { BarChart.TYPE, LineChart.TYPE } );
 	        }
@@ -229,20 +231,21 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     
     private XYMultipleSeriesRenderer getMultipleSeriesRenderer(){
     	XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+    	renderer.setAxesColor(Color.DKGRAY);
         renderer.setAxisTitleTextSize(32);
-        renderer.setChartTitleTextSize(40);
-        renderer.setLabelsTextSize(30);
-        renderer.setShowLegend(false);
-        renderer.setPointSize(8f);
-        renderer.setMargins(new int[] {40, 20, 40, 20});
-        renderer.setAxesColor(Color.DKGRAY);
-        renderer.setLabelsColor(Color.LTGRAY);
-        renderer.setYAxisMin(0);
-        renderer.setYAxisMax(1);
-        renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
-        renderer.setYLabelsPadding(10);
         renderer.setBarSpacing(0.25);
+        renderer.setChartTitleTextSize(40);
+        renderer.setLabelsColor(Color.LTGRAY);
+        renderer.setLabelsTextSize(30);
+        renderer.setMargins(new int[] {40, 50, 40, 20});
+        renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
+        renderer.setPointSize(8f);
+        renderer.setShowLegend(false);
         renderer.setXLabels(0);
+        renderer.setYAxisMax(1);
+        renderer.setYAxisMin(0);
+        renderer.setYLabelsAlign(Align.RIGHT);
+//        renderer.setYLabelsPadding(10);
         
         //renderer.setLegendTextSize(30);
         //renderer.setChartTitle(metric.getName());

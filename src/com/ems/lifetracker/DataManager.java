@@ -2,6 +2,7 @@ package com.ems.lifetracker;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -267,6 +268,13 @@ public class DataManager extends SQLiteOpenHelper{
     		}
     		date = DateUtil.getOffsetDate(date, 1);
     	}
+    	
+    	Collections.sort(entries, new Comparator<MetricEntry>() {
+            @Override
+            public int compare(MetricEntry e1, MetricEntry e2){
+                return  e1.getDate().compareTo(e2.getDate());
+            }
+        });
     	
     	return entries;
     }
