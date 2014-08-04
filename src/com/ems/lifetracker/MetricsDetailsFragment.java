@@ -108,7 +108,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	    		series.add(t, e.getCount());
 	        	avgSeries.add(DateUtil.dateFromString(e.getDate()).getTime(), avg);
 	        	
-	        	if((entries.size() <= 4) || (i % (entries.size() / 4) == 1)){
+	        	if((entries.size() <= 4) || (i % (entries.size() / 3) == 1)){
 	        		renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
 	        	}
 	        	if(e.getCount() >= ymax) ymax = e.getCount();
@@ -237,7 +237,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         renderer.setChartTitleTextSize(40);
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(30);
-        renderer.setMargins(new int[] {40, 50, 40, 20});
+        renderer.setMargins(new int[] {40, 50, 10, 50});
         renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
         renderer.setPointSize(8f);
         renderer.setShowLegend(false);

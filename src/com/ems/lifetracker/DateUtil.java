@@ -55,7 +55,7 @@ public class DateUtil {
 		}catch(ParseException p){
 			//calendar still set to today
 		}
-		return new SimpleDateFormat("EE M/dd", Locale.US).format(cal.getTime());
+		return new SimpleDateFormat("EE M/d", Locale.US).format(cal.getTime());
 	}
 	
 	public static String getOffsetDate(String inDate, int offset){
