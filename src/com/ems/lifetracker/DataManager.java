@@ -1,6 +1,7 @@
 package com.ems.lifetracker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -225,13 +226,14 @@ public class DataManager extends SQLiteOpenHelper{
     public List<MetricEntry> getEntriesByName(String name){
     	SQLiteDatabase db = this.getReadableDatabase();
     	List<MetricEntry> entries = new ArrayList<MetricEntry>();
+    	List<String> dates = new ArrayList<String>();
     	MetricEntry entry;
     	
     	Cursor cursor = db.query(TABLE_INSTANCES, new String[] { 
         		KEY_DATE, KEY_UNIT, KEY_TYPE, KEY_COUNT, KEY_DETAILS }, KEY_NAME + "=?",
                 new String[] { name }, null, null, KEY_DATE, null);
+
     	cursor.moveToPosition(-1);
-    	
     	while(cursor.moveToNext()){
 			entry = new MetricEntry(
 					name,
@@ -242,9 +244,30 @@ public class DataManager extends SQLiteOpenHelper{
 					cursor.getString(4)
 					);
 			entries.add(entry);
+			dates.add(entry.getDate());
     	}
     	cursor.close();
     	db.close();
+    	
+    	Metric metric = getMetricByName(name);
+    	String today = DateUtil.getFormattedDate(null);
+    	Collections.sort(dates);
+    	String date = dates.get(0);
+    	while(date.compareTo(today) <= 0){
+    		if(!dates.contains(date)){
+    			entry = new MetricEntry(
+    					name,
+    					date,
+    					metric.getUnit(), 
+    					metric.getType(), 
+    					metric.getDflt(),
+    					null
+    					);
+    			entries.add(entry);
+    		}
+    		date = DateUtil.getOffsetDate(date, 1);
+    	}
+    	
     	return entries;
     }
 }

@@ -81,7 +81,8 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	    	// Set up the data renderer
 	    	XYSeriesRenderer r = getSeriesRenderer();
 	        renderer.addSeriesRenderer(r);
-	        renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(entries.get(0).getDate(), -1)).getTime());
+	        renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(entries.get(0).getDate(), -1)).getTime() + 43200000);
+	        renderer.setXAxisMax(DateUtil.dateFromString(DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), 1)).getTime() - 43200000);
 	        
 	        // Set up average renderer
 	    	ravg = getSeriesRenderer();;
@@ -239,7 +240,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         renderer.setYAxisMin(0);
         renderer.setYAxisMax(1);
         renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
-        renderer.setYLabelsPadding(3);
+        renderer.setYLabelsPadding(10);
         renderer.setBarSpacing(0.25);
         renderer.setXLabels(0);
         
