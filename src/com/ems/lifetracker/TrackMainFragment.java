@@ -93,6 +93,7 @@ public class TrackMainFragment extends Fragment {
         		GridView gv = (GridView)rootView.findViewById(R.id.track_main_gridview);
         		for(int i=0; i<gv.getChildCount(); i++){
         			gv.getChildAt(i).setBackgroundColor(ctx.getResources().getColor(R.color.tile_default));
+        			entriesAdapter.resetUpdated();
         		}
         		Toast.makeText(ctx, "Saved", Toast.LENGTH_LONG).show();
         	}

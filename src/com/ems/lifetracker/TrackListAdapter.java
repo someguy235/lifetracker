@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 	private ArrayList<MetricEntry> entries;
+	private ArrayList<Integer> updated = new ArrayList<Integer>();
 	private int pos;
 	
     public TrackListAdapter(Context context, ArrayList<MetricEntry> entries) {
@@ -28,6 +29,10 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
     
     public ArrayList<MetricEntry> getEntries(){
     	return this.entries;
+    }
+    
+    public void resetUpdated(){
+    	this.updated.clear();
     }
     
     @Override
@@ -66,6 +71,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				   ImageView mDone = (ImageView)v;
 				   mDone.setImageResource(e.getCount() == 0 ? R.drawable.check : R.drawable.cross);
 				   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+				   updated.add(ePos);
 			   }
 	       });
 		   mDone.setTag(convertView);
@@ -90,6 +96,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 						   TextView mDetails = (TextView)v;
 						   mDetails.setText("" + e.getDetails());
 						   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+						   updated.add(ePos);
 				       }
 				   });
 				   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -119,7 +126,11 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 		   mDetails.setTag(convertView);
 		   
 		   // Populate the data into the template view using the data object
-	       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_default));
+		   if(updated.contains(pos)){
+			   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+		   }else{
+			   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_default));
+		   }
 	       
        /*
         *  Increment-based metrics 
@@ -147,6 +158,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				   TextView mCount = (TextView)((View)v.getTag()).findViewById(R.id.track_list_increment_item_count);
 				   mCount.setText((e.getCount() % 1.0 == 0.0) ? ""+ (int)e.getCount() : ""+ e.getCount());
 				   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+				   updated.add(ePos);
 			   }
 	       });
 		   mMore.setTag(convertView);
@@ -162,6 +174,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 					   TextView mCount = (TextView)((View)v.getTag()).findViewById(R.id.track_list_increment_item_count);
 					   mCount.setText((e.getCount() % 1.0 == 0.0) ? ""+ (int)e.getCount() : ""+ e.getCount());
 					   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+					   updated.add(ePos);
 				   }
 			   }
 	       });
@@ -187,6 +200,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 						   TextView mDetails = (TextView)v;
 						   mDetails.setText("" + e.getDetails());
 						   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+						   updated.add(ePos);
 				       }
 				   });
 				   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -216,7 +230,11 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 		   mDetails.setTag(convertView);
 		   
 		   // Populate the data into the template view using the data object
-	       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_default));
+		   if(updated.contains(pos)){
+			   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+		   }else{
+			   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_default));
+		   }
 	       
        /*
         *  Count-based metrics
@@ -243,9 +261,6 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 				   final EditText input = new EditText(getContext());
 				   input.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-				   
-				   
-				   
 
 				   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
 				       @Override
@@ -254,6 +269,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 						   TextView mCount = (TextView)((View)v.getTag()).findViewById(R.id.track_list_count_item_count);
 						   mCount.setText((e.getCount() % 1.0 == 0.0) ? ""+ (int)e.getCount() : ""+ e.getCount());
 						   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+						   updated.add(ePos);
 				       }
 				   });
 				   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -304,6 +320,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 						   TextView mDetails = (TextView)v;
 						   mDetails.setText("" + e.getDetails());
 						   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+						   updated.add(ePos);
 				       }
 				   });
 				   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -332,7 +349,11 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 	       });
 		   mDetails.setTag(convertView);
 		   
-	       convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_default));
+		   if(updated.contains(pos)){
+			   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+		   }else{
+			   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_default));
+		   }
 	   }
 
 	   // Return the completed view to render on screen
