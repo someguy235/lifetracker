@@ -39,7 +39,13 @@ public class TrackMainFragment extends Fragment {
         GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
         entriesAdapter = new TrackListAdapter(ctx, entries);
         gridview.setAdapter(entriesAdapter);
-        datePicker.setText(activeDay);
+        if(activeDate.equals(DateUtil.getFormattedDate(null))){
+        	datePicker.setText("Today");
+        }else if(activeDate.equals(DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), -1))){
+        	datePicker.setText("Yesterday");
+        }else{
+        	datePicker.setText(activeDay);
+        }
     }
     
     @Override
@@ -68,7 +74,6 @@ public class TrackMainFragment extends Fragment {
         		activeDate = DateUtil.getOffsetDate(activeDate, -1);
         		activeDay = DateUtil.getFormattedDay(activeDate);
         		updateGrid();
-        		datePicker.setText(activeDay);
         	}
         });
         
@@ -79,7 +84,6 @@ public class TrackMainFragment extends Fragment {
         		activeDate = DateUtil.getOffsetDate(activeDate, 1);
         		activeDay = DateUtil.getFormattedDay(activeDate);
         		updateGrid();
-        		datePicker.setText(activeDay);
         	}
         });
         
