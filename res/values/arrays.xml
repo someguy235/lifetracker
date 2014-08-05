@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="chart_colors">
+        <item>@color/lt_blue</item>
+        <item>@color/brick</item>
+        <item>@color/lt_orange</item>
+        <item>@color/lt_purple</item>
+        <item>@color/blue_green</item>
+        <item>@color/lt_red</item>
+        <item>@color/lt_green</item>
+        <item>@color/pink</item>
+        <item>@color/lt_yellow</item>
+        <item>@color/brown</item>
+    </array>
+</resources>
+

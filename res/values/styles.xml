@@ -28,6 +28,11 @@
 	<color name="lt_orange">#E6804D</color>
 	<color name="lt_yellow">#D1BC36</color>
 	<color name="lt_green">#42D692</color>
-    <color name="lt_blue">#4986E7</color>
+    <color name="pink">#F691B2</color>
+	<color name="lt_blue">#4986E7</color>
 	<color name="lt_purple">#8C66D9</color>	
+	<color name="brown">#AC725E</color>
+	<color name="brick">#AD2D2D</color>
+	<color name="blue_green">#4585A3</color>
+	
 </resources>
