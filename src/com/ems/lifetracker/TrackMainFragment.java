@@ -29,11 +29,10 @@ public class TrackMainFragment extends Fragment {
 	private String activeDate, activeDay;
 	private View rootView;
 	private TextView datePicker;
-//	private int mYear, mMonth, mDay;
 
     public TrackMainFragment(){}
      
-    public void updateGrid(){
+    private void updateGrid(){
     	// Load today's entries into Adapter
         ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByDate(activeDate);
         GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);

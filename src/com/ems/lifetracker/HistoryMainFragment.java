@@ -25,38 +25,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
  
 public class HistoryMainFragment extends Fragment {
+	private View rootView;
 	private Context ctx;
+	private DataManager dm;
+	private ArrayList<Metric> allMetrics;
+//	private ArrayList<Metric> metrics;
+	private LinearLayout layout;
+	private HistoryListAdapter listAdapter;
+	
 	private XYMultipleSeriesDataset dataset;
 	private XYMultipleSeriesRenderer renderer;
 	private GraphicalView mChartView;
-	private ArrayList<Metric> metrics;
 	
     public HistoryMainFragment(){}
      
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	View rootView = inflater.inflate(R.layout.fragment_history_main, container, false);
-        ctx = getActivity();
-        DataManager dm = new DataManager(ctx);
-        metrics = (ArrayList<Metric>)dm.getAllMetrics();
-        String minDate = DateUtil.getFormattedDate(null);
-
+    public void updateChart(){
+    	String minDate = DateUtil.getFormattedDate(null);
+    	ArrayList<Metric> metrics = listAdapter.getActiveMetrics();
+    	
         if(metrics.size() == 0){
-        	
+        	//TODO: show no metrics message
         }else{
+        	//TODO: hide no metrics message
         	String[] chartTypes = new String[metrics.size()];
             double ymin = Double.MAX_VALUE;
         	double ymax = 0.0;
 	    	
-//	        final TextView emptyMsg = (TextView) rootView.findViewById(R.id.metrics_details_empty_msg);
-//			emptyMsg.setVisibility(View.GONE);
-
         	// Get chart container and add default data series
         	dataset = new XYMultipleSeriesDataset();
 	    	renderer = getMultipleSeriesRenderer();
@@ -65,7 +66,6 @@ public class HistoryMainFragment extends Fragment {
 	        for(int m=0; m<metrics.size(); m++){
 	        	// Set up the data renderer
 		    	XYSeriesRenderer r = getSeriesRenderer();
-//		        r.setColor(ctx.getResources().getColor(R.color.lt_blue));
 		    	int[] colors = ctx.getResources().getIntArray(R.array.chart_colors);
 		    	r.setColor(colors[m%10]);
 
@@ -77,32 +77,16 @@ public class HistoryMainFragment extends Fragment {
 		        }else{
 		        	chartTypes[m] = LineChart.TYPE;
 		        }
-//	        	entryMap.put( metric.getName(), (ArrayList<MetricEntry>)dm.getEntriesByName(metric.getName()) );
 	            ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metric.getName());
 
-	        	
-		        // Set up average renderer
-//		    	ravg = getSeriesRenderer();;
-//		    	ravg.setColor(ctx.getResources().getColor(R.color.lt_green));
-//		    	ravg.setFillPoints(false);
-//		    	renderer.addSeriesRenderer(ravg);
-		    	
-//		        XYSeries series = new XYSeries(metric.getUnit());
 	            XYSeries series = new XYSeries(metric.getName());
-//		        avgSeries = new XYSeries("average");
 		    	
-//		    	for(MetricEntry e : entries){
-//		    		avg += e.getCount();
-//		    	}
-//		    	avg = avg / entries.size();
-		
 		    	for(int i=0; i<entries.size(); i++){
 		    		MetricEntry e = entries.get(i);
 		    		
 		    		long t = DateUtil.dateFromString(e.getDate()).getTime();
 		        	
 		    		series.add(t, e.getCount());
-//		        	avgSeries.add(DateUtil.dateFromString(e.getDate()).getTime(), avg);
 		        	
 		        	if((entries.size() <= 4) || (i % (entries.size() / 3) == 1)){
 		        		renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
@@ -113,11 +97,6 @@ public class HistoryMainFragment extends Fragment {
 		    	}
 		        
 		        dataset.addSeries(series);
-//		        dataset.addSeries(avgSeries);
-
-	        
-	        
-	        
 	        
 	        } // each metric
 	        
@@ -127,41 +106,28 @@ public class HistoryMainFragment extends Fragment {
 	        renderer.setYAxisMin(ymin * 0.9);
 	        renderer.setYAxisMax(ymax * 1.1);
 	        
+	        renderer.setPanLimits(new double[]{renderer.getXAxisMin(), renderer.getXAxisMax(), renderer.getYAxisMin(), renderer.getYAxisMax()});
+	        
+	        layout.removeAllViews();
 	        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, chartTypes );
-	        
-//	        if(metric.getType().equals("count")){
-//		        renderer.setYAxisMin(ymin * 0.9);
-//		        renderer.setYAxisMax(ymax * 1.1);
-//		        mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
-//	        }else if(metric.getType().equals("increment")){
-//		        renderer.setYAxisMin(ymin * 0.9);
-//		        renderer.setYAxisMax(ymax * 1.1);
-//		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
-//		        		new String[] { BarChart.TYPE, LineChart.TYPE } );
-//	        }else if(metric.getType().equals("binary")){
-//	        	renderer.addYTextLabel(0, "no");
-//	        	renderer.addYTextLabel(1, "yes");
-//		        renderer.setYLabels(0);
-//		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
-//		        		new String[] { BarChart.TYPE, LineChart.TYPE } );
-//	        }
-
-	        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
 	        layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-	        
-//	        Collections.reverse(entries);
-//	        EntriesListAdapter eAdapter = new EntriesListAdapter(ctx, entries);
-//	        final ListView eventsListView = (ListView)rootView.findViewById(R.id.metrics_details_events);
-//	        eventsListView.setAdapter(eAdapter);
-	        
-//	        ToggleButton tb = (ToggleButton) rootView.findViewById(R.id.metrics_details_button_average);
-//	        tb.setOnClickListener(this);
-//	        tb.setText("Avg: "+ new DecimalFormat("#.##").format(avg));
-//	        tb.setTextOn("Avg: "+ new DecimalFormat("#.##").format(avg));
-//	        tb.setTextOff("Avg Off");
-	        
         }
+    }
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	rootView = inflater.inflate(R.layout.fragment_history_main, container, false);
+        ctx = getActivity();
+        dm = new DataManager(ctx);
+        allMetrics = (ArrayList<Metric>)dm.getAllMetrics();
+        layout = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
+        
+        ListView listview = (ListView) rootView.findViewById(R.id.history_main_events);
+        listAdapter = new HistoryListAdapter(ctx, allMetrics, HistoryMainFragment.this);
+        listview.setAdapter(listAdapter);
 
+        updateChart();
+        
         return rootView;
     }
     
@@ -173,30 +139,22 @@ public class HistoryMainFragment extends Fragment {
         renderer.setChartTitleTextSize(40);
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(30);
+        renderer.setLegendTextSize(30);
         renderer.setMargins(new int[] {40, 50, 50, 50});
         renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
         renderer.setPointSize(8f);
-//        renderer.setShowLegend(false);
-        renderer.setLegendTextSize(30);
-//        renderer.setL
         renderer.setXLabels(0);
         renderer.setYAxisMax(1);
         renderer.setYAxisMin(0);
         renderer.setYLabelsAlign(Align.RIGHT);
 //        renderer.setYLabelsPadding(10);
-        
-        //renderer.setLegendTextSize(30);
-        //renderer.setChartTitle(metric.getName());
         return renderer;
     }
     private XYSeriesRenderer getSeriesRenderer(){
     	XYSeriesRenderer r = new XYSeriesRenderer();
-        //r.setColor(ctx.getResources().getColor(R.color.lt_blue));
         r.setPointStyle(PointStyle.CIRCLE);
         r.setLineWidth(4f);
         r.setFillPoints(true);
-        //r.setFillBelowLine(true);
-        //r.setFillBelowLineColor(Color.WHITE);
         return r;
     }
 }
