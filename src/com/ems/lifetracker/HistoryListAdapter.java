@@ -46,6 +46,13 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
     	mName.setText(metric.getName());
 
     	ToggleButton toggleButton = (ToggleButton) convertView.findViewById(R.id.history_main_button_toggle);
+    	if(activeMetrics.contains(metric)){
+    		toggleButton.setChecked(true);
+    	}else{
+    		toggleButton.setChecked(false);
+    	}
+    	
+    	
         toggleButton.setOnClickListener(new OnClickListener(){
         	private final HistoryMainFragment eParent = parentFragment;
         	@Override

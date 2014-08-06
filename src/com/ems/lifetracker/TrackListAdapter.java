@@ -118,6 +118,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 					   }
 				   });
 				   input.setText(e.getDetails());
+				   input.setSelection(input.getText().length());
 				   dialog.setView(input);
 				   
 				   dialog.show();
@@ -222,6 +223,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 					   }
 				   });
 				   input.setText(e.getDetails());
+				   input.setSelection(input.getText().length());
 				   dialog.setView(input);
 				   
 				   dialog.show();
@@ -280,7 +282,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				   });
 				   
 				   final AlertDialog dialog = builder.create();
-				   dialog.setTitle("Count");
+				   dialog.setTitle(e.getUnit());
 
 				   input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 					   @Override
@@ -290,8 +292,10 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 						   }
 					   }
 				   });
-				   if(e.getCount() != 0.0)
+				   if(e.getCount() != 0.0){
 					   input.setText(""+ e.getCount());
+					   input.setSelection(input.getText().length());
+				   }
 				   
 				   dialog.setView(input);
 				   
@@ -342,6 +346,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 					   }
 				   });
 				   input.setText(e.getDetails());
+				   input.setSelection(input.getText().length());
 				   dialog.setView(input);
 				   
 				   dialog.show();
