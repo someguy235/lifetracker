@@ -1,5 +1,6 @@
 package com.ems.lifetracker;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,6 +16,7 @@ import android.widget.ToggleButton;
 
 public class HistoryListAdapter extends ArrayAdapter<Metric> {
 	private ArrayList<Metric> activeMetrics;
+	private ArrayList<Metric> activeAverages;
 	private HashMap<String, Metric> allMetrics;
 	private HistoryMainFragment parentFragment;
 	
@@ -23,10 +25,12 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
        
        this.parentFragment = (HistoryMainFragment)fragment;
        this.activeMetrics = new ArrayList<Metric>();
+       this.activeAverages = new ArrayList<Metric>();
        this.allMetrics = new HashMap<String, Metric>();
 
        for(Metric m : metrics){
     	   activeMetrics.add(m);
+    	   activeAverages.add(m);
     	   allMetrics.put(m.getName(), m);
        }
     }
@@ -35,10 +39,13 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
     	return this.activeMetrics;
     }
     
+    public ArrayList<Metric> getActiveAverages(){
+    	return this.activeAverages;
+    }
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
     	final Metric metric = getItem(position);    
-//    	final HistoryMainFragment eParent = parent;
     	
     	convertView = LayoutInflater.from(getContext()).inflate(R.layout.history_list_item, parent, false);
 
@@ -46,14 +53,16 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
     	mName.setText(metric.getName());
 
     	ToggleButton toggleButton = (ToggleButton) convertView.findViewById(R.id.history_main_button_toggle);
+    	
+    	toggleButton.setTextOn("On");
+    	toggleButton.setTextOff("Off");
     	if(activeMetrics.contains(metric)){
     		toggleButton.setChecked(true);
     	}else{
     		toggleButton.setChecked(false);
     	}
     	
-    	
-        toggleButton.setOnClickListener(new OnClickListener(){
+    	toggleButton.setOnClickListener(new OnClickListener(){
         	private final HistoryMainFragment eParent = parentFragment;
         	@Override
         	public void onClick(View v) {
@@ -67,15 +76,29 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
         	}
         });
         
-//        ToggleButton avgButton = (ToggleButton) convertView.findViewById(R.id.history_main_button_average);
-//        avgButton.setOnClickListener(new OnClickListener(){
-//        	@Override
-//        	public void onClick(View v) {
-//        	
-//        	}
-//        });
-       
-       
+        ToggleButton avgButton = (ToggleButton) convertView.findViewById(R.id.history_main_button_average);
+        
+        avgButton.setTextOn("Avg: "+ parentFragment.getAverage(metric.getName()));
+    	avgButton.setTextOff("Avg Off");
+    	if(activeAverages.contains(metric)){
+    		avgButton.setChecked(true);
+    	}else{
+    		avgButton.setChecked(false);
+    	}
+    	
+        avgButton.setOnClickListener(new OnClickListener(){
+    		private final HistoryMainFragment eParent = parentFragment;
+        	@Override
+        	public void onClick(View v) {
+        		ToggleButton tb = (ToggleButton) v;
+        		if(tb.isChecked()){
+        			activeAverages.add(metric);
+        		}else{
+        			activeAverages.remove(metric);
+        		}
+        		eParent.updateChart();
+        	}
+        });
     	
     	// Return the completed view to render on screen
     	return convertView;

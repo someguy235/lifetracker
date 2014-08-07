@@ -250,31 +250,33 @@ public class DataManager extends SQLiteOpenHelper{
     	cursor.close();
     	db.close();
     	
-    	Metric metric = getMetricByName(name);
-    	String today = DateUtil.getFormattedDate(null);
-    	Collections.sort(dates);
-    	String date = dates.get(0);
-    	while(date.compareTo(today) <= 0){
-    		if(!dates.contains(date)){
-    			entry = new MetricEntry(
-    					name,
-    					date,
-    					metric.getUnit(), 
-    					metric.getType(), 
-    					metric.getDflt(),
-    					null
-    					);
-    			entries.add(entry);
-    		}
-    		date = DateUtil.getOffsetDate(date, 1);
-    	}
+    	if(entries.size() > 0){
+	    	Metric metric = getMetricByName(name);
+	    	String today = DateUtil.getFormattedDate(null);
+	    	Collections.sort(dates);
+	    	String date = dates.get(0);
+	    	while(date.compareTo(today) <= 0){
+	    		if(!dates.contains(date)){
+	    			entry = new MetricEntry(
+	    					name,
+	    					date,
+	    					metric.getUnit(), 
+	    					metric.getType(), 
+	    					metric.getDflt(),
+	    					null
+	    					);
+	    			entries.add(entry);
+	    		}
+	    		date = DateUtil.getOffsetDate(date, 1);
+	    	}
     	
-    	Collections.sort(entries, new Comparator<MetricEntry>() {
-            @Override
-            public int compare(MetricEntry e1, MetricEntry e2){
-                return  e1.getDate().compareTo(e2.getDate());
-            }
-        });
+	    	Collections.sort(entries, new Comparator<MetricEntry>() {
+	            @Override
+	            public int compare(MetricEntry e1, MetricEntry e2){
+	                return  e1.getDate().compareTo(e2.getDate());
+	            }
+	        });
+    	}
     	
     	return entries;
     }

@@ -237,18 +237,14 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         renderer.setChartTitleTextSize(40);
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(30);
-        renderer.setMargins(new int[] {40, 50, 10, 50});
-        renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
+        renderer.setMargins(new int[] {40, 50, 50, 50});
         renderer.setPointSize(8f);
+        renderer.setShowCustomTextGrid(true);
         renderer.setShowLegend(false);
         renderer.setXLabels(0);
         renderer.setYAxisMax(1);
         renderer.setYAxisMin(0);
         renderer.setYLabelsAlign(Align.RIGHT);
-//        renderer.setYLabelsPadding(10);
-        
-        //renderer.setLegendTextSize(30);
-        //renderer.setChartTitle(metric.getName());
         return renderer;
     }
     private XYSeriesRenderer getSeriesRenderer(){
@@ -257,8 +253,6 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         r.setPointStyle(PointStyle.CIRCLE);
         r.setLineWidth(4f);
         r.setFillPoints(true);
-        //r.setFillBelowLine(true);
-        //r.setFillBelowLineColor(Color.WHITE);
         return r;
     }
 }
