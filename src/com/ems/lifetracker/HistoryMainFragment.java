@@ -2,7 +2,10 @@ package com.ems.lifetracker;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -26,6 +29,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
  
 public class HistoryMainFragment extends Fragment {
 	private View rootView;
@@ -50,16 +54,24 @@ public class HistoryMainFragment extends Fragment {
     	String minDate = DateUtil.getFormattedDate(null);
     	ArrayList<Metric> activeMetrics = listAdapter.getActiveMetrics();
     	ArrayList<Metric> activeAverages = listAdapter.getActiveAverages();
+    	HashSet<String> xAxisDates;
+    	
+    	final TextView t = (TextView) rootView.findViewById(R.id.history_main_empty_msg);
+    	final LinearLayout l = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
     	
         if(activeMetrics.size() == 0 && activeAverages.size() == 0){
-        	//TODO: show no metrics message
+        	l.setVisibility(View.GONE);
+        	t.setVisibility(View.VISIBLE);
         }else{
-        	//TODO: hide no metrics message
-	    	int[] colors = ctx.getResources().getIntArray(R.array.chart_colors);
+			t.setVisibility(View.GONE);
+			l.setVisibility(View.VISIBLE);
+
+			int[] colors = ctx.getResources().getIntArray(R.array.chart_colors);
         	String[] chartTypes = new String[activeMetrics.size() + activeAverages.size()];
             double ymin = Double.MAX_VALUE;
         	double ymax = 0.0;
-	    	
+	    	xAxisDates = new HashSet<String>();
+        	
         	// Get chart container and add default data series
         	dataset = new XYMultipleSeriesDataset();
 	    	renderer = getMultipleSeriesRenderer();
@@ -95,34 +107,51 @@ public class HistoryMainFragment extends Fragment {
 			    	}
 			    	avg = avg / entries.size();
 			    	averages.put(metric.getName(), avg);
-			    	avgseries = new XYSeries(metric.getName() + " avg ");
+			    	avgseries = new XYSeries(metric.getName() + " avg  ");
 	        	}
 	            
+	        	//TODO: reorganize these loops
 		    	for(int i=0; i<entries.size(); i++){
 		    		MetricEntry e = entries.get(i);
-		    		
-		    		long t = DateUtil.dateFromString(e.getDate()).getTime();
+		    		long xAxisDate = DateUtil.dateFromString(e.getDate()).getTime();
 		        	
-		    		if(activeMetrics.contains(allMetrics.get(m)))
-		    			series.add(t, e.getCount());
-		    		if(activeAverages.contains(allMetrics.get(m)))
-		    			avgseries.add(t, avg);
-		        	
-		        	if((entries.size() <= 4) || (i % (entries.size() / 3) == 1)){
-		        		renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
+		    		if(activeMetrics.contains(metric)){
+		    			series.add(xAxisDate, e.getCount());
+		    			if(e.getCount() > ymax) ymax = e.getCount();
+			        	if(e.getCount() < ymin) ymin = e.getCount();
+		    		}
+		        	if(activeAverages.contains(metric)){
+		    			avgseries.add(xAxisDate, avg);
+		    			if(avg > ymax) ymax = avg;
+			        	if(avg < ymin) ymin = avg;
 		        	}
-		        	if(e.getCount() >= ymax) ymax = e.getCount();
-		        	if(e.getCount() <= ymin) ymin = e.getCount();
-		        	if(e.getDate().compareTo(minDate) < 0) minDate = e.getDate();
+
+		        	if(activeMetrics.contains(metric) || activeAverages.contains(metric)){
+		    			xAxisDates.add(e.getDate());
+		    			if(e.getDate().compareTo(minDate) < 0) minDate = e.getDate();	
+		        	}
+		        	
 		    	}
 		        
-		    	if(activeMetrics.contains(allMetrics.get(m)))
+		    	if(activeMetrics.contains(metric))
 		    		dataset.addSeries(series);
-		    	if(activeAverages.contains(allMetrics.get(m)))
+		    	if(activeAverages.contains(metric))
 		    		dataset.addSeries(avgseries);
 	        
 	        } // each metric
-
+	        
+	        List<String> xAxisDateList = new ArrayList<String>(xAxisDates);
+	        Collections.sort(xAxisDateList);
+	        for(int i=0; i<xAxisDateList.size(); i++){
+	        	String xAxisDate = xAxisDateList.get(i);
+        		if((xAxisDateList.size() <= 4) || (i % (xAxisDateList.size() / 3) == 1)){
+	        		renderer.addXTextLabel(
+	        				DateUtil.dateFromString(xAxisDate).getTime(), 
+	        				DateUtil.getFormattedDay(xAxisDate)
+        				);
+	        	}
+	        }
+	        
 	        renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(minDate, -1)).getTime() + 43200000);
 	        renderer.setXAxisMax(DateUtil.dateFromString(DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), 1)).getTime() - 43200000);
 	        

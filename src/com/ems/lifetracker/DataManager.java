@@ -250,6 +250,7 @@ public class DataManager extends SQLiteOpenHelper{
     	cursor.close();
     	db.close();
     	
+    	// Fill in gaps in entries with the Metric default value
     	if(entries.size() > 0){
 	    	Metric metric = getMetricByName(name);
 	    	String today = DateUtil.getFormattedDate(null);
