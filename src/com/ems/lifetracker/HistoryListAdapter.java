@@ -1,6 +1,5 @@
 package com.ems.lifetracker;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 

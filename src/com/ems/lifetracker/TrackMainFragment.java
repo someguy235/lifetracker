@@ -3,6 +3,9 @@ package com.ems.lifetracker;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -10,6 +13,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +40,7 @@ public class TrackMainFragment extends Fragment {
     	// Load today's entries into Adapter
         ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByDate(activeDate);
         GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
-        entriesAdapter = new TrackListAdapter(ctx, entries);
+        entriesAdapter = new TrackListAdapter(ctx, entries, TrackMainFragment.this);
         gridview.setAdapter(entriesAdapter);
         if(activeDate.equals(DateUtil.getFormattedDate(null))){
         	datePicker.setText("Today");
@@ -45,6 +49,25 @@ public class TrackMainFragment extends Fragment {
         }else{
         	datePicker.setText(activeDay);
         }
+    }
+    
+    public void hasUnsavedEntries(boolean has){
+    	final Button saveButton = (Button) rootView.findViewById(R.id.track_list_button_save);
+    	
+    	if(has){
+//    		saveButton.setBackgroundColor(ctx.getResources().getColor(R.color.save_changed));
+    	}else{
+    		Integer colorFrom = getResources().getColor(R.color.save_saved);
+    		Integer colorTo = getResources().getColor(R.color.save_default);
+    		ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+    		colorAnimation.addUpdateListener(new AnimatorUpdateListener() {
+    		    @Override
+    		    public void onAnimationUpdate(ValueAnimator animator) {
+    		        saveButton.setBackgroundColor((Integer)animator.getAnimatedValue());
+    		    }
+    		});
+    		colorAnimation.start();
+    	}
     }
     
     @Override
@@ -62,7 +85,9 @@ public class TrackMainFragment extends Fragment {
         datePicker = (TextView) rootView.findViewById(R.id.track_list_date);
         datePicker.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+            	activeDate = DateUtil.getFormattedDate(null);
+                activeDay = DateUtil.getFormattedDay(activeDate);
+                updateGrid();
             }
         });
 
@@ -98,7 +123,11 @@ public class TrackMainFragment extends Fragment {
         			gv.getChildAt(i).setBackgroundColor(ctx.getResources().getColor(R.color.tile_default));
         			entriesAdapter.resetUpdated();
         		}
-        		Toast.makeText(ctx, "Saved", Toast.LENGTH_LONG).show();
+        		Toast toast = Toast.makeText(ctx, "Saved", Toast.LENGTH_SHORT);
+        		toast.setGravity(Gravity.CENTER, 0, 0);
+        		toast.show();
+
+        		hasUnsavedEntries(false);
         	}
         });
         

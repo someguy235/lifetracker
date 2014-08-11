@@ -24,6 +24,10 @@
 <!-- 	<color name="tile_changed">#42D692</color> -->
 	<color name="tile_changed">@color/lt_red</color>
 	
+	<color name="save_default">@color/black</color>
+	<color name="save_changed">@color/lt_red</color>
+	<color name="save_saved">@color/lt_green</color>
+	
 	<color name="lt_red">#D96666</color>
 	<color name="lt_orange">#E6804D</color>
 	<color name="lt_yellow">#D1BC36</color>
@@ -34,5 +38,9 @@
 	<color name="brown">#AC725E</color>
 	<color name="brick">#AD2D2D</color>
 	<color name="blue_green">#4585A3</color>
+	
+	<color name="pale_red">#E8A5A9</color>
+	<color name="pale_green">#A7CFB1</color>
+	
 	
 </resources>

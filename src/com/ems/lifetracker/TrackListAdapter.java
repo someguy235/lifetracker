@@ -18,12 +18,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
+	private TrackMainFragment parentFragment;
 	private ArrayList<MetricEntry> entries;
 	private ArrayList<Integer> updated = new ArrayList<Integer>();
 	private int pos;
 	
-    public TrackListAdapter(Context context, ArrayList<MetricEntry> entries) {
+    public TrackListAdapter(Context context, ArrayList<MetricEntry> entries, TrackMainFragment fragment) {
        super(context, R.layout.track_list_item, entries);
+       this.parentFragment = fragment;
        this.entries = entries;
     }
     
@@ -38,7 +40,6 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
     	// Get the data item for this position
-    	
     	MetricEntry metric = getItem(position);    
     	pos = position;
     	
@@ -61,6 +62,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 		   
 		   // Set click listeners for interface components
 		   mDone.setOnClickListener(new OnClickListener() {
+			   private final TrackMainFragment eParent = parentFragment;
 			   int ePos = pos;
 			   @Override
 			   public void onClick(View v) {
@@ -72,6 +74,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				   mDone.setImageResource(e.getCount() == 0 ? R.drawable.check : R.drawable.cross);
 				   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
 				   updated.add(ePos);
+				   eParent.hasUnsavedEntries(true);
 			   }
 	       });
 		   mDone.setTag(convertView);
