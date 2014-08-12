@@ -12,6 +12,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -49,25 +50,6 @@ public class TrackMainFragment extends Fragment {
         }else{
         	datePicker.setText(activeDay);
         }
-    }
-    
-    public void hasUnsavedEntries(boolean has){
-    	final Button saveButton = (Button) rootView.findViewById(R.id.track_list_button_save);
-    	
-    	if(has){
-//    		saveButton.setBackgroundColor(ctx.getResources().getColor(R.color.save_changed));
-    	}else{
-    		Integer colorFrom = getResources().getColor(R.color.save_saved);
-    		Integer colorTo = getResources().getColor(R.color.save_default);
-    		ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-    		colorAnimation.addUpdateListener(new AnimatorUpdateListener() {
-    		    @Override
-    		    public void onAnimationUpdate(ValueAnimator animator) {
-    		        saveButton.setBackgroundColor((Integer)animator.getAnimatedValue());
-    		    }
-    		});
-    		colorAnimation.start();
-    	}
     }
     
     @Override
@@ -114,20 +96,44 @@ public class TrackMainFragment extends Fragment {
         // The save button action
         Button saveButton = (Button) rootView.findViewById(R.id.track_list_button_save);
         saveButton.setOnClickListener(new OnClickListener() {
+        	View savedView;
         	@Override
         	public void onClick(View v) {
         		ArrayList<MetricEntry> entries = entriesAdapter.getEntries();
         		dm.saveEntries(entries, activeDate);
+        		
+        		Integer colorFrom = getResources().getColor(R.color.tile_changed);
+        		Integer colorTo = getResources().getColor(R.color.tile_default);
+        		ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        		
         		GridView gv = (GridView)rootView.findViewById(R.id.track_main_gridview);
         		for(int i=0; i<gv.getChildCount(); i++){
-        			gv.getChildAt(i).setBackgroundColor(ctx.getResources().getColor(R.color.tile_default));
-        			entriesAdapter.resetUpdated();
+        			if(entriesAdapter.getUpdated().contains(i)){
+        				savedView = gv.getChildAt(i);
+        				colorAnimation.addUpdateListener(new AnimatorUpdateListener() {
+        					View sv = savedView;
+                		    @Override
+                		    public void onAnimationUpdate(ValueAnimator animator) {
+                		    	sv.setBackgroundColor((Integer)animator.getAnimatedValue());
+                		    }
+                		});	
+        				
+        			}
+        			
+            		colorAnimation.start();
         		}
-        		Toast toast = Toast.makeText(ctx, "Saved", Toast.LENGTH_SHORT);
+        		entriesAdapter.resetUpdated();
+        		final Toast toast = Toast.makeText(ctx, "Saved", Toast.LENGTH_SHORT);
         		toast.setGravity(Gravity.CENTER, 0, 0);
         		toast.show();
+        		Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                   @Override
+                   public void run() {
+                       toast.cancel(); 
+                   }
+                }, 1000);
 
-        		hasUnsavedEntries(false);
         	}
         });
         

@@ -171,7 +171,8 @@ public class HistoryMainFragment extends Fragment {
     	rootView = inflater.inflate(R.layout.fragment_history_main, container, false);
         ctx = getActivity();
         dm = new DataManager(ctx);
-        allMetrics = (ArrayList<Metric>)dm.getAllMetrics();
+//        allMetrics = (ArrayList<Metric>)dm.getAllMetrics();
+        allMetrics = (ArrayList<Metric>)dm.getAllNonEmptyMetrics();
         layout = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
         averages = new HashMap<String, Double>();
         

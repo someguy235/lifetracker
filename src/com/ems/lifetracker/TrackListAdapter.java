@@ -1,6 +1,7 @@
 package com.ems.lifetracker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,7 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
+public class TrackListAdapter extends ArrayAdapter<MetricEntry>{
 	private TrackMainFragment parentFragment;
 	private ArrayList<MetricEntry> entries;
 	private ArrayList<Integer> updated = new ArrayList<Integer>();
@@ -33,6 +34,16 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
     	return this.entries;
     }
     
+    public void animateSavedUpdated(){
+    	for(int i : this.updated){
+    		Log.d("updated", ""+i);
+    	}
+    }
+    
+    public List<Integer> getUpdated(){
+    	return this.updated;
+    }
+    
     public void resetUpdated(){
     	this.updated.clear();
     }
@@ -43,7 +54,7 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
     	MetricEntry metric = getItem(position);    
     	pos = position;
     	
-   		TextView mName, mCount, mUnit, mDetails;
+   		TextView mName, mCount, mUnit, mDetails = null;
    		ImageView mDone;
        
        /*
@@ -57,9 +68,10 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 		   mCount = (TextView) convertView.findViewById(R.id.track_list_binary_item_count);
 		   mCount.setText(metric.getCount() == 0 ? "No" : "Yes");
 		   
+		   
 		   mDone = (ImageView) convertView.findViewById(R.id.track_list_binary_item_done);
 		   mDone.setImageResource(metric.getCount() == 0 ? R.drawable.check : R.drawable.cross);
-		   
+		   mDone.setTag(convertView);
 		   // Set click listeners for interface components
 		   mDone.setOnClickListener(new OnClickListener() {
 			   private final TrackMainFragment eParent = parentFragment;
@@ -74,60 +86,10 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 				   mDone.setImageResource(e.getCount() == 0 ? R.drawable.check : R.drawable.cross);
 				   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
 				   updated.add(ePos);
-				   eParent.hasUnsavedEntries(true);
 			   }
 	       });
-		   mDone.setTag(convertView);
 		   
 		   mDetails = (TextView)convertView.findViewById(R.id.track_list_binary_item_details);
-		   if(metric.getDetails() != null){
-			   mDetails.setText(metric.getDetails());
-		   }
-		   mDetails.setOnClickListener(new OnClickListener() {
-			   int ePos = pos;
-			   @Override
-			   public void onClick(final View v) {
-				   final MetricEntry e = entries.get(ePos);
-				   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-				   final EditText input = new EditText(getContext());
-				   input.setInputType(InputType.TYPE_CLASS_TEXT);
-				   
-				   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
-				       @Override
-				       public void onClick(DialogInterface dialog, int which) {
-				    	   e.setDetails(input.getText().toString());
-						   TextView mDetails = (TextView)v;
-						   mDetails.setText("" + e.getDetails());
-						   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
-						   updated.add(ePos);
-				       }
-				   });
-				   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				       @Override
-				       public void onClick(DialogInterface dialog, int which) {
-				           dialog.cancel();
-				       }
-				   });
-	
-				   final AlertDialog dialog = builder.create();
-				   dialog.setTitle("Details");
-
-				   input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-					   @Override
-					   public void onFocusChange(View v, boolean hasFocus) {
-						   if (hasFocus) {
-							   dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-						   }
-					   }
-				   });
-				   input.setText(e.getDetails());
-				   input.setSelection(input.getText().length());
-				   dialog.setView(input);
-				   
-				   dialog.show();
-			   }
-	       });
-		   mDetails.setTag(convertView);
 		   
 		   // Populate the data into the template view using the data object
 		   if(updated.contains(pos)){
@@ -185,54 +147,6 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 		   mLess.setTag(convertView);
 		   
 		   mDetails = (TextView)convertView.findViewById(R.id.track_list_increment_item_details);
-		   if(metric.getDetails() != null){
-			   mDetails.setText(metric.getDetails());
-		   }
-		   mDetails.setOnClickListener(new OnClickListener() {
-			   int ePos = pos;
-			   @Override
-			   public void onClick(final View v) {
-				   final MetricEntry e = entries.get(ePos);
-				   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-				   final EditText input = new EditText(getContext());
-				   input.setInputType(InputType.TYPE_CLASS_TEXT);
-				   
-				   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
-				       @Override
-				       public void onClick(DialogInterface dialog, int which) {
-				    	   e.setDetails(input.getText().toString());
-						   TextView mDetails = (TextView)v;
-						   mDetails.setText("" + e.getDetails());
-						   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
-						   updated.add(ePos);
-				       }
-				   });
-				   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				       @Override
-				       public void onClick(DialogInterface dialog, int which) {
-				           dialog.cancel();
-				       }
-				   });
-	
-				   final AlertDialog dialog = builder.create();
-				   dialog.setTitle("Details");
-
-				   input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-					   @Override
-					   public void onFocusChange(View v, boolean hasFocus) {
-						   if (hasFocus) {
-							   dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-						   }
-					   }
-				   });
-				   input.setText(e.getDetails());
-				   input.setSelection(input.getText().length());
-				   dialog.setView(input);
-				   
-				   dialog.show();
-			   }
-	       });
-		   mDetails.setTag(convertView);
 		   
 		   // Populate the data into the template view using the data object
 		   if(updated.contains(pos)){
@@ -308,54 +222,6 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 		   mEdit.setTag(convertView);
 		   
 		   mDetails = (TextView)convertView.findViewById(R.id.track_list_count_item_details);
-		   if(metric.getDetails() != null){
-			   mDetails.setText(metric.getDetails());
-		   }
-		   mDetails.setOnClickListener(new OnClickListener() {
-			   int ePos = pos;
-			   @Override
-			   public void onClick(final View v) {
-				   final MetricEntry e = entries.get(ePos);
-				   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-				   final EditText input = new EditText(getContext());
-				   input.setInputType(InputType.TYPE_CLASS_TEXT);
-				   
-				   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
-				       @Override
-				       public void onClick(DialogInterface dialog, int which) {
-				    	   e.setDetails(input.getText().toString());
-						   TextView mDetails = (TextView)v;
-						   mDetails.setText("" + e.getDetails());
-						   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
-						   updated.add(ePos);
-				       }
-				   });
-				   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				       @Override
-				       public void onClick(DialogInterface dialog, int which) {
-				           dialog.cancel();
-				       }
-				   });
-	
-				   final AlertDialog dialog = builder.create();
-				   dialog.setTitle("Details");
-
-				   input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-					   @Override
-					   public void onFocusChange(View v, boolean hasFocus) {
-						   if (hasFocus) {
-							   dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-						   }
-					   }
-				   });
-				   input.setText(e.getDetails());
-				   input.setSelection(input.getText().length());
-				   dialog.setView(input);
-				   
-				   dialog.show();
-			   }
-	       });
-		   mDetails.setTag(convertView);
 		   
 		   if(updated.contains(pos)){
 			   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
@@ -363,6 +229,58 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry> {
 			   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.tile_default));
 		   }
 	   }
+	   
+	   /*
+	    * Every metric has a details field
+	    */
+	   mDetails.setTag(convertView);
+	   if(metric.getDetails() != null){
+		   mDetails.setText(metric.getDetails());
+	   }
+	   mDetails.setOnClickListener(new OnClickListener() {
+		   int ePos = pos;
+		   @Override
+		   public void onClick(final View v) {
+			   final MetricEntry e = entries.get(ePos);
+			   AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+			   final EditText input = new EditText(getContext());
+			   input.setInputType(InputType.TYPE_CLASS_TEXT);
+			   
+			   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
+			       @Override
+			       public void onClick(DialogInterface dialog, int which) {
+			    	   e.setDetails(input.getText().toString());
+					   TextView mDetails = (TextView)v;
+					   mDetails.setText("" + e.getDetails());
+					   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+					   updated.add(ePos);
+			       }
+			   });
+			   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			       @Override
+			       public void onClick(DialogInterface dialog, int which) {
+			           dialog.cancel();
+			       }
+			   });
+
+			   final AlertDialog dialog = builder.create();
+			   dialog.setTitle("Details");
+
+			   input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+				   @Override
+				   public void onFocusChange(View v, boolean hasFocus) {
+					   if (hasFocus) {
+						   dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+					   }
+				   }
+			   });
+			   input.setText(e.getDetails());
+			   input.setSelection(input.getText().length());
+			   dialog.setView(input);
+			   
+			   dialog.show();
+		   }
+       });
 
 	   // Return the completed view to render on screen
        return convertView;

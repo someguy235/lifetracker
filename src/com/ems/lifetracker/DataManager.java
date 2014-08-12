@@ -95,11 +95,18 @@ public class DataManager extends SQLiteOpenHelper{
     	return metric;
     }
     
-    public List<Metric> getAllMetrics(){
+    private List<Metric> getMetrics(String type){
     	List<Metric> metrics = new ArrayList<Metric>();
-    	
-    	String query = "SELECT * FROM " + TABLE_METRICS;
     	SQLiteDatabase db = this.getReadableDatabase();
+    	String query = null;
+
+    	if(type.equals("all")){
+    		query = "SELECT * FROM " + TABLE_METRICS;
+    	}else if(type.equals("active")){
+    		query = "SELECT * FROM "+ TABLE_METRICS +
+    				" WHERE "+ KEY_NAME +" IN (SELECT DISTINCT("+ KEY_NAME +") FROM "+ TABLE_INSTANCES +")";
+        	
+    	}
     	Cursor cursor = db.rawQuery(query, null);
 		cursor.moveToPosition(-1);
     	
@@ -116,7 +123,16 @@ public class DataManager extends SQLiteOpenHelper{
     	}
     	cursor.close();
     	db.close();
+    	
     	return metrics;
+    }
+    
+    public List<Metric> getAllMetrics(){
+    	return getMetrics("all");
+    }
+    
+    public List<Metric> getAllNonEmptyMetrics(){
+    	return getMetrics("active");
     }
     
     public boolean addMetric(Metric metric){
