@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -108,8 +109,8 @@ public class TrackMainFragment extends Fragment {
         		
         		GridView gv = (GridView)rootView.findViewById(R.id.track_main_gridview);
         		for(int i=0; i<gv.getChildCount(); i++){
-        			if(entriesAdapter.getUpdated().contains(i)){
-        				savedView = gv.getChildAt(i);
+    				savedView = gv.getChildAt(i);
+    				if(((ColorDrawable)savedView.getBackground()).getColor() == ctx.getResources().getColor(R.color.tile_changed)){
         				colorAnimation.addUpdateListener(new AnimatorUpdateListener() {
         					View sv = savedView;
                 		    @Override
@@ -117,8 +118,7 @@ public class TrackMainFragment extends Fragment {
                 		    	sv.setBackgroundColor((Integer)animator.getAnimatedValue());
                 		    }
                 		});	
-        				
-        			}
+    				}
         			
             		colorAnimation.start();
         		}

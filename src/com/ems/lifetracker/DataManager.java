@@ -185,10 +185,10 @@ public class DataManager extends SQLiteOpenHelper{
         			);
         	
         	if(updatedRows == 0){
-        		Log.d("INSERTED", args.toString());
+//        		Log.d("INSERTED", args.toString());
         		db.insert(TABLE_INSTANCES, null, args);
         	}else{
-        		Log.d("UPDATED", args.toString());
+//        		Log.d("UPDATED", args.toString());
         	}
         }
 
