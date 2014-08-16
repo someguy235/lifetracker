@@ -171,7 +171,6 @@ public class HistoryMainFragment extends Fragment {
     	rootView = inflater.inflate(R.layout.fragment_history_main, container, false);
         ctx = getActivity();
         dm = new DataManager(ctx);
-//        allMetrics = (ArrayList<Metric>)dm.getAllMetrics();
         allMetrics = (ArrayList<Metric>)dm.getAllNonEmptyMetrics();
         layout = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
         averages = new HashMap<String, Double>();
@@ -188,19 +187,19 @@ public class HistoryMainFragment extends Fragment {
     private XYMultipleSeriesRenderer getMultipleSeriesRenderer(){
     	XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
     	renderer.setAxesColor(Color.DKGRAY);
-        renderer.setAxisTitleTextSize(32);
         renderer.setBarSpacing(0.25);
-        renderer.setChartTitleTextSize(40);
+        renderer.setFitLegend(true);
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(30);
         renderer.setLegendTextSize(30);
-        renderer.setMargins(new int[] {40, 50, 50, 50});
+        renderer.setMargins(new int[] {20, 30, renderer.getLegendHeight() + 50, 20});
         renderer.setPointSize(8f);
         renderer.setShowCustomTextGrid(true);
         renderer.setXLabels(0);
         renderer.setYAxisMax(1);
         renderer.setYAxisMin(0);
         renderer.setYLabelsAlign(Align.RIGHT);
+        
         return renderer;
     }
     private XYSeriesRenderer getSeriesRenderer(){

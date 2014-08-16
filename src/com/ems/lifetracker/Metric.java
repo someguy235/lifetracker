@@ -5,11 +5,8 @@ public class Metric {
 	private String name;
 	private String desc;
 	private String unit; // name of unit (miles, hours, glasses, etc.)
-	private String type; //TODO: restrict this to binary/numeric/increment
+	private String type; 
 	private double dflt;
-	//private String isBinaryType; // yes/no metrics, eg went out to lunch
-	//private String isNumericType; // enter a value metric, eg "9" for distance ran
-	//private String isIncrementType; // accumulated throughout metric, eg glasses of water
 	
 	public Metric(){
 	
@@ -22,7 +19,6 @@ public class Metric {
 		this.type = type;
 		this.dflt = dflt;
 	}
-	
 	
 	public String getName() {
 		return name;

@@ -49,8 +49,8 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	private double avg = 0.0;
 	XYMultipleSeriesDataset dataset;
 	XYMultipleSeriesRenderer renderer;
-	XYSeriesRenderer ravg;
-	XYSeries avgSeries;
+	XYSeriesRenderer ravg, rtrend;
+	XYSeries avgSeries, trendSeries;
 	
     public MetricsDetailsFragment(){}
      
@@ -85,13 +85,20 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	        renderer.setXAxisMax(DateUtil.dateFromString(DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), 1)).getTime() - 43200000);
 	        
 	        // Set up average renderer
-	    	ravg = getSeriesRenderer();;
+	    	ravg = getSeriesRenderer();
 	    	ravg.setColor(ctx.getResources().getColor(R.color.lt_green));
 	    	ravg.setFillPoints(false);
 	    	renderer.addSeriesRenderer(ravg);
 	    	
+	    	// Set up trend renderer
+	    	rtrend = getSeriesRenderer();
+	    	rtrend.setColor(ctx.getResources().getColor(R.color.lt_yellow));
+	    	rtrend.setFillPoints(false);
+	    	renderer.addSeriesRenderer(rtrend);
+	    	
 	        XYSeries series = new XYSeries(metric.getUnit());
 	        avgSeries = new XYSeries("average");
+	        trendSeries = new XYSeries("trend");
 	    	
 	    	for(MetricEntry e : entries){
 	    		avg += e.getCount();
@@ -100,13 +107,16 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	
 	    	double ymin = entries.get(0).getCount();
 	        double ymax = entries.get(0).getCount();
+	        double trend = 0.0;
 	    	for(int i=0; i<entries.size(); i++){
 	    		MetricEntry e = entries.get(i);
 	    		
 	    		long t = DateUtil.dateFromString(e.getDate()).getTime();
+	        	trend += e.getCount();
 	        	
 	    		series.add(t, e.getCount());
-	        	avgSeries.add(DateUtil.dateFromString(e.getDate()).getTime(), avg);
+	        	avgSeries.add(t, avg);
+	        	trendSeries.add(t, trend/(i+1));
 	        	
 	        	if((entries.size() <= 4) || (i % (entries.size() / 3) == 1)){
 	        		renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
@@ -117,22 +127,25 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	        
 	        dataset.addSeries(series);
 	        dataset.addSeries(avgSeries);
+	        dataset.addSeries(trendSeries);
 	        
 	        if(metric.getType().equals("count")){
 		        renderer.setYAxisMin(ymin * 0.9);
 		        renderer.setYAxisMax(ymax * 1.1);
-		        mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
+//		        mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
+		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
+		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
 	        }else if(metric.getType().equals("increment")){
 		        renderer.setYAxisMin(ymin * 0.9);
 		        renderer.setYAxisMax(ymax * 1.1);
 		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
-		        		new String[] { BarChart.TYPE, LineChart.TYPE } );
+		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
 	        }else if(metric.getType().equals("binary")){
 	        	renderer.addYTextLabel(0, "no");
 	        	renderer.addYTextLabel(1, "yes");
 		        renderer.setYLabels(0);
 		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
-		        		new String[] { BarChart.TYPE, LineChart.TYPE } );
+		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
 	        }
 	
 	        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);
@@ -143,11 +156,17 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	        final ListView eventsListView = (ListView)rootView.findViewById(R.id.metrics_details_events);
 	        eventsListView.setAdapter(eAdapter);
 	        
-	        ToggleButton tb = (ToggleButton) rootView.findViewById(R.id.metrics_details_button_average);
-	        tb.setOnClickListener(this);
-	        tb.setText("Avg: "+ new DecimalFormat("#.##").format(avg));
-	        tb.setTextOn("Avg: "+ new DecimalFormat("#.##").format(avg));
-	        tb.setTextOff("Avg Off");
+	        ToggleButton avgButton = (ToggleButton) rootView.findViewById(R.id.metrics_details_button_average);
+	        avgButton.setOnClickListener(this);
+	        avgButton.setText("Avg: "+ new DecimalFormat("#.##").format(avg));
+	        avgButton.setTextOn("Avg: "+ new DecimalFormat("#.##").format(avg));
+	        avgButton.setTextOff("Avg");
+	        
+	        ToggleButton trendButton = (ToggleButton) rootView.findViewById(R.id.metrics_details_button_trend);
+	        trendButton.setOnClickListener(this);
+	        trendButton.setText("Trend");
+	        trendButton.setTextOn("Trend");
+	        trendButton.setTextOff("Trend");
 		}else{
 			final LinearLayout l = (LinearLayout) rootView.findViewById(R.id.metrics_details_content);
 			l.setVisibility(View.GONE);
@@ -169,14 +188,26 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 
     	switch (v.getId()) {
     	case R.id.metrics_details_button_average:
-    		ToggleButton tb = (ToggleButton) v;
-    		if(tb.isChecked()){
+    		ToggleButton avgButton = (ToggleButton) v;
+    		if(avgButton.isChecked()){
     	    	renderer.addSeriesRenderer(ravg);
     	    	dataset.addSeries(avgSeries);
     	    	mChartView.repaint();
     		}else{
     	    	renderer.removeSeriesRenderer(ravg);
     	    	dataset.removeSeries(avgSeries);
+    	    	mChartView.repaint();
+    		}
+    		break;
+    	case R.id.metrics_details_button_trend:
+    		ToggleButton trendButton = (ToggleButton) v;
+    		if(trendButton.isChecked()){
+    	    	renderer.addSeriesRenderer(rtrend);
+    	    	dataset.addSeries(trendSeries);
+    	    	mChartView.repaint();
+    		}else{
+    	    	renderer.removeSeriesRenderer(rtrend);
+    	    	dataset.removeSeries(trendSeries);
     	    	mChartView.repaint();
     		}
     		break;
@@ -232,19 +263,19 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     private XYMultipleSeriesRenderer getMultipleSeriesRenderer(){
     	XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
     	renderer.setAxesColor(Color.DKGRAY);
-        renderer.setAxisTitleTextSize(32);
         renderer.setBarSpacing(0.25);
-        renderer.setChartTitleTextSize(40);
+        renderer.setFitLegend(true);
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(30);
-        renderer.setMargins(new int[] {40, 50, 50, 50});
-        renderer.setPointSize(8f);
+//        renderer.setMargins(new int[] {20, 30, renderer.getLegendHeight() + 50, 20});
+        renderer.setPointSize(0f);
         renderer.setShowCustomTextGrid(true);
         renderer.setShowLegend(false);
         renderer.setXLabels(0);
         renderer.setYAxisMax(1);
         renderer.setYAxisMin(0);
         renderer.setYLabelsAlign(Align.RIGHT);
+        
         return renderer;
     }
     private XYSeriesRenderer getSeriesRenderer(){

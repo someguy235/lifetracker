@@ -56,7 +56,6 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
 
     	switch (v.getId()) {
         case R.id.metrics_new_button_save:
-        	//TODO: add some common sense checks to entered fields
         	EditText metricNameText = (EditText) rootView.findViewById(R.id.metrics_new_name);
         	String metricName = metricNameText.getText().toString();
         	
