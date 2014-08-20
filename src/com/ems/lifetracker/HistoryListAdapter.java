@@ -77,15 +77,9 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
         
         ToggleButton avgButton = (ToggleButton) convertView.findViewById(R.id.history_main_button_average);
         
-        //avgButton.setTextOn("Avg: "+ parentFragment.getAverage(metric.getName()));
-//    	avgButton.setTextOff("Avg Off");
-    	if(activeAverages.contains(metric)){
-    		avgButton.setChecked(true);
-    		avgButton.setText("Avg: "+ parentFragment.getAverage(metric.getName()));
-    	}else{
-    		avgButton.setChecked(false);
-    		avgButton.setText("Avg Off");
-    	}
+		avgButton.setChecked(false);
+		avgButton.setText("Avg Off");
+		activeAverages.remove(metric);
     	
         avgButton.setOnClickListener(new OnClickListener(){
     		private final HistoryMainFragment eParent = parentFragment;
