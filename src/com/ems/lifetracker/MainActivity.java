@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity
@@ -61,30 +62,26 @@ public class MainActivity extends Activity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = null;
         switch (position){
         	case 0:
         		mTitle = getString(R.string.title_section1);
-                fragmentManager.beginTransaction()
-            		.replace(R.id.main_container, new TrackMainFragment())
-            		.addToBackStack(null)
-        			.commit();
-        		
+        		fragment = new TrackMainFragment();
         		break;
         	case 1:
         		mTitle = getString(R.string.title_section2);
-                fragmentManager.beginTransaction()
-        			.replace(R.id.main_container, new MetricsMainFragment())
-       			    .addToBackStack(null)
-        			.commit();
+        		fragment = new MetricsMainFragment();
     			break;
         	case 2:
         		mTitle = getString(R.string.title_section3);
-                fragmentManager.beginTransaction()
-            		.replace(R.id.main_container, new HistoryMainFragment())
-            		.addToBackStack(null)
-        			.commit();
+        		fragment = new HistoryMainFragment();
         		break;
         }
+
+        fragmentManager.beginTransaction()
+        	.replace(R.id.main_container, fragment)
+        	.addToBackStack(null)
+        	.commit();
     } 
 
     public void onSectionAttached(int number) {

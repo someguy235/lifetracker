@@ -12,5 +12,15 @@
         <item>@color/lt_yellow</item>
         <item>@color/brown</item>
     </array>
+    <array name="nav_drawer_items">
+        <item>Track</item>
+        <item>Metrics</item>
+        <item>History</item>
+    </array>
+    <array name="nav_drawer_icons">
+        <item>@drawable/track</item>
+        <item>@drawable/metrics</item>
+        <item>@drawable/history</item>
+    </array>
 </resources>
 
