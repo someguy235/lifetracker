@@ -2,21 +2,21 @@
 <resources>
     <array name="chart_colors">
         <item>@color/lt_blue</item>
-        <item>@color/brick</item>
         <item>@color/lt_orange</item>
-        <item>@color/lt_purple</item>
-        <item>@color/blue_green</item>
-        <item>@color/lt_red</item>
         <item>@color/lt_green</item>
-        <item>@color/pink</item>
+        <item>@color/lt_red</item>
+		<item>@color/lt_magenta</item>
         <item>@color/lt_yellow</item>
-        <item>@color/brown</item>
+        <item>@color/lt_violet</item>
+        <item>@color/lt_cyan</item>
     </array>
+    
     <array name="nav_drawer_items">
         <item>Track</item>
         <item>Metrics</item>
         <item>History</item>
     </array>
+
     <array name="nav_drawer_icons">
         <item>@drawable/track</item>
         <item>@drawable/metrics</item>

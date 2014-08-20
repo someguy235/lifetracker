@@ -98,7 +98,7 @@ public class HistoryMainFragment extends Fragment {
 	        	
 	        	if(activeAverages.contains(allMetrics.get(m))){
 			    	XYSeriesRenderer ravg = getSeriesRenderer();
-			    	ravg.setColor(colors[m%10]);
+			    	ravg.setColor(colors[m%8]);
 			        renderer.addSeriesRenderer(ravg);
 			        chartTypes[index++] = LineChart.TYPE;
 			        
@@ -193,12 +193,13 @@ public class HistoryMainFragment extends Fragment {
         renderer.setLabelsTextSize(30);
         renderer.setLegendTextSize(30);
         renderer.setMargins(new int[] {20, 30, renderer.getLegendHeight() + 50, 20});
+        renderer.setMarginsColor(ctx.getResources().getColor(R.color.default_background));
         renderer.setPointSize(8f);
         renderer.setShowCustomTextGrid(true);
         renderer.setXLabels(0);
         renderer.setYAxisMax(1);
         renderer.setYAxisMin(0);
-        renderer.setYLabelsAlign(Align.RIGHT);
+        renderer.setYLabelsAlign(Align.LEFT);
         
         return renderer;
     }

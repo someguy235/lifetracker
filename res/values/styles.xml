@@ -20,24 +20,23 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     
-    <color name="tile_default">#4986E7</color>
-<!-- 	<color name="tile_changed">#42D692</color> -->
+    <color name="default_background">#001C24</color>
+    
+    <color name="tile_default">@color/lt_blue</color>
 	<color name="tile_changed">@color/lt_red</color>
 	
 	<color name="save_default">@color/black</color>
 	<color name="save_changed">@color/lt_red</color>
 	<color name="save_saved">@color/lt_green</color>
 	
-	<color name="lt_red">#D96666</color>
-	<color name="lt_orange">#E6804D</color>
-	<color name="lt_yellow">#D1BC36</color>
-	<color name="lt_green">#42D692</color>
-    <color name="pink">#F691B2</color>
-	<color name="lt_blue">#4986E7</color>
-	<color name="lt_purple">#8C66D9</color>	
-	<color name="brown">#AC725E</color>
-	<color name="brick">#AD2D2D</color>
-	<color name="blue_green">#4585A3</color>
+	<color name="lt_red">#dc322f</color>
+	<color name="lt_orange">#cb4b16</color>
+	<color name="lt_cyan">#2aa198</color>	
+	<color name="lt_yellow">#b58900</color>
+	<color name="lt_green">#859900</color>
+    <color name="lt_blue">#268bd2</color>
+	<color name="lt_violet">#6c71c4</color>
+	<color name="lt_magenta">#d33682</color>
 	
 	<color name="pale_red">#E8A5A9</color>
 	<color name="pale_green">#A7CFB1</color>

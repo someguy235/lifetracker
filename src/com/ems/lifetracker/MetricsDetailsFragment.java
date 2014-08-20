@@ -268,14 +268,14 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(30);
 //        renderer.setMargins(new int[] {20, 30, renderer.getLegendHeight() + 50, 20});
+        renderer.setMarginsColor(ctx.getResources().getColor(R.color.default_background));
         renderer.setPointSize(0f);
         renderer.setShowCustomTextGrid(true);
         renderer.setShowLegend(false);
         renderer.setXLabels(0);
         renderer.setYAxisMax(1);
         renderer.setYAxisMin(0);
-        renderer.setYLabelsAlign(Align.RIGHT);
-        
+        renderer.setYLabelsAlign(Align.LEFT);
         return renderer;
     }
     private XYSeriesRenderer getSeriesRenderer(){
