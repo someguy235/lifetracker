@@ -84,7 +84,7 @@ public class HistoryMainFragment extends Fragment {
 		        
 	        	if(activeMetrics.contains(allMetrics.get(m))){
 		        	XYSeriesRenderer r = getSeriesRenderer();
-			    	r.setColor(colors[m%10]);
+			    	r.setColor(colors[m % colors.length]);
 			        renderer.addSeriesRenderer(r);
 			        
 			        if(metric.getType().equals("binary")){
@@ -98,7 +98,7 @@ public class HistoryMainFragment extends Fragment {
 	        	
 	        	if(activeAverages.contains(allMetrics.get(m))){
 			    	XYSeriesRenderer ravg = getSeriesRenderer();
-			    	ravg.setColor(colors[m%8]);
+			    	ravg.setColor(colors[m % colors.length]);
 			        renderer.addSeriesRenderer(ravg);
 			        chartTypes[index++] = LineChart.TYPE;
 			        
