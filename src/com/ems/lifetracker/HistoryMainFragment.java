@@ -36,10 +36,14 @@ public class HistoryMainFragment extends Fragment {
 	private Context ctx;
 	private DataManager dm;
 	private ArrayList<Metric> allMetrics;
-//	private ArrayList<Metric> metrics;
+	private HashSet<String> xAxisDates;
 	private LinearLayout layout;
+	private String minDate;
 	private HistoryListAdapter listAdapter;
 	private HashMap<String, Double> averages;
+	private HashMap<String, XYSeries> metricSeries;
+	private HashMap<String, XYSeries> averageSeries;
+	private HashMap<String, double[]> metricMinMax;
 	private XYMultipleSeriesDataset dataset;
 	private XYMultipleSeriesRenderer renderer;
 	private GraphicalView mChartView;
@@ -51,10 +55,8 @@ public class HistoryMainFragment extends Fragment {
     }
     
     public void updateChart(){
-    	String minDate = DateUtil.getFormattedDate(null);
     	ArrayList<Metric> activeMetrics = listAdapter.getActiveMetrics();
     	ArrayList<Metric> activeAverages = listAdapter.getActiveAverages();
-    	HashSet<String> xAxisDates;
     	
     	final TextView t = (TextView) rootView.findViewById(R.id.history_main_empty_msg);
     	final LinearLayout l = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
@@ -68,9 +70,7 @@ public class HistoryMainFragment extends Fragment {
 
 			int[] colors = ctx.getResources().getIntArray(R.array.chart_colors);
         	String[] chartTypes = new String[activeMetrics.size() + activeAverages.size()];
-            double ymin = Double.MAX_VALUE;
-        	double ymax = 0.0;
-	    	xAxisDates = new HashSet<String>();
+        	double ymin = Double.MAX_VALUE, ymax = 0.0;
         	
         	// Get chart container and add default data series
         	dataset = new XYMultipleSeriesDataset();
@@ -78,11 +78,8 @@ public class HistoryMainFragment extends Fragment {
     		int index = 0;
 	        for(int m=0; m<allMetrics.size(); m++){
 		        Metric metric = allMetrics.get(m);
-		        ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metric.getName());
-		        double avg = 0.0;
-		        XYSeries series = null, avgseries = null;
-		        
-	        	if(activeMetrics.contains(allMetrics.get(m))){
+
+		        if(activeMetrics.contains(metric)){
 		        	XYSeriesRenderer r = getSeriesRenderer();
 			    	r.setColor(colors[m % colors.length]);
 			        renderer.addSeriesRenderer(r);
@@ -92,9 +89,14 @@ public class HistoryMainFragment extends Fragment {
 			        }else{
 			        	chartTypes[index++] = LineChart.TYPE;
 			        }
-			        
-			        series = new XYSeries(metric.getName() +"  ");
-	        	}
+
+			        if(metricMinMax.get(metric.getName())[0] < ymin)
+			        	ymin = metricMinMax.get(metric.getName())[0];
+			        if(metricMinMax.get(metric.getName())[1] > ymax)
+			        	ymax = metricMinMax.get(metric.getName())[1];
+
+			        dataset.addSeries(metricSeries.get(metric.getName()));
+		        }
 	        	
 	        	if(activeAverages.contains(allMetrics.get(m))){
 			    	XYSeriesRenderer ravg = getSeriesRenderer();
@@ -102,41 +104,18 @@ public class HistoryMainFragment extends Fragment {
 			        renderer.addSeriesRenderer(ravg);
 			        chartTypes[index++] = LineChart.TYPE;
 			        
-			        for(MetricEntry e : entries){
-			    		avg += e.getCount();
-			    	}
-			    	avg = avg / entries.size();
-			    	averages.put(metric.getName(), avg);
-			    	avgseries = new XYSeries(metric.getName() + " avg  ");
+			        if(averages.get(metric.getName()) < ymin)
+			        	ymin = averages.get(metric.getName());
+			        if(averages.get(metric.getName()) > ymax)
+			        	ymax = averages.get(metric.getName());
+			        
+			        dataset.addSeries(averageSeries.get(metric.getName()));
 	        	}
 	            
-	        	//TODO: reorganize these loops
-		    	for(int i=0; i<entries.size(); i++){
-		    		MetricEntry e = entries.get(i);
-		    		long xAxisDate = DateUtil.dateFromString(e.getDate()).getTime();
-		        	
-		    		if(activeMetrics.contains(metric)){
-		    			series.add(xAxisDate, e.getCount());
-		    			if(e.getCount() > ymax) ymax = e.getCount();
-			        	if(e.getCount() < ymin) ymin = e.getCount();
-		    		}
-		        	if(activeAverages.contains(metric)){
-		    			avgseries.add(xAxisDate, avg);
-		    			if(avg > ymax) ymax = avg;
-			        	if(avg < ymin) ymin = avg;
-		        	}
-
-		        	if(activeMetrics.contains(metric) || activeAverages.contains(metric)){
-		    			xAxisDates.add(e.getDate());
-		    			if(e.getDate().compareTo(minDate) < 0) minDate = e.getDate();	
-		        	}
-		        	
-		    	}
-		        
-		    	if(activeMetrics.contains(metric))
-		    		dataset.addSeries(series);
-		    	if(activeAverages.contains(metric))
-		    		dataset.addSeries(avgseries);
+//		    	if(activeMetrics.contains(metric))
+//		    		dataset.addSeries(metricSeries.get(metric.getName()));
+//		    	if(activeAverages.contains(metric))
+//		    		dataset.addSeries(averageSeries.get(metric.getName()));
 	        
 	        } // each metric
 	        
@@ -169,15 +148,55 @@ public class HistoryMainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	rootView = inflater.inflate(R.layout.fragment_history_main, container, false);
-        ctx = getActivity();
-        dm = new DataManager(ctx);
+    	layout = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
+    	
+    	ctx = getActivity();
+    	dm = new DataManager(ctx);
         allMetrics = (ArrayList<Metric>)dm.getAllNonEmptyMetrics();
-        layout = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
-        averages = new HashMap<String, Double>();
-        
-        ListView listview = (ListView) rootView.findViewById(R.id.history_main_events);
+    	
+    	ListView listview = (ListView) rootView.findViewById(R.id.history_main_events);
         listAdapter = new HistoryListAdapter(ctx, allMetrics, HistoryMainFragment.this);
         listview.setAdapter(listAdapter);
+        
+        metricSeries = new HashMap<String, XYSeries>();
+        averageSeries = new HashMap<String, XYSeries>();
+        xAxisDates = new HashSet<String>();
+        XYSeries series = null, avgseries = null;
+        metricMinMax = new HashMap<String, double[]>();
+        
+        minDate = DateUtil.getFormattedDate(null);
+        averages = new HashMap<String, Double>();
+        
+    	// Create all the XYSeries objects and store them in a HashMap for retreival later
+    	// Also calculate the xaxis dates, averages, ymin, ymax, and min date
+        for(int m=0; m<allMetrics.size(); m++){
+        	Metric metric = allMetrics.get(m);
+        	series = new XYSeries(metric.getName() +"  ");
+	    	avgseries = new XYSeries(metric.getName() + " avg  ");
+	    	
+            ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metric.getName());
+	    
+            double avg = 0.0, ymin = Double.MAX_VALUE, ymax = 0.0;
+	        for(MetricEntry e : entries){
+	    		avg += e.getCount();
+	    		if(e.getCount() > ymax) ymax = e.getCount();
+	        	if(e.getCount() < ymin) ymin = e.getCount();
+	    	}
+	    	avg = avg / entries.size();
+	    	averages.put(metric.getName(), avg);
+	    	metricMinMax.put(metric.getName(), new double[]{ymin, ymax});
+	    	
+	    	for(MetricEntry e : entries){
+	    		long xAxisDate = DateUtil.dateFromString(e.getDate()).getTime();
+    			series.add(xAxisDate, e.getCount());
+	        	avgseries.add(xAxisDate, avg);
+    			xAxisDates.add(e.getDate());
+    			if(e.getDate().compareTo(minDate) < 0) minDate = e.getDate();	
+	    	}     
+	    	
+	    	metricSeries.put(metric.getName(), series);
+	    	averageSeries.put(metric.getName(), avgseries);
+        }
 
         updateChart();
         
