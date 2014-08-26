@@ -30,7 +30,7 @@ public class EntriesListAdapter extends ArrayAdapter<MetricEntry> {
        // Populate the data into the template view using the data object
        eDate.setText(DateUtil.getFormattedDay(entry.getDate()));
        if(entry.getType().equals("binary")){
-    	   eCount.setText(entry.getCount() == 1 ? ": yes" : ": no");
+    	   eCount.setText(entry.getCount() >= 1 ? ": yes" : ": no");
        }else{
     	   eCount.setText((entry.getCount() % 1.0 == 0.0) ? ": "+ (int)entry.getCount() : ": "+ entry.getCount());
        }

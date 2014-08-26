@@ -35,22 +35,36 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.widget.RadioGroup.OnCheckedChangeListener;
  
 public class MetricsDetailsFragment extends Fragment implements OnClickListener{
+	private Metric metric;
 	private Context ctx;
 	private Bundle bundle;
 	private FragmentManager fragmentManager;
 	private GraphicalView mChartView;
+	private ArrayList<MetricEntry> entries;
 	private double avg = 0.0;
 	XYMultipleSeriesDataset dataset;
 	XYMultipleSeriesRenderer renderer;
 	XYSeriesRenderer ravg, rtrend;
 	XYSeries avgSeries, trendSeries;
+	View rootView;
+	LinearLayout defaultButtons;
+	LinearLayout editButtons;
+	LinearLayout buttonContainer;
+	LinearLayout contentContainer;
+	RelativeLayout editContainer;
+	TextView emptyMsg;
 	
     public MetricsDetailsFragment(){}
      
@@ -58,13 +72,20 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	bundle = this.getArguments();
     	String metricName = bundle.getString("metricName");
-		View rootView = inflater.inflate(R.layout.fragment_metrics_details, container, false);
+		rootView = inflater.inflate(R.layout.fragment_metrics_details, container, false);
         ctx = getActivity();
         DataManager dm = new DataManager(ctx);
-        ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
+        entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
         
+        defaultButtons = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_defaultbuttons);
+    	editButtons = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_editbuttons);
+    	buttonContainer = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_buttonscontainer);
+    	contentContainer = (LinearLayout) rootView.findViewById(R.id.metrics_details_content);
+    	editContainer = (RelativeLayout) rootView.findViewById(R.id.metrics_details_edit_container);
+    	emptyMsg = (TextView) rootView.findViewById(R.id.metrics_details_empty_msg);
+		
         // Create header area
-        Metric metric = dm.getMetricByName(metricName);
+        metric = dm.getMetricByName(metricName);
         ArrayList<Metric> metrics = new ArrayList<Metric>();
         metrics.add(metric);
         MetricsListAdapter adapter = new MetricsListAdapter(ctx, metrics);
@@ -72,8 +93,8 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 		listView.setAdapter(adapter);
 		
 		if(entries.size() > 0){
-			final TextView emptyMsg = (TextView) rootView.findViewById(R.id.metrics_details_empty_msg);
 			emptyMsg.setVisibility(View.GONE);
+			
 			// Get chart container and add default data series
 			dataset = new XYMultipleSeriesDataset();
 	    	renderer = getMultipleSeriesRenderer();
@@ -168,8 +189,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	        trendButton.setTextOn("Trend");
 	        trendButton.setTextOff("Trend");
 		}else{
-			final LinearLayout l = (LinearLayout) rootView.findViewById(R.id.metrics_details_content);
-			l.setVisibility(View.GONE);
+			contentContainer.setVisibility(View.GONE);
 		}
 		
 		Button b = (Button) rootView.findViewById(R.id.metrics_details_button_cancel);
@@ -178,7 +198,22 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         b.setOnClickListener(this);
         b = (Button) rootView.findViewById(R.id.metrics_details_button_delete);
         b.setOnClickListener(this);
-        
+        b = (Button) rootView.findViewById(R.id.metrics_details_button_save);
+        b.setOnClickListener(this);
+        b = (Button) rootView.findViewById(R.id.metrics_details_button_editcancel);
+        b.setOnClickListener(this);
+        RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.metrics_edit_radio_group);        
+        radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+            	if(checkedId == R.id.metrics_edit_radio_binary){
+            		rootView.findViewById(R.id.metrics_edit_dflt_text).setVisibility(LinearLayout.GONE);
+            		rootView.findViewById(R.id.metrics_edit_binary_default_radio_group).setVisibility(LinearLayout.VISIBLE);
+            	}else{
+            		rootView.findViewById(R.id.metrics_edit_binary_default_radio_group).setVisibility(LinearLayout.GONE);
+            		rootView.findViewById(R.id.metrics_edit_dflt_text).setVisibility(LinearLayout.VISIBLE);
+            	}
+            }
+        });
         return rootView;
     }
     
@@ -218,13 +253,43 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     			.commit();
     		break;
         case R.id.metrics_details_button_edit:
-        	Toast.makeText(ctx, "Edit button doesn't work yet.", 
-        			Toast.LENGTH_LONG).show();
-//    		fragmentManager.beginTransaction()
-//        		.replace(R.id.main_container, new MetricsNewFragment())
-//        		.addToBackStack(null)
-//				.commit();
-    		break;
+        	defaultButtons.setVisibility(View.GONE);
+        	editButtons.setVisibility(View.VISIBLE);
+        	buttonContainer.setVisibility(View.VISIBLE);
+        	contentContainer.setVisibility(View.GONE);
+        	editContainer.setVisibility(View.VISIBLE);
+        	emptyMsg.setVisibility(View.GONE);
+        	
+        	EditText editDesc = (EditText) rootView.findViewById(R.id.metrics_edit_desc);
+        	if(metric.getDesc() != null) 
+        		editDesc.setText(metric.getDesc()); 
+        	EditText editUnit = (EditText) rootView.findViewById(R.id.metrics_edit_unit);
+        	if(metric.getUnit() != null) 
+        		editUnit.setText(metric.getUnit());
+        	
+        	RadioButton defaultRadio = null;
+        	if(metric.getType().equals("binary")){
+        		defaultRadio = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_binary);
+        		defaultRadio.setChecked(true);
+        		RadioButton defaultBinary = null;
+        		if(metric.getDflt() == 0){
+        			defaultBinary = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_binary_yes);
+        		}else{
+        			defaultBinary = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_binary_no);
+        		}
+        		defaultBinary.setChecked(true);
+            }else if(metric.getType().equals("increment")){
+            	defaultRadio = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_increment);
+            	defaultRadio.setChecked(true);
+        		EditText editDflt = (EditText) rootView.findViewById(R.id.metrics_edit_dflt_text);
+        		editDflt.setText(""+ metric.getDflt());
+        	}else if(metric.getType().equals("count")){
+        		defaultRadio = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_count);
+        		defaultRadio.setChecked(true);
+        		EditText editDflt = (EditText) rootView.findViewById(R.id.metrics_edit_dflt_text);
+        		editDflt.setText(""+ metric.getDflt());
+        	}
+        	break;
         case R.id.metrics_details_button_delete:
         	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 
@@ -257,6 +322,20 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     	    alert.show();
 
     		break;
+        case R.id.metrics_details_button_save:
+        	
+        	break;
+        case R.id.metrics_details_button_editcancel:
+        	editButtons.setVisibility(View.GONE);
+        	defaultButtons.setVisibility(View.VISIBLE);
+        	buttonContainer.setVisibility(View.VISIBLE);
+        	editContainer.setVisibility(View.GONE);
+        	if(entries.size() > 0){
+        		contentContainer.setVisibility(View.VISIBLE);
+        	}else{
+        		emptyMsg.setVisibility(View.VISIBLE);
+        	}
+        	break;
         }
     }
     
