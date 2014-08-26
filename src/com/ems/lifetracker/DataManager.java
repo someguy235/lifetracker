@@ -152,9 +152,27 @@ public class DataManager extends SQLiteOpenHelper{
 	    return success >= -1;
     }
     
+    public boolean updateMetric(Metric metric){
+    	SQLiteDatabase db = this.getWritableDatabase();
+    	ContentValues values = new ContentValues();
+	    
+	    values.put(KEY_DESC, metric.getDesc()); 
+	    values.put(KEY_UNIT, metric.getUnit()); 
+	    values.put(KEY_TYPE, metric.getType());
+	    values.put(KEY_DFLT, metric.getDflt());
+    	
+    	long success = db.update(
+    			TABLE_METRICS, 
+    			values, 
+    			KEY_NAME +"=?", 
+    			new String[]{metric.getName()}
+    			);
+    	
+    	return success >= -1;
+    }
+    
     public boolean deleteMetricByName(String name){
     	SQLiteDatabase db = this.getWritableDatabase();
-
     	
 		long success = db.delete(TABLE_METRICS, KEY_NAME + "='" + name +"'", null);
 		if(success >= -1){
@@ -185,10 +203,7 @@ public class DataManager extends SQLiteOpenHelper{
         			);
         	
         	if(updatedRows == 0){
-//        		Log.d("INSERTED", args.toString());
         		db.insert(TABLE_INSTANCES, null, args);
-        	}else{
-//        		Log.d("UPDATED", args.toString());
         	}
         }
 

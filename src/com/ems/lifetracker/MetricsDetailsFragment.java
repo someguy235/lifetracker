@@ -47,6 +47,7 @@ import android.widget.ToggleButton;
 import android.widget.RadioGroup.OnCheckedChangeListener;
  
 public class MetricsDetailsFragment extends Fragment implements OnClickListener{
+	private String metricName;
 	private Metric metric;
 	private Context ctx;
 	private Bundle bundle;
@@ -54,46 +55,262 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	private GraphicalView mChartView;
 	private ArrayList<MetricEntry> entries;
 	private double avg = 0.0;
-	XYMultipleSeriesDataset dataset;
-	XYMultipleSeriesRenderer renderer;
-	XYSeriesRenderer ravg, rtrend;
-	XYSeries avgSeries, trendSeries;
-	View rootView;
-	LinearLayout defaultButtons;
-	LinearLayout editButtons;
-	LinearLayout buttonContainer;
-	LinearLayout contentContainer;
-	RelativeLayout editContainer;
-	TextView emptyMsg;
+	private XYMultipleSeriesDataset dataset;
+	private XYMultipleSeriesRenderer renderer;
+	private XYSeriesRenderer ravg, rtrend;
+	private XYSeries avgSeries, trendSeries;
+	private View rootView;
+	private LinearLayout defaultButtons;
+	private LinearLayout editButtons;
+	private LinearLayout buttonContainer;
+	private LinearLayout contentContainer;
+	private RelativeLayout editContainer;
+	private ListView metricsDetailsListView;
+	private LinearLayout chartLayout;
+	private TextView emptyMsg;
+	private DataManager dm;
 	
     public MetricsDetailsFragment(){}
      
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	bundle = this.getArguments();
-    	String metricName = bundle.getString("metricName");
-		rootView = inflater.inflate(R.layout.fragment_metrics_details, container, false);
-        ctx = getActivity();
-        DataManager dm = new DataManager(ctx);
-        entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
-        
-        defaultButtons = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_defaultbuttons);
+    	// Get handles for a bunch of UI elements
+    	rootView = inflater.inflate(R.layout.fragment_metrics_details, container, false);
+    	defaultButtons = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_defaultbuttons);
     	editButtons = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_editbuttons);
     	buttonContainer = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_buttonscontainer);
     	contentContainer = (LinearLayout) rootView.findViewById(R.id.metrics_details_content);
     	editContainer = (RelativeLayout) rootView.findViewById(R.id.metrics_details_edit_container);
     	emptyMsg = (TextView) rootView.findViewById(R.id.metrics_details_empty_msg);
+    	metricsDetailsListView = (ListView) rootView.findViewById(R.id.metrics_details_list);
+    	chartLayout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);
+        
+    	// Set up button handlers
+    	Button b = (Button) rootView.findViewById(R.id.metrics_details_button_cancel);
+        b.setOnClickListener(this);
+        b = (Button) rootView.findViewById(R.id.metrics_details_button_edit);
+        b.setOnClickListener(this);
+        b = (Button) rootView.findViewById(R.id.metrics_details_button_delete);
+        b.setOnClickListener(this);
+        b = (Button) rootView.findViewById(R.id.metrics_details_button_save);
+        b.setOnClickListener(this);
+        b = (Button) rootView.findViewById(R.id.metrics_details_button_editcancel);
+        b.setOnClickListener(this);
+        RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.metrics_edit_radio_group);        
+        radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+            	if(checkedId == R.id.metrics_edit_radio_binary){
+            		rootView.findViewById(R.id.metrics_edit_dflt_text).setVisibility(LinearLayout.GONE);
+            		rootView.findViewById(R.id.metrics_edit_binary_default_radio_group).setVisibility(LinearLayout.VISIBLE);
+            	}else{
+            		rootView.findViewById(R.id.metrics_edit_binary_default_radio_group).setVisibility(LinearLayout.GONE);
+            		rootView.findViewById(R.id.metrics_edit_dflt_text).setVisibility(LinearLayout.VISIBLE);
+            	}
+            }
+        });
+        
+        bundle = this.getArguments();
+    	ctx = getActivity();
+    	dm = new DataManager(ctx);
+    	metricName = bundle.getString("metricName");
+
+		updateView();
 		
+        return rootView;
+    }
+    
+    @Override
+    public void onClick(View v) {
+        fragmentManager = getFragmentManager();
+
+    	switch (v.getId()) {
+    	case R.id.metrics_details_button_average:
+    		ToggleButton avgButton = (ToggleButton) v;
+    		if(avgButton.isChecked()){
+    	    	renderer.addSeriesRenderer(ravg);
+    	    	dataset.addSeries(avgSeries);
+    	    	mChartView.repaint();
+    		}else{
+    	    	renderer.removeSeriesRenderer(ravg);
+    	    	dataset.removeSeries(avgSeries);
+    	    	mChartView.repaint();
+    		}
+    		break;
+    	case R.id.metrics_details_button_trend:
+    		ToggleButton trendButton = (ToggleButton) v;
+    		if(trendButton.isChecked()){
+    	    	renderer.addSeriesRenderer(rtrend);
+    	    	dataset.addSeries(trendSeries);
+    	    	mChartView.repaint();
+    		}else{
+    	    	renderer.removeSeriesRenderer(rtrend);
+    	    	dataset.removeSeries(trendSeries);
+    	    	mChartView.repaint();
+    		}
+    		break;
+        case R.id.metrics_details_button_cancel:
+    		fragmentManager.beginTransaction()
+        		.replace(R.id.main_container, new MetricsMainFragment())
+        		.addToBackStack(null)
+    			.commit();
+    		break;
+
+        case R.id.metrics_details_button_delete:
+        	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+
+    	    builder.setTitle("Confirm");
+    	    builder.setMessage("Are you sure you want to delete this metric?");
+    	    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+    	        public void onClick(DialogInterface dialog, int which) {
+    	        	DataManager dm = new DataManager(ctx);
+    	        	String metricName = bundle.getString("metricName");
+    	    		if(dm.deleteMetricByName(metricName)){
+    		    		fragmentManager.beginTransaction()
+    		        		.replace(R.id.main_container, new MetricsMainFragment())
+    		        		.addToBackStack(null)
+    		        		.commit();
+    	    		}else{
+    	    			Toast.makeText(ctx, "Something went wrong!", 
+    		        			Toast.LENGTH_LONG).show();
+    	    		}
+    	        	dialog.dismiss();
+    	        }
+
+    	    });
+
+    	    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+    	        @Override
+    	        public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
+    	    });
+
+    	    AlertDialog alert = builder.create();
+    	    alert.show();
+
+    		break;
+    		
+        case R.id.metrics_details_button_edit:
+        	defaultButtons.setVisibility(View.GONE);
+        	editButtons.setVisibility(View.VISIBLE);
+        	buttonContainer.setVisibility(View.VISIBLE);
+        	contentContainer.setVisibility(View.GONE);
+        	editContainer.setVisibility(View.VISIBLE);
+        	emptyMsg.setVisibility(View.GONE);
+        	
+        	EditText editDesc = (EditText) rootView.findViewById(R.id.metrics_edit_desc);
+        	if(metric.getDesc() != null) 
+        		editDesc.setText(metric.getDesc()); 
+        	EditText editUnit = (EditText) rootView.findViewById(R.id.metrics_edit_unit);
+        	if(metric.getUnit() != null) 
+        		editUnit.setText(metric.getUnit());
+        	
+        	RadioButton defaultRadio = null;
+        	if(metric.getType().equals("binary")){
+        		defaultRadio = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_binary);
+        		defaultRadio.setChecked(true);
+        		RadioButton defaultBinary = null;
+        		if(metric.getDflt() > 0.0){
+        			defaultBinary = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_binary_yes);
+        		}else{
+        			defaultBinary = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_binary_no);
+        		}
+        		defaultBinary.setChecked(true);
+            }else if(metric.getType().equals("increment")){
+            	defaultRadio = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_increment);
+            	defaultRadio.setChecked(true);
+        		EditText editDflt = (EditText) rootView.findViewById(R.id.metrics_edit_dflt_text);
+        		editDflt.setText(""+ metric.getDflt());
+        	}else if(metric.getType().equals("count")){
+        		defaultRadio = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_count);
+        		defaultRadio.setChecked(true);
+        		EditText editDflt = (EditText) rootView.findViewById(R.id.metrics_edit_dflt_text);
+        		editDflt.setText(""+ metric.getDflt());
+        	}
+        	break;
+        case R.id.metrics_details_button_save:
+        	EditText metricDescText = (EditText) rootView.findViewById(R.id.metrics_edit_desc);
+        	String metricDesc = metricDescText.getText().toString();
+        	
+        	EditText metricUnitText = (EditText) rootView.findViewById(R.id.metrics_edit_unit);
+        	String metricUnit = metricUnitText.getText().toString();
+        	
+        	EditText metricDfltText = (EditText) rootView.findViewById(R.id.metrics_edit_dflt_text);
+        	double metricDflt;
+        	if(metricDfltText.getText().toString().matches("")){
+        		metricDflt = 0.0;
+        	}else{
+        		metricDflt = Double.parseDouble(metricDfltText.getText().toString()); 
+        	}
+        	
+        	RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.metrics_edit_radio_group);
+        	int selectedType = radioGroup.getCheckedRadioButtonId();
+        	View radioButton = radioGroup.findViewById(selectedType);
+        	int typeIdx = radioGroup.indexOfChild(radioButton);
+        	
+        	String metricType = null;
+        	switch(typeIdx){
+        	case 0:
+        		metricType = "binary";
+        		//get default value from yes/no radio group
+            	RadioGroup g = (RadioGroup) rootView.findViewById(R.id.metrics_edit_binary_default_radio_group); 
+            	int selected = g.getCheckedRadioButtonId();
+            	RadioButton b = (RadioButton) rootView.findViewById(selected);
+            	String metricDfltStr = b.getText().toString().toLowerCase();
+            	metricDflt = metricDfltStr.equals("yes") ? 1 : 0;
+        		break;
+        	case 1:
+        		metricType = "count";
+        		break;
+        	case 2:
+        		metricType = "increment";
+        		break;
+        	}
+ 
+	        Metric updateMetric = new Metric(metric.getName(), metricDesc, metricUnit, metricType, metricDflt);
+	         
+	        if(dm.updateMetric(updateMetric)){
+	        	updateView();
+	        }else{
+	        	Toast.makeText(ctx, "Something went wrong!", 
+	        			Toast.LENGTH_LONG).show();
+	        }
+	        editButtons.setVisibility(View.GONE);
+        	defaultButtons.setVisibility(View.VISIBLE);
+        	buttonContainer.setVisibility(View.VISIBLE);
+        	editContainer.setVisibility(View.GONE);
+        	if(entries.size() > 0){
+        		contentContainer.setVisibility(View.VISIBLE);
+        	}else{
+        		emptyMsg.setVisibility(View.VISIBLE);
+        	}
+        	
+	        break;
+        case R.id.metrics_details_button_editcancel:
+        	editButtons.setVisibility(View.GONE);
+        	defaultButtons.setVisibility(View.VISIBLE);
+        	buttonContainer.setVisibility(View.VISIBLE);
+        	editContainer.setVisibility(View.GONE);
+        	if(entries.size() > 0){
+        		contentContainer.setVisibility(View.VISIBLE);
+        	}else{
+        		emptyMsg.setVisibility(View.VISIBLE);
+        	}
+        	break;
+        }
+    }
+    
+    private void updateView(){
         // Create header area
         metric = dm.getMetricByName(metricName);
         ArrayList<Metric> metrics = new ArrayList<Metric>();
         metrics.add(metric);
-        MetricsListAdapter adapter = new MetricsListAdapter(ctx, metrics);
-        final ListView listView = (ListView) rootView.findViewById(R.id.metrics_details_list);
-		listView.setAdapter(adapter);
-		
-		if(entries.size() > 0){
+        MetricsListAdapter metricsListAdapter = new MetricsListAdapter(ctx, metrics);
+        metricsDetailsListView.setAdapter(metricsListAdapter);
+        
+        entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
+        
+        if(entries.size() > 0){
 			emptyMsg.setVisibility(View.GONE);
+			contentContainer.setVisibility(View.VISIBLE);
 			
 			// Get chart container and add default data series
 			dataset = new XYMultipleSeriesDataset();
@@ -153,7 +370,6 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	        if(metric.getType().equals("count")){
 		        renderer.setYAxisMin(ymin * 0.9);
 		        renderer.setYAxisMax(ymax * 1.1);
-//		        mChartView = ChartFactory.getTimeChartView(ctx, dataset, renderer, "M/d");
 		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
 		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
 	        }else if(metric.getType().equals("increment")){
@@ -169,8 +385,8 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
 	        }
 	
-	        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);
-	        layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+	        chartLayout.removeAllViews();
+	        chartLayout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 	        
 	        Collections.reverse(entries);
 	        EntriesListAdapter eAdapter = new EntriesListAdapter(ctx, entries);
@@ -190,153 +406,8 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	        trendButton.setTextOff("Trend");
 		}else{
 			contentContainer.setVisibility(View.GONE);
+			emptyMsg.setVisibility(View.VISIBLE);
 		}
-		
-		Button b = (Button) rootView.findViewById(R.id.metrics_details_button_cancel);
-        b.setOnClickListener(this);
-        b = (Button) rootView.findViewById(R.id.metrics_details_button_edit);
-        b.setOnClickListener(this);
-        b = (Button) rootView.findViewById(R.id.metrics_details_button_delete);
-        b.setOnClickListener(this);
-        b = (Button) rootView.findViewById(R.id.metrics_details_button_save);
-        b.setOnClickListener(this);
-        b = (Button) rootView.findViewById(R.id.metrics_details_button_editcancel);
-        b.setOnClickListener(this);
-        RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.metrics_edit_radio_group);        
-        radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-            	if(checkedId == R.id.metrics_edit_radio_binary){
-            		rootView.findViewById(R.id.metrics_edit_dflt_text).setVisibility(LinearLayout.GONE);
-            		rootView.findViewById(R.id.metrics_edit_binary_default_radio_group).setVisibility(LinearLayout.VISIBLE);
-            	}else{
-            		rootView.findViewById(R.id.metrics_edit_binary_default_radio_group).setVisibility(LinearLayout.GONE);
-            		rootView.findViewById(R.id.metrics_edit_dflt_text).setVisibility(LinearLayout.VISIBLE);
-            	}
-            }
-        });
-        return rootView;
-    }
-    
-    @Override
-    public void onClick(View v) {
-        fragmentManager = getFragmentManager();
-
-    	switch (v.getId()) {
-    	case R.id.metrics_details_button_average:
-    		ToggleButton avgButton = (ToggleButton) v;
-    		if(avgButton.isChecked()){
-    	    	renderer.addSeriesRenderer(ravg);
-    	    	dataset.addSeries(avgSeries);
-    	    	mChartView.repaint();
-    		}else{
-    	    	renderer.removeSeriesRenderer(ravg);
-    	    	dataset.removeSeries(avgSeries);
-    	    	mChartView.repaint();
-    		}
-    		break;
-    	case R.id.metrics_details_button_trend:
-    		ToggleButton trendButton = (ToggleButton) v;
-    		if(trendButton.isChecked()){
-    	    	renderer.addSeriesRenderer(rtrend);
-    	    	dataset.addSeries(trendSeries);
-    	    	mChartView.repaint();
-    		}else{
-    	    	renderer.removeSeriesRenderer(rtrend);
-    	    	dataset.removeSeries(trendSeries);
-    	    	mChartView.repaint();
-    		}
-    		break;
-        case R.id.metrics_details_button_cancel:
-    		fragmentManager.beginTransaction()
-        		.replace(R.id.main_container, new MetricsMainFragment())
-        		.addToBackStack(null)
-    			.commit();
-    		break;
-        case R.id.metrics_details_button_edit:
-        	defaultButtons.setVisibility(View.GONE);
-        	editButtons.setVisibility(View.VISIBLE);
-        	buttonContainer.setVisibility(View.VISIBLE);
-        	contentContainer.setVisibility(View.GONE);
-        	editContainer.setVisibility(View.VISIBLE);
-        	emptyMsg.setVisibility(View.GONE);
-        	
-        	EditText editDesc = (EditText) rootView.findViewById(R.id.metrics_edit_desc);
-        	if(metric.getDesc() != null) 
-        		editDesc.setText(metric.getDesc()); 
-        	EditText editUnit = (EditText) rootView.findViewById(R.id.metrics_edit_unit);
-        	if(metric.getUnit() != null) 
-        		editUnit.setText(metric.getUnit());
-        	
-        	RadioButton defaultRadio = null;
-        	if(metric.getType().equals("binary")){
-        		defaultRadio = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_binary);
-        		defaultRadio.setChecked(true);
-        		RadioButton defaultBinary = null;
-        		if(metric.getDflt() == 0){
-        			defaultBinary = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_binary_yes);
-        		}else{
-        			defaultBinary = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_binary_no);
-        		}
-        		defaultBinary.setChecked(true);
-            }else if(metric.getType().equals("increment")){
-            	defaultRadio = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_increment);
-            	defaultRadio.setChecked(true);
-        		EditText editDflt = (EditText) rootView.findViewById(R.id.metrics_edit_dflt_text);
-        		editDflt.setText(""+ metric.getDflt());
-        	}else if(metric.getType().equals("count")){
-        		defaultRadio = (RadioButton) rootView.findViewById(R.id.metrics_edit_radio_count);
-        		defaultRadio.setChecked(true);
-        		EditText editDflt = (EditText) rootView.findViewById(R.id.metrics_edit_dflt_text);
-        		editDflt.setText(""+ metric.getDflt());
-        	}
-        	break;
-        case R.id.metrics_details_button_delete:
-        	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-
-    	    builder.setTitle("Confirm");
-    	    builder.setMessage("Are you sure you want to delete this metric?");
-    	    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-    	        public void onClick(DialogInterface dialog, int which) {
-    	        	DataManager dm = new DataManager(ctx);
-    	        	String metricName = bundle.getString("metricName");
-    	    		if(dm.deleteMetricByName(metricName)){
-    		    		fragmentManager.beginTransaction()
-    		        		.replace(R.id.main_container, new MetricsMainFragment())
-    		        		.addToBackStack(null)
-    		        		.commit();
-    	    		}else{
-    	    			Toast.makeText(ctx, "Something went wrong!", 
-    		        			Toast.LENGTH_LONG).show();
-    	    		}
-    	        	dialog.dismiss();
-    	        }
-
-    	    });
-
-    	    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-    	        @Override
-    	        public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
-    	    });
-
-    	    AlertDialog alert = builder.create();
-    	    alert.show();
-
-    		break;
-        case R.id.metrics_details_button_save:
-        	
-        	break;
-        case R.id.metrics_details_button_editcancel:
-        	editButtons.setVisibility(View.GONE);
-        	defaultButtons.setVisibility(View.VISIBLE);
-        	buttonContainer.setVisibility(View.VISIBLE);
-        	editContainer.setVisibility(View.GONE);
-        	if(entries.size() > 0){
-        		contentContainer.setVisibility(View.VISIBLE);
-        	}else{
-        		emptyMsg.setVisibility(View.VISIBLE);
-        	}
-        	break;
-        }
     }
     
     private XYMultipleSeriesRenderer getMultipleSeriesRenderer(){

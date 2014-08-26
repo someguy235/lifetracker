@@ -112,11 +112,6 @@ public class HistoryMainFragment extends Fragment {
 			        dataset.addSeries(averageSeries.get(metric.getName()));
 	        	}
 	            
-//		    	if(activeMetrics.contains(metric))
-//		    		dataset.addSeries(metricSeries.get(metric.getName()));
-//		    	if(activeAverages.contains(metric))
-//		    		dataset.addSeries(averageSeries.get(metric.getName()));
-	        
 	        } // each metric
 	        
 	        List<String> xAxisDateList = new ArrayList<String>(xAxisDates);
