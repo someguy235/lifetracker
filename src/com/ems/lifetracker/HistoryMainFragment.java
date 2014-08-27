@@ -47,11 +47,16 @@ public class HistoryMainFragment extends Fragment {
 	private XYMultipleSeriesDataset dataset;
 	private XYMultipleSeriesRenderer renderer;
 	private GraphicalView mChartView;
+	private String timeframe = "all";
 	
     public HistoryMainFragment(){}
      
     public String getAverage(String metricName){
     	return new DecimalFormat("#.##").format(averages.get(metricName));
+    }
+    
+    public void setTimeFrame(String timeframe){
+    	this.timeframe = timeframe;
     }
     
     public void updateChart(){
@@ -147,6 +152,7 @@ public class HistoryMainFragment extends Fragment {
 
     	ctx = getActivity();
     	((MainActivity)ctx).showActionBarMenu(true);
+    	((MainActivity)ctx).setVisibleChart("history");
     	dm = new DataManager(ctx);
         allMetrics = (ArrayList<Metric>)dm.getAllNonEmptyMetrics();
     	
@@ -207,7 +213,8 @@ public class HistoryMainFragment extends Fragment {
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(30);
         renderer.setLegendTextSize(30);
-        renderer.setMargins(new int[] {20, 30, renderer.getLegendHeight() + 50, 20});
+//        renderer.setMargins(new int[] {20, 30, renderer.getLegendHeight() + 50, 20});
+        renderer.setMargins(new int[] {20, 0, renderer.getLegendHeight() + 50, 0});
         renderer.setMarginsColor(ctx.getResources().getColor(R.color.default_background));
         renderer.setPointSize(8f);
         renderer.setShowCustomTextGrid(true);

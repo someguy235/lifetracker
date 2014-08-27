@@ -49,31 +49,41 @@ import android.widget.ToggleButton;
 import android.widget.RadioGroup.OnCheckedChangeListener;
  
 public class MetricsDetailsFragment extends Fragment implements OnClickListener{
-	private String metricName;
-	private Metric metric;
-	private Context ctx;
-	private Bundle bundle;
-	private FragmentManager fragmentManager;
-	private GraphicalView mChartView;
-	private ArrayList<MetricEntry> entries;
+	private String metricName,
+		timeframe = "all";
 	private double avg = 0.0;
+	
+	private Metric metric;
+	private DataManager dm;
+	private ArrayList<MetricEntry> entries;
+	
+	private Bundle bundle;
+	private Context ctx;
+	private FragmentManager fragmentManager;
+
+	private GraphicalView mChartView;
+	private ListView metricsDetailsListView;
+	private TextView emptyMsg;
+	private View rootView;
+	
+	private LinearLayout defaultButtons, 
+		editButtons,
+		buttonContainer,
+		contentContainer,
+		chartLayout;
+	private RelativeLayout editContainer;
+
 	private XYMultipleSeriesDataset dataset;
 	private XYMultipleSeriesRenderer renderer;
 	private XYSeriesRenderer ravg, rtrend;
 	private XYSeries avgSeries, trendSeries;
-	private View rootView;
-	private LinearLayout defaultButtons;
-	private LinearLayout editButtons;
-	private LinearLayout buttonContainer;
-	private LinearLayout contentContainer;
-	private RelativeLayout editContainer;
-	private ListView metricsDetailsListView;
-	private LinearLayout chartLayout;
-	private TextView emptyMsg;
-	private DataManager dm;
 	
     public MetricsDetailsFragment(){}
      
+    public void setTimeFrame(String timeframe){
+    	this.timeframe = timeframe;
+    }
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	// Get handles for a bunch of UI elements
@@ -114,6 +124,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         bundle = this.getArguments();
     	ctx = getActivity();
     	((MainActivity)ctx).showActionBarMenu(true);
+    	((MainActivity)ctx).setVisibleChart("details");
     	setHasOptionsMenu(true);
     	
     	dm = new DataManager(ctx);
@@ -303,7 +314,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         }
     }
     
-    private void updateView(){
+    public void updateView(){
         // Create header area
         metric = dm.getMetricByName(metricName);
         ArrayList<Metric> metrics = new ArrayList<Metric>();

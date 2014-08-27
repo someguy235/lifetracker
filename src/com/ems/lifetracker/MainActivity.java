@@ -24,8 +24,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-	private Menu menu;
+//	private Menu menu;
 	private boolean showMenu = false;
+	private String visibleChart = null;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -78,16 +79,18 @@ public class MainActivity extends Activity
         		fragment = new HistoryMainFragment();
         		break;
         }
-
         fragmentManager.beginTransaction()
         	.replace(R.id.main_container, fragment)
         	.addToBackStack(null)
         	.commit();
-        
     } 
 
     public void showActionBarMenu(boolean show){
         this.showMenu = show;
+    }
+    
+    public void setVisibleChart(String visibleChart){
+    	this.visibleChart = visibleChart;
     }
     
     public void onSectionAttached(int number) {
@@ -114,14 +117,14 @@ public class MainActivity extends Activity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	Log.d("onCreateOptionsMenu", ""+ showMenu);
-    	this.menu = menu;
+//    	this.menu = menu;
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
         	if(showMenu){
         		getMenuInflater().inflate(R.menu.main, menu);
+        		menu.getItem(2).setChecked(true);
         	}
     		restoreActionBar();
             return true;
@@ -131,22 +134,39 @@ public class MainActivity extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-    	Log.d("onOptionsItemSelected", ""+item.getItemId());
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+    	String timeframe = null;
         int id = item.getItemId();
         if (id == R.id.time_menu_week) {
-            return true;
+        	item.setChecked(true);
+        	timeframe = "week";
         }
         if (id == R.id.time_menu_month) {
-            return true;
+        	item.setChecked(true);
+        	timeframe = "month";
         }
         if (id == R.id.time_menu_all) {
-            return true;
+        	item.setChecked(true);
+        	timeframe = "all";
         }
         
-        return super.onOptionsItemSelected(item);
+        if(timeframe != null){
+        	if(visibleChart.equals("history")){
+        		HistoryMainFragment fragment = (HistoryMainFragment) getFragmentManager().findFragmentById(R.id.main_container);
+        		fragment.setTimeFrame(timeframe);
+        		fragment.updateChart();
+        	}
+        	if(visibleChart.equals("details")){
+        		MetricsDetailsFragment fragment = (MetricsDetailsFragment) getFragmentManager().findFragmentById(R.id.main_container);
+        		fragment.setTimeFrame(timeframe);
+        		fragment.updateView();
+        	}
+        	return true;
+        }else{
+        	return super.onOptionsItemSelected(item);
+        }
     }
     
     public void chooseActivity(){
