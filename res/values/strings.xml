@@ -13,6 +13,10 @@
     <string name="title_activity_metrics">MetricsActivity</string>
     <string name="title_activity_history">HistoryActivity</string>
     <string name="title_activity_metrics_new_fragment">MetricsNewFragment</string>
+    <!-- Action Menu -->
+    <string name="time_menu_week">Week</string>
+    <string name="time_menu_month">Month</string>
+    <string name="time_menu_all">All</string>
     <!-- Metrics -->
     <string name="metrics_main_button_new">New Metric</string>
     <string name="title_activity_metrics_details">MetricsDetailsActivity</string>

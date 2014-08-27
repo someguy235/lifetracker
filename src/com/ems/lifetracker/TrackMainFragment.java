@@ -59,6 +59,7 @@ public class TrackMainFragment extends Fragment {
   
         rootView = inflater.inflate(R.layout.fragment_track_main, container, false);
         ctx = getActivity();
+    	((MainActivity)ctx).showActionBarMenu(false);
         activeDate = DateUtil.getFormattedDate(null);
         activeDay = DateUtil.getFormattedDay(activeDate);
 

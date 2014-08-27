@@ -30,6 +30,8 @@ import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -111,6 +113,9 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         
         bundle = this.getArguments();
     	ctx = getActivity();
+    	((MainActivity)ctx).showActionBarMenu(true);
+    	setHasOptionsMenu(true);
+    	
     	dm = new DataManager(ctx);
     	metricName = bundle.getString("metricName");
 
@@ -435,5 +440,11 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         r.setLineWidth(4f);
         r.setFillPoints(true);
         return r;
+    }
+    
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu,inflater);
     }
 }

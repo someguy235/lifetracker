@@ -30,7 +30,8 @@ public class MetricsNewFragment extends Fragment implements OnClickListener {
   
         rootView = inflater.inflate(R.layout.fragment_metrics_new, container, false);
         ctx = getActivity();
-        
+    	((MainActivity)ctx).showActionBarMenu(false);
+
         Button saveButton = (Button) rootView.findViewById(R.id.metrics_new_button_save);
         saveButton.setOnClickListener(this);
         Button cancelButton = (Button) rootView.findViewById(R.id.metrics_new_button_cancel);

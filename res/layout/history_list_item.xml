@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    
  android:layout_width="match_parent"
  android:layout_height="0dp"
  android:paddingTop="5dp"
@@ -13,6 +14,7 @@
    	/>
 	<ToggleButton
     	android:id="@+id/history_main_button_toggle"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -21,6 +23,7 @@
      />
 	<ToggleButton
 	    android:id="@+id/history_main_button_average"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

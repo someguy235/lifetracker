@@ -144,8 +144,9 @@ public class HistoryMainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	rootView = inflater.inflate(R.layout.fragment_history_main, container, false);
     	layout = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
-    	
+
     	ctx = getActivity();
+    	((MainActivity)ctx).showActionBarMenu(true);
     	dm = new DataManager(ctx);
         allMetrics = (ArrayList<Metric>)dm.getAllNonEmptyMetrics();
     	

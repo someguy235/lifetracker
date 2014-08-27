@@ -24,7 +24,8 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-
+	private Menu menu;
+	private boolean showMenu = false;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -71,7 +72,7 @@ public class MainActivity extends Activity
         	case 1:
         		mTitle = getString(R.string.title_section2);
         		fragment = new MetricsMainFragment();
-    			break;
+        		break;
         	case 2:
         		mTitle = getString(R.string.title_section3);
         		fragment = new HistoryMainFragment();
@@ -82,8 +83,13 @@ public class MainActivity extends Activity
         	.replace(R.id.main_container, fragment)
         	.addToBackStack(null)
         	.commit();
+        
     } 
 
+    public void showActionBarMenu(boolean show){
+        this.showMenu = show;
+    }
+    
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
@@ -108,12 +114,16 @@ public class MainActivity extends Activity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+    	Log.d("onCreateOptionsMenu", ""+ showMenu);
+    	this.menu = menu;
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
+        	if(showMenu){
+        		getMenuInflater().inflate(R.menu.main, menu);
+        	}
+    		restoreActionBar();
             return true;
         }
         return super.onCreateOptionsMenu(menu);
@@ -121,13 +131,21 @@ public class MainActivity extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+    	Log.d("onOptionsItemSelected", ""+item.getItemId());
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.time_menu_week) {
             return true;
         }
+        if (id == R.id.time_menu_month) {
+            return true;
+        }
+        if (id == R.id.time_menu_all) {
+            return true;
+        }
+        
         return super.onOptionsItemSelected(item);
     }
     

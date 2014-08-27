@@ -29,7 +29,8 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
   
         View rootView = inflater.inflate(R.layout.fragment_metrics_main, container, false);
         ctx = getActivity();
-        
+    	((MainActivity)ctx).showActionBarMenu(false);
+
         DataManager dm = new DataManager(ctx);
         ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
         
