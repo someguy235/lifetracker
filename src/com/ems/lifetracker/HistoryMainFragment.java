@@ -50,7 +50,7 @@ public class HistoryMainFragment extends Fragment {
 	private String timeframe = "all";
 	
     public HistoryMainFragment(){}
-     
+    
     public String getAverage(String metricName){
     	return new DecimalFormat("#.##").format(averages.get(metricName));
     }
@@ -145,38 +145,22 @@ public class HistoryMainFragment extends Fragment {
         }
     }
     
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	rootView = inflater.inflate(R.layout.fragment_history_main, container, false);
-    	layout = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
-
-    	ctx = getActivity();
-    	((MainActivity)ctx).showActionBarMenu(true);
-    	((MainActivity)ctx).setVisibleChart("history");
-    	dm = new DataManager(ctx);
-        allMetrics = (ArrayList<Metric>)dm.getAllNonEmptyMetrics();
+    public void updateEntries(){
+    	metricSeries = new HashMap<String, XYSeries>();
+    	averageSeries = new HashMap<String, XYSeries>();
+    	xAxisDates = new HashSet<String>();
+    	XYSeries series = null, avgseries = null;
+    	metricMinMax = new HashMap<String, double[]>();
+      
+    	minDate = DateUtil.getFormattedDate(null);
+    	averages = new HashMap<String, Double>();
     	
-    	ListView listview = (ListView) rootView.findViewById(R.id.history_main_events);
-        listAdapter = new HistoryListAdapter(ctx, allMetrics, HistoryMainFragment.this);
-        listview.setAdapter(listAdapter);
-        
-        metricSeries = new HashMap<String, XYSeries>();
-        averageSeries = new HashMap<String, XYSeries>();
-        xAxisDates = new HashSet<String>();
-        XYSeries series = null, avgseries = null;
-        metricMinMax = new HashMap<String, double[]>();
-        
-        minDate = DateUtil.getFormattedDate(null);
-        averages = new HashMap<String, Double>();
-        
-    	// Create all the XYSeries objects and store them in a HashMap for retreival later
-    	// Also calculate the xaxis dates, averages, ymin, ymax, and min date
-        for(int m=0; m<allMetrics.size(); m++){
+    	for(int m=0; m<allMetrics.size(); m++){
         	Metric metric = allMetrics.get(m);
         	series = new XYSeries(metric.getName() +"  ");
 	    	avgseries = new XYSeries(metric.getName() + " avg  ");
 	    	
-            ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metric.getName());
+	    	ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByNameAndTimeframe(metric.getName(), timeframe);
 	    
             double avg = 0.0, ymin = Double.MAX_VALUE, ymax = 0.0;
 	        for(MetricEntry e : entries){
@@ -199,6 +183,24 @@ public class HistoryMainFragment extends Fragment {
 	    	metricSeries.put(metric.getName(), series);
 	    	averageSeries.put(metric.getName(), avgseries);
         }
+    }
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	rootView = inflater.inflate(R.layout.fragment_history_main, container, false);
+    	layout = (LinearLayout) rootView.findViewById(R.id.history_main_chart);
+
+    	ctx = getActivity();
+    	((MainActivity)ctx).showActionBarMenu(true);
+    	((MainActivity)ctx).setVisibleChart("history");
+    	dm = new DataManager(ctx);
+        allMetrics = (ArrayList<Metric>)dm.getAllNonEmptyMetrics();
+    	
+    	ListView listview = (ListView) rootView.findViewById(R.id.history_main_events);
+        listAdapter = new HistoryListAdapter(ctx, allMetrics, HistoryMainFragment.this);
+        listview.setAdapter(listAdapter);
+        
+        updateEntries();
 
         updateChart();
         

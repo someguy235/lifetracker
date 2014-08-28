@@ -256,14 +256,25 @@ public class DataManager extends SQLiteOpenHelper{
     }
     
     public List<MetricEntry> getEntriesByName(String name){
+    	return getEntriesByNameAndTimeframe(name, "all");
+    }
+    
+    public List<MetricEntry> getEntriesByNameAndTimeframe(String name, String timeframe){
     	SQLiteDatabase db = this.getReadableDatabase();
     	List<MetricEntry> entries = new ArrayList<MetricEntry>();
     	List<String> dates = new ArrayList<String>();
     	MetricEntry entry;
     	
+    	String minDate = "0000-00-00";
+    	if(timeframe.equals("week")){
+    		minDate = DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), -7);
+    	}else if(timeframe.equals("month")){
+    		minDate = DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), -30);
+    	}
+
     	Cursor cursor = db.query(TABLE_INSTANCES, new String[] { 
-        		KEY_DATE, KEY_UNIT, KEY_TYPE, KEY_COUNT, KEY_DETAILS }, KEY_NAME + "=?",
-                new String[] { name }, null, null, KEY_DATE, null);
+        		KEY_DATE, KEY_UNIT, KEY_TYPE, KEY_COUNT, KEY_DETAILS }, KEY_NAME + "=? AND " + KEY_DATE + ">?",
+                new String[] { name, minDate }, null, null, KEY_DATE, null);
 
     	cursor.moveToPosition(-1);
     	while(cursor.moveToNext()){

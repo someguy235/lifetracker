@@ -51,7 +51,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	private String metricName,
 		timeframe = "all";
-	private double avg = 0.0;
+	private double avg;
 	
 	private Metric metric;
 	private DataManager dm;
@@ -322,7 +322,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         MetricsListAdapter metricsListAdapter = new MetricsListAdapter(ctx, metrics);
         metricsDetailsListView.setAdapter(metricsListAdapter);
         
-        entries = (ArrayList<MetricEntry>)dm.getEntriesByName(metricName);
+        entries = (ArrayList<MetricEntry>)dm.getEntriesByNameAndTimeframe(metricName, timeframe);
         
         if(entries.size() > 0){
 			emptyMsg.setVisibility(View.GONE);
@@ -354,6 +354,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	        avgSeries = new XYSeries("average");
 	        trendSeries = new XYSeries("trend");
 	    	
+	        avg = 0.0;
 	    	for(MetricEntry e : entries){
 	    		avg += e.getCount();
 	    	}

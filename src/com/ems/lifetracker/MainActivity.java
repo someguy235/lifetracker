@@ -151,11 +151,12 @@ public class MainActivity extends Activity
         	item.setChecked(true);
         	timeframe = "all";
         }
-        
+
         if(timeframe != null){
         	if(visibleChart.equals("history")){
         		HistoryMainFragment fragment = (HistoryMainFragment) getFragmentManager().findFragmentById(R.id.main_container);
         		fragment.setTimeFrame(timeframe);
+        		fragment.updateEntries();
         		fragment.updateChart();
         	}
         	if(visibleChart.equals("details")){
