@@ -3,13 +3,18 @@ package com.ems.lifetracker;
 import java.util.ArrayList;
 import java.util.List;
 
+//import com.ems.lifetracker.TrackMainFragment.MyGestureDetector;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.InputType;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -24,10 +29,26 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry>{
 	private ArrayList<Integer> updated = new ArrayList<Integer>();
 	private int pos;
 	
+	private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_MAX_OFF_PATH = 250;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private GestureDetector gestureDetector;
+    View.OnTouchListener gestureListener;
+    
     public TrackListAdapter(Context context, ArrayList<MetricEntry> entries, TrackMainFragment fragment) {
        super(context, R.layout.track_list_item, entries);
        this.parentFragment = fragment;
        this.entries = entries;
+       
+       //Gesture detection
+       //gestureDetector = new GestureDetector(this, new MyGestureDetector());
+       gestureDetector = new GestureDetector(new MyGestureDetector());
+       gestureListener = new View.OnTouchListener() {
+           public boolean onTouch(View v, MotionEvent event) {
+               return gestureDetector.onTouchEvent(event);
+           }
+       };
+       
     }
     
     public ArrayList<MetricEntry> getEntries(){
@@ -230,6 +251,8 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry>{
 		   }
 	   }
 	   
+	   convertView.setOnTouchListener(gestureListener);
+	   
 	   /*
 	    * Every metric has a details field
 	    */
@@ -285,4 +308,38 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry>{
 	   // Return the completed view to render on screen
        return convertView;
    }
+    
+    class MyGestureDetector extends SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            try {
+                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                    return false;
+                // right to left swipe
+                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    //Toast.makeText(SelectFilterActivity.this, "Left Swipe", Toast.LENGTH_SHORT).show();
+                	parentFragment.dateDown();
+//                	activeDate = DateUtil.getOffsetDate(activeDate, -1);
+//            		activeDay = DateUtil.getFormattedDay(activeDate);
+            		Log.d("swiped", "left");
+//            		updateGrid();
+                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    //Toast.makeText(SelectFilterActivity.this, "Right Swipe", Toast.LENGTH_SHORT).show();
+                	parentFragment.dateUp();
+//                	activeDate = DateUtil.getOffsetDate(activeDate, 1);
+//            		activeDay = DateUtil.getFormattedDay(activeDate);
+            		Log.d("swiped", "right");
+//            		updateGrid();
+                }
+            } catch (Exception e) {
+                // nothing
+            }
+            return false;
+        }
+
+            @Override
+        public boolean onDown(MotionEvent e) {
+              return true;
+        }
+    }
 }

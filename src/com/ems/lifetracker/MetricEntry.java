@@ -16,7 +16,7 @@ public class MetricEntry {
 		this.count = count;
 		this.details = details;
 	}
-	
+	 
 	public String getName() {
 		return name;
 	}

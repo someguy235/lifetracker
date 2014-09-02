@@ -38,12 +38,14 @@ public class HistoryMainFragment extends Fragment {
 	private ArrayList<Metric> allMetrics;
 	private HashSet<String> xAxisDates;
 	private LinearLayout layout;
+	private List<String> xAxisDateList;
 	private String minDate;
 	private HistoryListAdapter listAdapter;
 	private HashMap<String, Double> averages;
 	private HashMap<String, XYSeries> metricSeries;
 	private HashMap<String, XYSeries> averageSeries;
 	private HashMap<String, double[]> metricMinMax;
+	private HashMap<String, List<String>> metricDatesMap;
 	private XYMultipleSeriesDataset dataset;
 	private XYMultipleSeriesRenderer renderer;
 	private GraphicalView mChartView;
@@ -119,8 +121,6 @@ public class HistoryMainFragment extends Fragment {
 	            
 	        } // each metric
 	        
-	        List<String> xAxisDateList = new ArrayList<String>(xAxisDates);
-	        Collections.sort(xAxisDateList);
 	        for(int i=0; i<xAxisDateList.size(); i++){
 	        	String xAxisDate = xAxisDateList.get(i);
         		if((xAxisDateList.size() <= 4) || (i % (xAxisDateList.size() / 3) == 1)){
@@ -148,11 +148,12 @@ public class HistoryMainFragment extends Fragment {
     public void updateEntries(){
     	metricSeries = new HashMap<String, XYSeries>();
     	averageSeries = new HashMap<String, XYSeries>();
-    	xAxisDates = new HashSet<String>();
+//    	xAxisDates = new HashSet<String>();
     	XYSeries series = null, avgseries = null;
     	metricMinMax = new HashMap<String, double[]>();
-      
-    	minDate = DateUtil.getFormattedDate(null);
+    	metricDatesMap = new HashMap<String, List<String>>();
+    	
+//    	minDate = DateUtil.getFormattedDate(null);
     	averages = new HashMap<String, Double>();
     	
     	for(int m=0; m<allMetrics.size(); m++){
@@ -172,17 +173,49 @@ public class HistoryMainFragment extends Fragment {
 	    	averages.put(metric.getName(), avg);
 	    	metricMinMax.put(metric.getName(), new double[]{ymin, ymax});
 	    	
+	    	List<String> metricDates = new ArrayList<String>();
 	    	for(MetricEntry e : entries){
 	    		long xAxisDate = DateUtil.dateFromString(e.getDate()).getTime();
     			series.add(xAxisDate, e.getCount());
 	        	avgseries.add(xAxisDate, avg);
-    			xAxisDates.add(e.getDate());
-    			if(e.getDate().compareTo(minDate) < 0) minDate = e.getDate();	
+    			//xAxisDates.add(e.getDate());
+    			//if(e.getDate().compareTo(minDate) < 0) minDate = e.getDate();
+	        	metricDates.add(e.getDate());
 	    	}     
+
+	    	metricDatesMap.put(metric.getName(), metricDates);
 	    	
 	    	metricSeries.put(metric.getName(), series);
 	    	averageSeries.put(metric.getName(), avgseries);
         }
+//    	xAxisDateList = new ArrayList<String>(xAxisDates);
+//        Collections.sort(xAxisDateList);
+    }
+    
+    public void updateDates(){
+    	xAxisDates = new HashSet<String>();
+    	minDate = DateUtil.getFormattedDate(null);
+    	List<String> mDates;
+    	
+    	ArrayList<Metric> activeMetrics = listAdapter.getActiveMetrics();
+    	for(Metric m : activeMetrics){
+    		mDates = metricDatesMap.get(m.getName());
+    		for(String d : mDates){
+    			if(d.compareTo(minDate) < 0) minDate = d;
+    			xAxisDates.add(d);
+    		}
+    	}
+    	
+    	ArrayList<Metric> activeAverages = listAdapter.getActiveAverages();
+    	for(Metric m : activeAverages){
+    		mDates = metricDatesMap.get(m.getName());
+    		for(String d : mDates){
+    			if(d.compareTo(minDate) < 0) minDate = d;
+    			xAxisDates.add(d);
+    		}
+    	}
+    	xAxisDateList = new ArrayList<String>(xAxisDates);
+        Collections.sort(xAxisDateList);
     }
     
     @Override
@@ -195,13 +228,20 @@ public class HistoryMainFragment extends Fragment {
     	((MainActivity)ctx).setVisibleChart("history");
     	dm = new DataManager(ctx);
         allMetrics = (ArrayList<Metric>)dm.getAllNonEmptyMetrics();
+    	if(allMetrics.size() > 1)
+    		allMetrics.add(new Metric("All", null, null, null, 0.0));
     	
     	ListView listview = (ListView) rootView.findViewById(R.id.history_main_events);
         listAdapter = new HistoryListAdapter(ctx, allMetrics, HistoryMainFragment.this);
         listview.setAdapter(listAdapter);
+
+        if(allMetrics.size() > 2)
+        	allMetrics.remove(allMetrics.size()-1);
         
         updateEntries();
 
+        updateDates();
+        
         updateChart();
         
         return rootView;

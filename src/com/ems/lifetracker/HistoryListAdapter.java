@@ -28,9 +28,11 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
        this.allMetrics = new HashMap<String, Metric>();
 
        for(Metric m : metrics){
-    	   activeMetrics.add(m);
-    	   //activeAverages.add(m);
-    	   allMetrics.put(m.getName(), m);
+    	   if(!m.getName().equals("All")){
+    		   activeMetrics.add(m);
+    		   //activeAverages.add(m);
+    		   allMetrics.put(m.getName(), m);
+    	   }
        }
     }
 
@@ -71,6 +73,7 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
         		}else{
         			activeMetrics.remove(metric);
         		}
+        		eParent.updateDates();
         		eParent.updateChart();
         	}
         });
@@ -102,6 +105,7 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
         			activeAverages.remove(metric);
         			tb.setText("Avg Off");
         		}
+        		eParent.updateDates();
         		eParent.updateChart();
         	}
         });

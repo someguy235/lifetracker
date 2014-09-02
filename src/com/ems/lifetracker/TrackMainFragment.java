@@ -15,8 +15,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -36,8 +39,20 @@ public class TrackMainFragment extends Fragment {
 	private View rootView;
 	private TextView datePicker;
 
-    public TrackMainFragment(){}
+	public TrackMainFragment(){}
      
+	public void dateUp(){
+		activeDate = DateUtil.getFormattedDate(null);
+        activeDay = DateUtil.getFormattedDay(activeDate);
+        updateGrid();
+	}
+	
+	public void dateDown(){
+		activeDate = DateUtil.getOffsetDate(activeDate, -1);
+		activeDay = DateUtil.getFormattedDay(activeDate);
+		updateGrid();	
+	}
+	
     private void updateGrid(){
     	// Load today's entries into Adapter
         ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByDate(activeDate);
@@ -142,4 +157,5 @@ public class TrackMainFragment extends Fragment {
 
         return rootView;
     }
+    
 }
