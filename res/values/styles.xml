@@ -30,8 +30,9 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     
-    <color name="default_actionbar_background">#001C24</color>
-	<color name="default_background">#002b36</color>
+<!--     <color name="default_actionbar_background">#002b36</color> -->
+	<color name="default_actionbar_background">#001C24</color>
+	<color name="default_background">#001C24</color>
     
     <color name="tile_default">@color/lt_blue</color>
 	<color name="tile_changed">@color/lt_red</color>

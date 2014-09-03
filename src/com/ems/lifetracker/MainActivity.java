@@ -157,6 +157,7 @@ public class MainActivity extends Activity
         		HistoryMainFragment fragment = (HistoryMainFragment) getFragmentManager().findFragmentById(R.id.main_container);
         		fragment.setTimeFrame(timeframe);
         		fragment.updateEntries();
+        		fragment.updateDates();
         		fragment.updateChart();
         	}
         	if(visibleChart.equals("details")){

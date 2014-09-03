@@ -214,6 +214,13 @@ public class HistoryMainFragment extends Fragment {
     			xAxisDates.add(d);
     		}
     	}
+    	
+    	if(timeframe.equals("week")){
+    		minDate = DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), -6);
+    	}else if(timeframe.equals("month")){
+    		minDate = DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), -29);
+    	}
+    	
     	xAxisDateList = new ArrayList<String>(xAxisDates);
         Collections.sort(xAxisDateList);
     }
