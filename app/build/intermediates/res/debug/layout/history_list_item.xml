@@ -1,0 +1,34 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    
+ android:layout_width="match_parent"
+ android:layout_height="0dp"
+ android:paddingTop="5dp"
+ android:paddingBottom="5dp"
+ android:orientation="horizontal" 
+ android:weightSum="3" >
+	<TextView
+		android:id="@+id/history_main_entry_name"
+		android:textSize="20sp"
+     	android:layout_width="0dp"
+     	android:layout_height="wrap_content"
+     	android:layout_weight="1"
+   	/>
+	<ToggleButton
+    	android:id="@+id/history_main_button_toggle"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="5dp" 
+        android:checked="true" 
+     />
+	<ToggleButton
+	    android:id="@+id/history_main_button_average"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="5dp" 
+        android:checked="false" 
+     />
+</LinearLayout><!-- From: file:/Users/ems/workspace/lifetracker/app/src/main/res/layout/history_list_item.xml -->

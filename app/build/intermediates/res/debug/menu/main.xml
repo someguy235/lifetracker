@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.ems.lifetracker.MainActivity" 
+    >
+    <group 
+        android:id="@+id/time_menu"
+        android:checkableBehavior="single"
+    	>
+    <item
+        android:id="@+id/time_menu_week"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/time_menu_week"
+    	/>
+    <item
+        android:id="@+id/time_menu_month"
+        android:orderInCategory="200"
+        android:showAsAction="never"
+        android:title="@string/time_menu_month"
+    	/>
+    <item
+        android:id="@+id/time_menu_all"
+        android:orderInCategory="300"
+        android:showAsAction="never"
+        android:title="@string/time_menu_all"
+    	/>
+    </group>
+</menu>
+<!-- From: file:/Users/ems/workspace/lifetracker/app/src/main/res/menu/main.xml -->
