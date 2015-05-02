@@ -198,7 +198,8 @@ public class DataManager extends SQLiteOpenHelper{
     			KEY_NAME +"=?", 
     			new String[]{metric.getName()}
     			);
-    	
+
+        db.close();
     	return success >= -1;
     }
     
@@ -217,14 +218,18 @@ public class DataManager extends SQLiteOpenHelper{
     public boolean archiveMetricByName(String name, String date){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues args = new ContentValues();
-        if(date.equals(""))
+        if(date != null && date.equals(""))
             date = null;
         args.put(KEY_ARCH, date);
 
         long success = db.update(TABLE_METRICS, args, KEY_NAME +"=?", new String[]{name});
+        db.close();
 
-        //System.out.println("name: "+ name +", date: "+ date +", success: "+ success);
         return success >= -1;
+    }
+
+    public boolean unarchiveMetricByName(String name){
+        return archiveMetricByName(name, null);
     }
     
     public boolean saveEntries(List<MetricEntry> entries, String date){

@@ -24,6 +24,15 @@
      	android:textSize="24sp"
      	android:gravity="center_horizontal"
      	android:text="No entries yet" />
+    <TextView
+        android:id="@+id/metrics_details_archive_date"
+        android:layout_below="@+id/metrics_details_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="0dp"
+        android:textSize="12sp"
+        android:gravity="center_horizontal"
+        android:text="" />
    	<RelativeLayout
    	    android:id="@+id/metrics_details_edit_container"
    	    android:layout_below="@+id/metrics_details_list"
@@ -162,7 +171,7 @@
    	</RelativeLayout>
 	<LinearLayout 
 	    android:id="@+id/metrics_details_content"
-	    android:layout_below="@+id/metrics_details_list"
+	    android:layout_below="@+id/metrics_details_archive_date"
 	    android:layout_above="@+id/metrics_details_layout_buttonscontainer"
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent" 

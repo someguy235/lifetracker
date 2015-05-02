@@ -71,8 +71,9 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 
 	private GraphicalView mChartView;
 	private ListView metricsDetailsListView;
-	private TextView emptyMsg;
+	private TextView emptyMsg, archiveMsg;
 	private View rootView;
+    private Button archiveButton;
 	
 	private LinearLayout defaultButtons, 
 		editButtons,
@@ -102,6 +103,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     	contentContainer = (LinearLayout) rootView.findViewById(R.id.metrics_details_content);
     	editContainer = (RelativeLayout) rootView.findViewById(R.id.metrics_details_edit_container);
     	emptyMsg = (TextView) rootView.findViewById(R.id.metrics_details_empty_msg);
+        archiveMsg = (TextView) rootView.findViewById(R.id.metrics_details_archive_date);
     	metricsDetailsListView = (ListView) rootView.findViewById(R.id.metrics_details_list);
     	chartLayout = (LinearLayout) rootView.findViewById(R.id.metrics_details_chart);
         
@@ -110,15 +112,16 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
         b.setOnClickListener(this);
         b = (Button) rootView.findViewById(R.id.metrics_details_button_edit);
         b.setOnClickListener(this);
-        b = (Button) rootView.findViewById(R.id.metrics_details_button_archive);
-        b.setOnClickListener(this);
         b = (Button) rootView.findViewById(R.id.metrics_details_button_delete);
         b.setOnClickListener(this);
         b = (Button) rootView.findViewById(R.id.metrics_details_button_save);
         b.setOnClickListener(this);
         b = (Button) rootView.findViewById(R.id.metrics_details_button_editcancel);
         b.setOnClickListener(this);
-        RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.metrics_edit_radio_group);        
+        archiveButton = (Button) rootView.findViewById(R.id.metrics_details_button_archive);
+        archiveButton.setOnClickListener(this);
+
+        RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.metrics_edit_radio_group);
         radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener(){
             public void onCheckedChanged(RadioGroup group, int checkedId) {
             	if(checkedId == R.id.metrics_edit_radio_binary){
@@ -182,11 +185,11 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     		break;
 
         case R.id.metrics_details_button_delete:
-        	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        	AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(ctx);
 
-    	    builder.setTitle("Confirm");
-    	    builder.setMessage("Are you sure you want to delete this metric?");
-    	    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            deleteBuilder.setTitle("Confirm");
+            deleteBuilder.setMessage("Are you sure you want to delete this metric?");
+            deleteBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
     	        public void onClick(DialogInterface dialog, int which) {
     	        	DataManager dm = new DataManager(ctx);
     	        	String metricName = bundle.getString("metricName");
@@ -204,64 +207,89 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 
     	    });
 
-    	    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            deleteBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
     	        @Override
     	        public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
     	    });
 
-    	    AlertDialog alert = builder.create();
-    	    alert.show();
+    	    AlertDialog deleteAlert = deleteBuilder.create();
+            deleteAlert.show();
 
     		break;
         case R.id.metrics_details_button_archive:
             Calendar cal = Calendar.getInstance();
+            if(metric.getArch() == null) {
+                DatePickerDialog dialog = new DatePickerDialog(ctx,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int archYear, int archMonth, int archDay) {
+                                if (archive) {
+                                    Calendar archCal = Calendar.getInstance();
+                                    archCal.set(Calendar.YEAR, archYear);
+                                    archCal.set(Calendar.MONTH, archMonth);
+                                    archCal.set(Calendar.DAY_OF_MONTH, archDay);
+                                    String archDate = DateUtil.getFormattedDate(archCal.getTime());
 
-            DatePickerDialog dialog = new DatePickerDialog(ctx,
-                    new DatePickerDialog.OnDateSetListener(){
-                        @Override
-                        public void onDateSet(DatePicker view, int archYear, int archMonth, int archDay) {
-                            if(archive){
-                                Calendar archCal = Calendar.getInstance();
-                                archCal.set(Calendar.YEAR, archYear);
-                                archCal.set(Calendar.MONTH, archMonth);
-                                archCal.set(Calendar.DAY_OF_MONTH, archDay);
-                                String archDate = DateUtil.getFormattedDate(archCal.getTime());
+                                    DataManager dm = new DataManager(ctx);
+                                    String metricName = bundle.getString("metricName");
+                                    if (dm.archiveMetricByName(metricName, archDate)) {
+                                        updateView();
+                                    } else {
+                                        Toast.makeText(ctx, "Something went wrong!",
+                                                Toast.LENGTH_LONG).show();
+                                    }
 
-                                DataManager dm = new DataManager(ctx);
-                                String metricName = bundle.getString("metricName");
-                                if(dm.archiveMetricByName(metricName, archDate)){
-                                    fragmentManager.beginTransaction()
-                                            .replace(R.id.main_container, new MetricsMainFragment())
-                                            .addToBackStack(null)
-                                            .commit();
-                                }else{
-                                    Toast.makeText(ctx, "Something went wrong!",
-                                            Toast.LENGTH_LONG).show();
                                 }
-
                             }
                         }
-                    }
-                    , cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)){
-            };
+                        , cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)) {
+                };
 
-            dialog.setButton(
-                DialogInterface.BUTTON_NEGATIVE, "Cancel",
-                new DialogInterface.OnClickListener() {
+                dialog.setButton(
+                        DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                archive = false;
+                            }
+                        }
+                );
+                dialog.setButton(
+                        DialogInterface.BUTTON_POSITIVE, "Archive",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                archive = true;
+                            }
+                        });
+
+                dialog.show();
+            }else{
+                AlertDialog.Builder unarchiveBuilder = new AlertDialog.Builder(ctx);
+
+                unarchiveBuilder.setTitle("Confirm");
+                unarchiveBuilder.setMessage("Are you sure you want to unarchive this metric?");
+                unarchiveBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        archive = false;
+                        DataManager dm = new DataManager(ctx);
+                        String metricName = bundle.getString("metricName");
+                        if(dm.unarchiveMetricByName(metricName)){
+                            updateView();
+                        }else{
+                            Toast.makeText(ctx, "Something went wrong!",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        dialog.dismiss();
                     }
-                }
-            );
-            dialog.setButton(
-                DialogInterface.BUTTON_POSITIVE, "Archive",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        archive = true;
-                    }
+
                 });
 
-            dialog.show();
+                unarchiveBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
+                });
+
+                AlertDialog unarchiveAlert = unarchiveBuilder.create();
+                unarchiveAlert.show();
+            }
 
             break;
         case R.id.metrics_details_button_edit:
@@ -485,6 +513,15 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 			contentContainer.setVisibility(View.GONE);
 			emptyMsg.setVisibility(View.VISIBLE);
 		}
+
+        if(metric.getArch() != null) {
+            archiveMsg.setVisibility(View.VISIBLE);
+            archiveMsg.setText("archived as of " + metric.getArch());
+            archiveButton.setText("Restore");
+        }else{
+            archiveMsg.setVisibility(View.GONE);
+            archiveButton.setText("Archive");
+        }
     }
     
     private XYMultipleSeriesRenderer getMultipleSeriesRenderer(){
