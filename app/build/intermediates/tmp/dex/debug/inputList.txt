@@ -1,3 +1,0 @@
-/Users/ems/workspace/lifetracker/app/build/intermediates/classes/debug
-/Users/ems/workspace/lifetracker/app/build/intermediates/pre-dexed/debug/achartengine-1.1.0-09dc3a2885c8a5508de3be569acda02b98facfd0.jar
-/Users/ems/workspace/lifetracker/app/build/intermediates/pre-dexed/debug/support-v4-19.1.0-7b11cbb7dd8c246ce00a32893ba1dcf72c9c1d65.jar
