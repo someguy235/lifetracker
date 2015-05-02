@@ -52,7 +52,7 @@ public class TrackMainFragment extends Fragment {
 	
     private void updateGrid(){
     	// Load today's entries into Adapter
-        ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByDate(activeDate);
+        ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByDate(activeDate, false);
         GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
         entriesAdapter = new TrackListAdapter(ctx, entries, TrackMainFragment.this);
         gridview.setAdapter(entriesAdapter);

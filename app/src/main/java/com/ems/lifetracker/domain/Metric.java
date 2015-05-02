@@ -71,7 +71,8 @@ public class Metric {
 	}
 
     public void setArch(String arch) {
-        this.arch = arch;
+        if(arch.equals("") || arch == null)
+            this.arch = null;
     }
 
     public String getArch(){

@@ -40,18 +40,19 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry>{
     View.OnTouchListener gestureListener;
     
     public TrackListAdapter(Context context, ArrayList<MetricEntry> entries, TrackMainFragment fragment) {
-       super(context, R.layout.track_list_item, entries);
-       this.parentFragment = fragment;
-       this.entries = entries;
-       
-       //Gesture detection
-       //gestureDetector = new GestureDetector(this, new MyGestureDetector());
-       gestureDetector = new GestureDetector(new MyGestureDetector());
-       gestureListener = new View.OnTouchListener() {
-           public boolean onTouch(View v, MotionEvent event) {
-               return gestureDetector.onTouchEvent(event);
-           }
-       };
+        super(context, R.layout.track_list_item, entries);
+
+        this.parentFragment = fragment;
+        this.entries = entries;
+
+        //Gesture detection
+        //gestureDetector = new GestureDetector(this, new MyGestureDetector());
+        //gestureDetector = new GestureDetector(new MyGestureDetector());
+        //gestureListener = new View.OnTouchListener() {
+        //    public boolean onTouch(View v, MotionEvent event) {
+        //        return gestureDetector.onTouchEvent(event);
+        //    }
+        //};
        
     }
     

@@ -37,7 +37,7 @@ public class MetricsMainFragment extends Fragment implements OnClickListener{
 
         DataManager dm = new DataManager(ctx);
         ArrayList<Metric> metrics = (ArrayList<Metric>)dm.getAllMetrics();
-        
+
         if(metrics.size() > 0){
         	final TextView emptyMsg = (TextView) rootView.findViewById(R.id.metrics_main_empty_msg);
 			emptyMsg.setVisibility(View.GONE);

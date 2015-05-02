@@ -75,9 +75,7 @@ public class DataManager extends SQLiteOpenHelper{
         // Create tables again
         //this.onCreate(db);
 
-        //TODO: add 'archive date' column
         db.execSQL("ALTER TABLE "+ TABLE_METRICS +" ADD COLUMN "+ KEY_ARCH +" TEXT");
-
     }
     
     public Metric getMetricByName(String name){
@@ -108,21 +106,29 @@ public class DataManager extends SQLiteOpenHelper{
     private List<Metric> getMetrics(String type){
     	List<Metric> metrics = new ArrayList<Metric>();
     	SQLiteDatabase db = this.getReadableDatabase();
-    	//String query = null;
         Cursor cursor = null;
 
     	if(type.equals("all")){
             cursor = db.query(
                     TABLE_METRICS,
                     new String[] { KEY_ID, KEY_NAME, KEY_DESC, KEY_UNIT, KEY_TYPE, KEY_DFLT, KEY_ARCH },
-                    null, null, null, null, null, null);
+                    null, null, null, null, null, null
+            );
     	}else if(type.equals("active")){
             cursor = db.query(
                     TABLE_METRICS,
                     new String[] { KEY_ID, KEY_NAME, KEY_DESC, KEY_UNIT, KEY_TYPE, KEY_DFLT, KEY_ARCH },
                     KEY_NAME + " IN (SELECT DISTINCT("+ KEY_NAME +") FROM "+ TABLE_INSTANCES +")",
-                    null, null, null, null, null);
-    	}
+                    null, null, null, null, null
+            );
+    	}else if(type.equals("nonarchived")){
+            cursor = db.query(
+                    TABLE_METRICS,
+                    new String[] { KEY_ID, KEY_NAME, KEY_DESC, KEY_UNIT, KEY_TYPE, KEY_DFLT, KEY_ARCH },
+                    KEY_ARCH + " =='' OR "+ KEY_ARCH +" IS NULL",
+                    null, null, null, null, null
+            );
+        }
 
         if(cursor != null) {
             cursor.moveToPosition(-1);
@@ -154,6 +160,10 @@ public class DataManager extends SQLiteOpenHelper{
     public List<Metric> getAllNonEmptyMetrics(){
     	return getMetrics("active");
     }
+
+    public List<Metric> getAllNonArchivedMetrics(){
+        return getMetrics("nonarchived");
+    }
     
     public boolean addMetric(Metric metric){
     	SQLiteDatabase db = this.getWritableDatabase();
@@ -180,6 +190,7 @@ public class DataManager extends SQLiteOpenHelper{
 	    values.put(KEY_UNIT, metric.getUnit()); 
 	    values.put(KEY_TYPE, metric.getType());
 	    values.put(KEY_DFLT, metric.getDflt());
+        values.put(KEY_ARCH, metric.getArch());
     	
     	long success = db.update(
     			TABLE_METRICS, 
@@ -206,11 +217,13 @@ public class DataManager extends SQLiteOpenHelper{
     public boolean archiveMetricByName(String name, String date){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues args = new ContentValues();
+        if(date.equals(""))
+            date = null;
         args.put(KEY_ARCH, date);
 
         long success = db.update(TABLE_METRICS, args, KEY_NAME +"=?", new String[]{name});
 
-        System.out.println("name: "+ name +", date: "+ date +", success: "+ success);
+        //System.out.println("name: "+ name +", date: "+ date +", success: "+ success);
         return success >= -1;
     }
     
@@ -243,45 +256,60 @@ public class DataManager extends SQLiteOpenHelper{
     	return true;
     }
     
-    public List<MetricEntry> getEntriesByDate(String date){
+    public List<MetricEntry> getEntriesByDate(String date, boolean includeArchived){
     	SQLiteDatabase db = this.getReadableDatabase();
     	List<MetricEntry> entries = new ArrayList<MetricEntry>();
     	HashMap<String, MetricEntry> entriesHash = new HashMap<String, MetricEntry>();
     	MetricEntry entry;
-    	
-    	Cursor cursor = db.query(TABLE_INSTANCES, new String[] { 
-        		KEY_NAME, KEY_UNIT, KEY_TYPE, KEY_COUNT, KEY_DETAILS }, KEY_DATE + "=?",
-                new String[] { date }, null, null, null, null);
-    	cursor.moveToPosition(-1);
-    	
-    	while(cursor.moveToNext()){
-			entry = new MetricEntry(
-					cursor.getString(0), 
-					date, 
-					cursor.getString(1), 
-					cursor.getString(2), 
-					cursor.getDouble(3),
-					cursor.getString(4)
-					);
-			entries.add(entry);
-			entriesHash.put(entry.getName(), entry);
-    	}
-    	cursor.close();
-    	db.close();
-    	List<Metric> metrics = getAllMetrics();
-    	for(Metric m : metrics){
-    		if(!entriesHash.containsKey(m.getName())){
-    			entries.add(new MetricEntry(
-    					m.getName(),
-    					date,
-    					m.getUnit(),
-    					m.getType(),
-    					m.getDflt(),
-    					null
-    					)
-    			);
-    		}
-    	}
+        String queryString;
+
+        if(includeArchived) {
+            queryString = KEY_DATE + "=?";
+        }else{
+            queryString = KEY_DATE + "=? AND "+ KEY_NAME +" in (SELECT "+ KEY_NAME +" FROM "+ TABLE_METRICS +" WHERE "+ KEY_ARCH +" IS null)";
+        }
+
+    	Cursor cursor = db.query(
+                TABLE_INSTANCES,
+                new String[] { KEY_NAME, KEY_UNIT, KEY_TYPE, KEY_COUNT, KEY_DETAILS },
+                queryString,
+                new String[] { date },
+                null, null, null, null);
+
+        if(cursor != null) {
+            cursor.moveToPosition(-1);
+
+            while (cursor.moveToNext()) {
+                entry = new MetricEntry(
+                        cursor.getString(0),
+                        date,
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getDouble(3),
+                        cursor.getString(4)
+                );
+                entries.add(entry);
+                entriesHash.put(entry.getName(), entry);
+            }
+            cursor.close();
+            db.close();
+
+            // add metric with default values if no entry exists
+            List<Metric> metrics = getAllMetrics();
+            for (Metric m : metrics) {
+                if (!entriesHash.containsKey(m.getName()) && (m.getArch() == null || m.getArch().compareTo(date) > 0)) {
+                    entries.add(new MetricEntry(
+                                    m.getName(),
+                                    date,
+                                    m.getUnit(),
+                                    m.getType(),
+                                    m.getDflt(),
+                                    null
+                            )
+                    );
+                }
+            }
+        }
     	
     	return entries;
     }
