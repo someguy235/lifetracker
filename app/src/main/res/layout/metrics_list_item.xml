@@ -45,6 +45,7 @@
         android:id="@+id/metrics_list_archive_image"
         android:layout_height="match_parent"
         android:layout_width="0dp"
+        android:padding="5dp"
         android:src="@drawable/box"
         android:layout_weight="1"/>
 </LinearLayout>

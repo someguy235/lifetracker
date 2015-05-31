@@ -21,13 +21,17 @@ public class Metric {
 		this.dflt = dflt;
 	}
 
-    public Metric(String name, String desc, String unit, String type, double dflt, String arch){
+    public Metric(String name, String desc, String unit, String type, double dflt, String arch) {
         this.name = name;
         this.desc = desc;
         this.unit = unit;
         this.type = type;
         this.dflt = dflt;
-        this.arch = arch;
+        if (arch == null || arch.equals("")){
+            this.arch = null;
+        }else {
+            this.arch = arch;
+        }
     }
 	
 	public String getName() {

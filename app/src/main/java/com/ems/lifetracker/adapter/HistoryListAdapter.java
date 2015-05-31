@@ -23,20 +23,22 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
 	private HistoryMainFragment parentFragment;
 	
     public HistoryListAdapter(Context context, ArrayList<Metric> metrics, HistoryMainFragment fragment) {
-       super(context, R.layout.history_list_item, metrics);
+        super(context, R.layout.history_list_item, metrics);
        
-       this.parentFragment = (HistoryMainFragment)fragment;
-       this.activeMetrics = new ArrayList<Metric>();
-       this.activeAverages = new ArrayList<Metric>();
-       this.allMetrics = new HashMap<String, Metric>();
+        this.parentFragment = (HistoryMainFragment)fragment;
+        this.activeMetrics = new ArrayList<Metric>();
+        this.activeAverages = new ArrayList<Metric>();
+        this.allMetrics = new HashMap<String, Metric>();
 
-       for(Metric m : metrics){
-    	   if(!m.getName().equals("All")){
-    		   activeMetrics.add(m);
-    		   //activeAverages.add(m);
-    		   allMetrics.put(m.getName(), m);
-    	   }
-       }
+        for(Metric m : metrics){
+            if(!m.getName().equals("All")){
+                allMetrics.put(m.getName(), m);
+                if(m.getArch() == null) {
+                    activeMetrics.add(m);
+                    //activeAverages.add(m);
+                }
+            }
+        }
     }
 
     public ArrayList<Metric> getActiveMetrics(){
@@ -65,7 +67,7 @@ public class HistoryListAdapter extends ArrayAdapter<Metric> {
     	}else{
     		toggleButton.setChecked(false);
     	}
-    	
+
     	toggleButton.setOnClickListener(new OnClickListener(){
         	private final HistoryMainFragment eParent = parentFragment;
         	@Override

@@ -53,8 +53,11 @@ public class MetricsListAdapter extends ArrayAdapter<Metric> {
     	    mImg.setImageResource(R.drawable.edit);
         }
 
-        if(metric.getArch() == null || metric.getArch().equals(""))
+        if(metric.getArch() == null) {
             mArchImg.setVisibility(View.GONE);
+        }else{
+            mArchImg.setVisibility(View.VISIBLE);
+        }
 
         // Return the completed view to render on screen
         return convertView;

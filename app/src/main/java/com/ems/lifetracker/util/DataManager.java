@@ -1,7 +1,6 @@
 package com.ems.lifetracker.util;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -102,7 +101,13 @@ public class DataManager extends SQLiteOpenHelper{
     	db.close();
     	return metric;
     }
-    
+
+    /*
+     * Find and return all metrics of a certain type:
+     * 1) all: every metric that exists for the user
+     * 2) active: every metric for which an entry has been saved
+     * 3) nonarchived: every metric that has not been archived (doesn't have an archive date)
+     */
     private List<Metric> getMetrics(String type){
     	List<Metric> metrics = new ArrayList<Metric>();
     	SQLiteDatabase db = this.getReadableDatabase();
@@ -337,7 +342,7 @@ public class DataManager extends SQLiteOpenHelper{
 
         Metric metric = getMetricByName(name);
         String maxDate = DateUtil.getFormattedDate(null);
-        if(metric.getArch() != null && !metric.getArch().equals("")){
+        if(metric.getArch() != null){
             maxDate = metric.getArch();
         }
 
@@ -345,7 +350,7 @@ public class DataManager extends SQLiteOpenHelper{
         Cursor cursor = db.query(
                 TABLE_INSTANCES,
                 new String[] { KEY_DATE, KEY_UNIT, KEY_TYPE, KEY_COUNT, KEY_DETAILS },
-                KEY_NAME + "=? AND " + KEY_DATE + ">? AND "+ KEY_DATE +"<?",
+                KEY_NAME + "=? AND " + KEY_DATE + ">? AND "+ KEY_DATE +"<=?",
                 new String[] { name, minDate, maxDate }, null, null, KEY_DATE, null);
 
     	cursor.moveToPosition(-1);
