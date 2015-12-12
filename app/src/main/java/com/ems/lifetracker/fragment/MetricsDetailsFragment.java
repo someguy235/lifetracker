@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -84,8 +85,8 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 
 	private XYMultipleSeriesDataset dataset;
 	private XYMultipleSeriesRenderer renderer;
-	private XYSeriesRenderer ravg, rtrend;
-	private XYSeries avgSeries, trendSeries;
+	private XYSeriesRenderer ravg, rtrend7, rtrend30;
+	private XYSeries avgSeries, trend7Series, trend30Series;
 	
     public MetricsDetailsFragment(){}
      
@@ -165,18 +166,38 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     	    	mChartView.repaint();
     		}
     		break;
-    	case R.id.metrics_details_button_trend:
-    		ToggleButton trendButton = (ToggleButton) v;
-    		if(trendButton.isChecked()){
-    	    	renderer.addSeriesRenderer(rtrend);
-    	    	dataset.addSeries(trendSeries);
+    	case R.id.metrics_details_button_trend7:
+    		ToggleButton trend7Button = (ToggleButton) v;
+    		if(trend7Button.isChecked()){
+                System.out.println("adding series...");
+    	    	renderer.addSeriesRenderer(rtrend7);
+                System.out.println("renderer added, adding series...");
+    	    	dataset.addSeries(trend7Series);
+                System.out.println("series added, repainting...");
     	    	mChartView.repaint();
+                System.out.println("repainted");
     		}else{
-    	    	renderer.removeSeriesRenderer(rtrend);
-    	    	dataset.removeSeries(trendSeries);
+                System.out.println("removing renderer...");
+    	    	renderer.removeSeriesRenderer(rtrend7);
+                System.out.println("renderer removed, removing series...");
+    	    	dataset.removeSeries(trend7Series);
+                System.out.println("series removed, repainting...");
     	    	mChartView.repaint();
+                System.out.println("repainted");
     		}
     		break;
+        case R.id.metrics_details_button_trend30:
+            ToggleButton trend30Button = (ToggleButton) v;
+            if(trend30Button.isChecked()){
+                renderer.addSeriesRenderer(rtrend30);
+                dataset.addSeries(trend30Series);
+                mChartView.repaint();
+            }else{
+                renderer.removeSeriesRenderer(rtrend30);
+                dataset.removeSeries(trend30Series);
+                mChartView.repaint();
+            }
+            break;
         case R.id.metrics_details_button_cancel:
     		fragmentManager.beginTransaction()
         		.replace(R.id.main_container, new MetricsMainFragment())
@@ -424,7 +445,9 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	    	XYSeriesRenderer r = getSeriesRenderer();
 	        renderer.addSeriesRenderer(r);
 	        renderer.setXAxisMin(DateUtil.dateFromString(DateUtil.getOffsetDate(entries.get(0).getDate(), -1)).getTime() + 43200000);
-	        renderer.setXAxisMax(DateUtil.dateFromString(DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), 1)).getTime() - 43200000);
+            double maxDate = DateUtil.dateFromString( (entries.get(entries.size() - 1)).getDate() ).getTime();
+            renderer.setXAxisMax(maxDate + 43200000);
+	        //renderer.setXAxisMax(DateUtil.dateFromString(DateUtil.getOffsetDate(DateUtil.getFormattedDate(null), 1)).getTime() - 43200000);
 	        
 	        // Set up average renderer
 	    	ravg = getSeriesRenderer();
@@ -432,15 +455,22 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	    	ravg.setFillPoints(false);
 	    	renderer.addSeriesRenderer(ravg);
 	    	
-	    	// Set up trend renderer
-	    	rtrend = getSeriesRenderer();
-	    	rtrend.setColor(ctx.getResources().getColor(R.color.lt_yellow));
-	    	rtrend.setFillPoints(false);
-	    	renderer.addSeriesRenderer(rtrend);
-	    	
-	        XYSeries series = new XYSeries(metric.getUnit());
+	    	// Set up 7 day trend renderer
+	    	rtrend7 = getSeriesRenderer();
+	    	rtrend7.setColor(ctx.getResources().getColor(R.color.lt_yellow));
+	    	rtrend7.setFillPoints(false);
+	    	renderer.addSeriesRenderer(rtrend7);
+
+            // Set up 30 day trend renderer
+            rtrend30 = getSeriesRenderer();
+            rtrend30.setColor(ctx.getResources().getColor(R.color.lt_yellow));
+            rtrend30.setFillPoints(false);
+            renderer.addSeriesRenderer(rtrend30);
+
+            XYSeries series = new XYSeries(metric.getUnit());
 	        avgSeries = new XYSeries("average");
-	        trendSeries = new XYSeries("trend");
+	        trend7Series = new XYSeries("trend7");
+            trend30Series = new XYSeries("trend30");
 	    	
 	        avg = 0.0;
 	    	for(MetricEntry e : entries){
@@ -450,19 +480,42 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	
 	    	double ymin = entries.get(0).getCount();
 	        double ymax = entries.get(0).getCount();
-	        double trend = 0.0;
+	        double trend7 = 0.0;
+            double trend30 = 0.0;
+            long entryDate;
+            LinkedList<Double> trend7Queue = new LinkedList<Double>();
+            LinkedList<Double> trend30Queue = new LinkedList<Double>();
+
 	    	for(int i=0; i<entries.size(); i++){
 	    		MetricEntry e = entries.get(i);
-	    		
-	    		long t = DateUtil.dateFromString(e.getDate()).getTime();
-	        	trend += e.getCount();
-	        	
-	    		series.add(t, e.getCount());
-	        	avgSeries.add(t, avg);
-	        	trendSeries.add(t, trend/(i+1));
-	        	
+
+                trend7Queue.add(e.getCount());
+                trend30Queue.add(e.getCount());
+
+	    		entryDate = DateUtil.dateFromString(e.getDate()).getTime();
+	    		series.add(entryDate, e.getCount());
+                avgSeries.add(entryDate, avg);
+
+                if(i >= 7){
+                    trend7 = 0.0;
+                    for(int j=0; j<trend7Queue.size(); j++){
+                        trend7 += (7.0-j)/28.0 * trend7Queue.get(7-j);
+                    }
+                    trend7Series.add(entryDate, trend7);
+                    trend7Queue.remove();
+                }
+
+                if(i >= 30){
+                    trend30 = 0.0;
+                    for(int j=0; j<trend30Queue.size(); j++){
+                        trend30 += (30.0-j)/435.0 * trend30Queue.get(30-j);
+                    }
+                    trend30Series.add(entryDate, trend30);
+                    trend30Queue.remove();
+                }
+
 	        	if((entries.size() <= 4) || (i % (entries.size() / 3) == 1)){
-	        		renderer.addXTextLabel(t, DateUtil.getFormattedDay(e.getDate()));
+	        		renderer.addXTextLabel(entryDate, DateUtil.getFormattedDay(e.getDate()));
 	        	}
 	        	if(e.getCount() >= ymax) ymax = e.getCount();
 	        	if(e.getCount() <= ymin) ymin = e.getCount();
@@ -470,24 +523,25 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	        
 	        dataset.addSeries(series);
 	        dataset.addSeries(avgSeries);
-	        dataset.addSeries(trendSeries);
+	        dataset.addSeries(trend7Series);
+            dataset.addSeries(trend30Series);
 	        
 	        if(metric.getType().equals("count")){
 		        renderer.setYAxisMin(ymin * 0.9);
 		        renderer.setYAxisMax(ymax * 1.1);
 		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
-		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
+		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
 	        }else if(metric.getType().equals("increment")){
 		        renderer.setYAxisMin(ymin * 0.9);
 		        renderer.setYAxisMax(ymax * 1.1);
 		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
-		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
+		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
 	        }else if(metric.getType().equals("binary")){
 	        	renderer.addYTextLabel(0, "no");
 	        	renderer.addYTextLabel(1, "yes");
 		        renderer.setYLabels(0);
 		        mChartView = ChartFactory.getCombinedXYChartView(ctx, dataset, renderer, 
-		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
+		        		new String[] { BarChart.TYPE, LineChart.TYPE, LineChart.TYPE, LineChart.TYPE } );
 	        }
 	
 	        chartLayout.removeAllViews();
@@ -504,11 +558,17 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	        avgButton.setTextOn("Avg: "+ new DecimalFormat("#.##").format(avg));
 	        avgButton.setTextOff("Avg");
 	        
-	        ToggleButton trendButton = (ToggleButton) rootView.findViewById(R.id.metrics_details_button_trend);
-	        trendButton.setOnClickListener(this);
-	        trendButton.setText("Trend");
-	        trendButton.setTextOn("Trend");
-	        trendButton.setTextOff("Trend");
+	        ToggleButton trend7Button = (ToggleButton) rootView.findViewById(R.id.metrics_details_button_trend7);
+	        trend7Button.setOnClickListener(this);
+	        trend7Button.setText("7d Trend");
+	        trend7Button.setTextOn("7d Trend");
+	        trend7Button.setTextOff("7d Trend");
+
+            ToggleButton trend30Button = (ToggleButton) rootView.findViewById(R.id.metrics_details_button_trend30);
+            trend30Button.setOnClickListener(this);
+            trend30Button.setText("30d Trend");
+            trend30Button.setTextOn("30d Trend");
+            trend30Button.setTextOff("30d Trend");
 		}else{
 			contentContainer.setVisibility(View.GONE);
 			emptyMsg.setVisibility(View.VISIBLE);

@@ -236,7 +236,8 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry>{
 					   }
 				   });
 				   if(e.getCount() != 0.0){
-					   input.setText(""+ e.getCount());
+					   //input.setText(""+ e.getCount());
+                       input.setText((e.getCount() % 1.0 == 0.0) ? ""+ (int)e.getCount() : ""+ e.getCount());
 					   input.setSelection(input.getText().length());
 				   }
 				   

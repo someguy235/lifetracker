@@ -20,6 +20,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 import com.ems.lifetracker.util.DataManager;
 import com.ems.lifetracker.util.DateUtil;
@@ -49,8 +50,14 @@ public class TrackMainFragment extends Fragment {
 		activeDay = DateUtil.getFormattedDay(activeDate);
 		updateGrid();	
 	}
+
+    public void dateReset(){
+        activeDate = DateUtil.getFormattedDate(null);
+        activeDay = DateUtil.getFormattedDay(activeDate);
+        updateGrid();
+    }
 	
-    private void updateGrid(){
+    public void updateGrid(){
     	// Load today's entries into Adapter
         ArrayList<MetricEntry> entries = (ArrayList<MetricEntry>)dm.getEntriesByDate(activeDate, false);
         GridView gridview = (GridView) rootView.findViewById(R.id.track_main_gridview);
@@ -68,7 +75,9 @@ public class TrackMainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-  
+
+        //Log.i("onCreateView", "created");
+
         rootView = inflater.inflate(R.layout.fragment_track_main, container, false);
         ctx = getActivity();
     	((MainActivity)ctx).showActionBarMenu(false);
@@ -81,9 +90,10 @@ public class TrackMainFragment extends Fragment {
         datePicker = (TextView) rootView.findViewById(R.id.track_list_date);
         datePicker.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	activeDate = DateUtil.getFormattedDate(null);
-                activeDay = DateUtil.getFormattedDay(activeDate);
-                updateGrid();
+                dateReset();
+            	//activeDate = DateUtil.getFormattedDate(null);
+                //activeDay = DateUtil.getFormattedDay(activeDate);
+                //updateGrid();
             }
         });
 

@@ -20,6 +20,7 @@ public class MainActivity extends Activity
 //	private Menu menu;
 	private boolean showMenu = false;
 	private String visibleChart = null;
+    private int position;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -54,6 +55,18 @@ public class MainActivity extends Activity
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        // put your code here...
+        if(this.position == 0) {
+            FragmentManager fragmentManager = getFragmentManager();
+            TrackMainFragment fragment = (TrackMainFragment)fragmentManager.findFragmentByTag("CURRENT_FRAGMENT_TAG");
+            fragment.updateGrid();
+            //System.out.println("resumed");
+        }
+    }
+
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
@@ -72,8 +85,9 @@ public class MainActivity extends Activity
         		fragment = new HistoryMainFragment();
         		break;
         }
+        this.position = position;
         fragmentManager.beginTransaction()
-        	.replace(R.id.main_container, fragment)
+        	.replace(R.id.main_container, fragment, "CURRENT_FRAGMENT_TAG")
         	.addToBackStack(null)
         	.commit();
     } 

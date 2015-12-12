@@ -195,17 +195,22 @@
 	        android:layout_weight=".15" >
 	        <ToggleButton
 		        android:id="@+id/metrics_details_button_average"
-   	   	        style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+   	   	        android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp" 
                 android:checked="true" />
+            <!--style="?android:attr/buttonBarButtonStyle"-->
 	        <ToggleButton
-		        android:id="@+id/metrics_details_button_trend"
-   	   	        style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+		        android:id="@+id/metrics_details_button_trend7"
+   	   	        android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp" 
+                android:checked="true" />
+            <ToggleButton
+                android:id="@+id/metrics_details_button_trend30"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:checked="true" />
 		</LinearLayout>
 		<LinearLayout
