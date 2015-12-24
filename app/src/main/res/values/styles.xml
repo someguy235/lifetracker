@@ -4,42 +4,52 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Holo">
+    <!--<style name="AppBaseTheme" parent="android:Theme.Material">-->
+    <!--<style name="AppBaseTheme" parent="android:Theme.Holo">-->
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-    </style>
+    <!--</style>-->
 
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
+
+
+    <!--<style name="AppTheme" parent="AppBaseTheme">-->
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
-    </style>
+    <!--</style>-->
 
-    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
-        <item name="android:src">@drawable/clock</item>
-    </style>
-    
-    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/default_actionbar_background</item>
-    </style>
-    
+
+
+    <!-- theme colors -->
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#BBDEFB</color>
+    <color name="accent">#607D8B</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#B6B6B6</color>
+
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    
-<!--     <color name="default_actionbar_background">#002b36</color> -->
-<!--     <color name="default_actionbar_background">#294860</color> -->
-<!-- 	<color name="default_actionbar_background">#001C24</color> -->
-		<color name="default_actionbar_background">#586e75</color>
-<!-- 	<color name="default_background">#001C24</color> -->
-<!-- 	<color name="default_background">#21384A</color> -->
-		<color name="default_background">#002b36</color>
-    
-<!-- 	udacity blue: 294860 -->
-<!-- 	darkened udacity blue: 21384A -->
+
+    <!-- chart line colors -->
+    <color name="lt_red">#dc322f</color>
+    <color name="lt_orange">#cb4b16</color>
+    <color name="lt_cyan">#2aa198</color>
+    <color name="lt_yellow">#b58900</color>
+    <color name="lt_green">#859900</color>
+    <color name="lt_blue">#268bd2</color>
+    <color name="lt_violet">#6c71c4</color>
+    <color name="lt_magenta">#d33682</color>
+
+    <color name="pale_red">#E8A5A9</color>
+    <color name="pale_green">#A7CFB1</color>
+
+    <!-- styles used in app areas -->
+    <color name="default_actionbar_background">@color/primary_dark</color>
+    <color name="default_background">@color/primary</color>
 
     <color name="tile_default">@color/lt_blue</color>
 	<color name="tile_changed">@color/lt_red</color>
@@ -47,18 +57,8 @@
 	<color name="save_default">@color/black</color>
 	<color name="save_changed">@color/lt_red</color>
 	<color name="save_saved">@color/lt_green</color>
-	
-	<color name="lt_red">#dc322f</color>
-	<color name="lt_orange">#cb4b16</color>
-	<color name="lt_cyan">#2aa198</color>	
-	<color name="lt_yellow">#b58900</color>
-	<color name="lt_green">#859900</color>
-    <color name="lt_blue">#268bd2</color>
-	<color name="lt_violet">#6c71c4</color>
-	<color name="lt_magenta">#d33682</color>
-	
-	<color name="pale_red">#E8A5A9</color>
-	<color name="pale_green">#A7CFB1</color>
-	
+
+    <color name="activated_background">@color/primary</color>
+
 	
 </resources>

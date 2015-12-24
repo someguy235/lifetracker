@@ -41,7 +41,7 @@
     <!-- Metrics Details -->
     <string name="metrics_details_button_cancel">Cancel</string>
     <string name="metrics_details_button_edit">Edit</string>
-    <string name="metrics_details_button_archive">Archive</string>
+    <string name="metrics_details_button_archive">Archive </string>
     <string name="metrics_details_button_delete">Delete</string>
     <string name="metrics_details_button_editcancel">Cancel</string>
     <string name="metrics_details_button_save">Save</string>

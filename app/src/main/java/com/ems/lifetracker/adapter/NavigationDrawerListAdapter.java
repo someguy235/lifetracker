@@ -16,12 +16,17 @@ import com.ems.lifetracker.R;
 
 public class NavigationDrawerListAdapter extends BaseAdapter {
 
+    private int selectedItem = 0;
     private Context context;
     private ArrayList<NavigationDrawerItem> navDrawerItems;
 
     public NavigationDrawerListAdapter(Context context, ArrayList<NavigationDrawerItem> navDrawerItems){
         this.context = context;
         this.navDrawerItems = navDrawerItems;
+    }
+
+    public void setSelectedItem(int position){
+        this.selectedItem = position;
     }
 
     @Override
@@ -52,6 +57,12 @@ public class NavigationDrawerListAdapter extends BaseAdapter {
 
         imgIcon.setImageResource(navDrawerItems.get(position).getIcon());        
         txtTitle.setText(navDrawerItems.get(position).getTitle());
+
+        if(selectedItem == position){
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.activated_background));
+        }else{
+            convertView.setBackgroundColor(0x00000000);
+        }
 
         return convertView;
     }

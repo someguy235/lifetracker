@@ -169,21 +169,13 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     	case R.id.metrics_details_button_trend7:
     		ToggleButton trend7Button = (ToggleButton) v;
     		if(trend7Button.isChecked()){
-                System.out.println("adding series...");
     	    	renderer.addSeriesRenderer(rtrend7);
-                System.out.println("renderer added, adding series...");
     	    	dataset.addSeries(trend7Series);
-                System.out.println("series added, repainting...");
     	    	mChartView.repaint();
-                System.out.println("repainted");
     		}else{
-                System.out.println("removing renderer...");
     	    	renderer.removeSeriesRenderer(rtrend7);
-                System.out.println("renderer removed, removing series...");
     	    	dataset.removeSeries(trend7Series);
-                System.out.println("series removed, repainting...");
     	    	mChartView.repaint();
-                System.out.println("repainted");
     		}
     		break;
         case R.id.metrics_details_button_trend30:
@@ -244,43 +236,25 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int archYear, int archMonth, int archDay) {
-                                if (archive) {
-                                    Calendar archCal = Calendar.getInstance();
-                                    archCal.set(Calendar.YEAR, archYear);
-                                    archCal.set(Calendar.MONTH, archMonth);
-                                    archCal.set(Calendar.DAY_OF_MONTH, archDay);
-                                    String archDate = DateUtil.getFormattedDate(archCal.getTime());
-
-                                    DataManager dm = new DataManager(ctx);
-                                    String metricName = bundle.getString("metricName");
-                                    if (dm.archiveMetricByName(metricName, archDate)) {
-                                        updateView();
-                                    } else {
-                                        Toast.makeText(ctx, "Something went wrong!",
-                                                Toast.LENGTH_LONG).show();
-                                    }
-
-                                }
+								System.out.println("onDateSet ");
+								Calendar archCal = Calendar.getInstance();
+								archCal.set(Calendar.YEAR, archYear);
+								archCal.set(Calendar.MONTH, archMonth);
+								archCal.set(Calendar.DAY_OF_MONTH, archDay);
+								String archDate = DateUtil.getFormattedDate(archCal.getTime());
+								System.out.println("archDate: "+ archDate);
+								DataManager dm = new DataManager(ctx);
+								String metricName = bundle.getString("metricName");
+								if (dm.archiveMetricByName(metricName, archDate)) {
+									updateView();
+								} else {
+									Toast.makeText(ctx, "Something went wrong!",
+											Toast.LENGTH_LONG).show();
+								}
                             }
                         }
                         , cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)) {
                 };
-
-                dialog.setButton(
-                        DialogInterface.BUTTON_NEGATIVE, "Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                archive = false;
-                            }
-                        }
-                );
-                dialog.setButton(
-                        DialogInterface.BUTTON_POSITIVE, "Archive",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                archive = true;
-                            }
-                        });
 
                 dialog.show();
             }else{
