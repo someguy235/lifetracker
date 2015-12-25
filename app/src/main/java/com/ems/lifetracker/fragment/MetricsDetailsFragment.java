@@ -479,6 +479,8 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
                 if(i >= 7){
                     trend7 = 0.0;
                     for(int j=0; j<trend7Queue.size(); j++){
+						//weight days further away proportionally less
+						//7+6+5+4+3+2+1=28
                         trend7 += (7.0-j)/28.0 * trend7Queue.get(7-j);
                     }
                     trend7Series.add(entryDate, trend7);
@@ -488,7 +490,9 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
                 if(i >= 30){
                     trend30 = 0.0;
                     for(int j=0; j<trend30Queue.size(); j++){
-                        trend30 += (30.0-j)/435.0 * trend30Queue.get(30-j);
+						//weight days further away proportionally less
+						//30+29+28+...+1=465
+                        trend30 += (30.0-j)/465.0 * trend30Queue.get(30-j);
                     }
                     trend30Series.add(entryDate, trend30);
                     trend30Queue.remove();
