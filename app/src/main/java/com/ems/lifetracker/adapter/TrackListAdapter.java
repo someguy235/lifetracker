@@ -210,11 +210,15 @@ public class TrackListAdapter extends ArrayAdapter<MetricEntry>{
 				   builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
 				       @Override
 				       public void onClick(DialogInterface dialog, int which) {
-				    	   e.setCount(Double.parseDouble(input.getText().toString()));
-						   TextView mCount = (TextView)((View)v.getTag()).findViewById(R.id.track_list_count_item_count);
-						   mCount.setText((e.getCount() % 1.0 == 0.0) ? ""+ (int)e.getCount() : ""+ e.getCount());
-						   ((View)v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
-						   updated.add(ePos);
+						   try{
+							   e.setCount(Double.parseDouble(input.getText().toString()));
+							   TextView mCount = (TextView) ((View) v.getTag()).findViewById(R.id.track_list_count_item_count);
+							   mCount.setText((e.getCount() % 1.0 == 0.0) ? "" + (int) e.getCount() : "" + e.getCount());
+							   ((View) v.getTag()).setBackgroundColor(getContext().getResources().getColor(R.color.tile_changed));
+							   updated.add(ePos);
+						   }catch(NumberFormatException nfe){
+							   //isn't a number, don't update anything
+						   }
 				       }
 				   });
 				   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

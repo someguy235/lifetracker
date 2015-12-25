@@ -40,7 +40,8 @@
     <color name="lt_cyan">#2aa198</color>
     <color name="lt_yellow">#b58900</color>
     <color name="lt_green">#859900</color>
-    <color name="lt_blue">#268bd2</color>
+    <!--<color name="lt_blue">#268bd2</color>-->
+    <color name="lt_blue">#2196F3</color>
     <color name="lt_violet">#6c71c4</color>
     <color name="lt_magenta">#d33682</color>
 
@@ -58,7 +59,7 @@
 	<color name="save_changed">@color/lt_red</color>
 	<color name="save_saved">@color/lt_green</color>
 
-    <color name="activated_background">@color/primary</color>
+    <color name="activated_background">@color/accent</color>
 
 	
 </resources>
