@@ -48,8 +48,8 @@
     <color name="pale_green">#A7CFB1</color>
 
     <!-- styles used in app areas -->
-    <color name="default_actionbar_background">@color/primary_dark</color>
-    <color name="default_background">@color/primary</color>
+    <!--<color name="default_actionbar_background">@color/primary_dark</color>-->
+    <color name="default_background">@color/primary_text</color>
 
     <color name="tile_default">@color/lt_blue</color>
 	<color name="tile_changed">@color/lt_red</color>

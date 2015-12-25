@@ -23,8 +23,9 @@
         <item name="android:activatedBackgroundIndicator">@drawable/activated_background</item>
     </style>
    -->
+    <!--
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/default_actionbar_background</item>
     </style>
-
+    -->
 </resources>
