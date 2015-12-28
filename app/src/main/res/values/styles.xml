@@ -31,6 +31,8 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
 
+    <color name="lt_grey">#424242</color>
+    <color name="lt_blue_grey">#263238</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
@@ -40,7 +42,6 @@
     <color name="lt_cyan">#2aa198</color>
     <color name="lt_yellow">#b58900</color>
     <color name="lt_green">#859900</color>
-    <!--<color name="lt_blue">#268bd2</color>-->
     <color name="lt_blue">#2196F3</color>
     <color name="lt_violet">#6c71c4</color>
     <color name="lt_magenta">#d33682</color>
@@ -49,8 +50,7 @@
     <color name="pale_green">#A7CFB1</color>
 
     <!-- styles used in app areas -->
-    <!--<color name="default_actionbar_background">@color/primary_dark</color>-->
-    <color name="default_background">@color/primary_text</color>
+    <color name="default_background">@color/lt_blue_grey</color>
 
     <color name="tile_default">@color/lt_blue</color>
 	<color name="tile_changed">@color/lt_red</color>

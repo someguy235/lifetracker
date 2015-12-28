@@ -82,10 +82,10 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
 	
 	private LinearLayout defaultButtons, 
 		editButtons,
-		buttonContainer,
 		contentContainer,
 		chartLayout;
-	private RelativeLayout editContainer;
+	private RelativeLayout editContainer,
+		buttonContainer;
 
 	private XYMultipleSeriesDataset dataset;
 	private XYMultipleSeriesRenderer renderer;
@@ -104,7 +104,8 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
     	rootView = inflater.inflate(R.layout.fragment_metrics_details, container, false);
     	defaultButtons = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_defaultbuttons);
     	editButtons = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_editbuttons);
-    	buttonContainer = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_buttonscontainer);
+    	//buttonContainer = (LinearLayout) rootView.findViewById(R.id.metrics_details_layout_buttonscontainer);
+		buttonContainer = (RelativeLayout) rootView.findViewById(R.id.metrics_details_layout_buttonscontainer);
     	contentContainer = (LinearLayout) rootView.findViewById(R.id.metrics_details_content);
     	editContainer = (RelativeLayout) rootView.findViewById(R.id.metrics_details_edit_container);
     	emptyMsg = (TextView) rootView.findViewById(R.id.metrics_details_empty_msg);
@@ -138,7 +139,7 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
             	}
             }
         });
-        
+
         bundle = this.getArguments();
     	ctx = getActivity();
     	((MainActivity)ctx).showActionBarMenu(true);
@@ -243,13 +244,11 @@ public class MetricsDetailsFragment extends Fragment implements OnClickListener{
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int archYear, int archMonth, int archDay) {
-								System.out.println("onDateSet ");
 								Calendar archCal = Calendar.getInstance();
 								archCal.set(Calendar.YEAR, archYear);
 								archCal.set(Calendar.MONTH, archMonth);
 								archCal.set(Calendar.DAY_OF_MONTH, archDay);
 								String archDate = DateUtil.getFormattedDate(archCal.getTime());
-								System.out.println("archDate: "+ archDate);
 								DataManager dm = new DataManager(ctx);
 								String metricName = bundle.getString("metricName");
 								if (dm.archiveMetricByName(metricName, archDate)) {

@@ -224,7 +224,7 @@
 			        android:layout_width="match_parent" />
     	</LinearLayout>
     </LinearLayout>
-    <LinearLayout 
+    <RelativeLayout
         android:id="@+id/metrics_details_layout_buttonscontainer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -234,61 +234,57 @@
 	    <LinearLayout
 	        style="?android:attr/buttonBarStyle"
 	        android:id="@+id/metrics_details_layout_defaultbuttons"
-	        android:layout_width="fill_parent"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
 	        android:orientation="horizontal"
-	        android:weightSum="4" >
+			>
 	   	    <Button
 	   	        style="?android:attr/buttonBarButtonStyle"
 		        android:id="@+id/metrics_details_button_cancel"
-		        android:layout_width="0dp"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-	            android:layout_weight="1"
 		        android:text="@string/metrics_details_button_cancel" />
 	       	<Button
 		        style="?android:attr/buttonBarButtonStyle"
 		        android:id="@+id/metrics_details_button_edit"
-		        android:layout_width="0dp"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-	            android:layout_weight="1"
 		        android:text="@string/metrics_details_button_edit" />
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/metrics_details_button_archive"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/metrics_details_button_archive" />
 			<Button
 		        style="?android:attr/buttonBarButtonStyle"
 		        android:id="@+id/metrics_details_button_delete"
-		        android:layout_width="0dp"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-	            android:layout_weight="1"
 		        android:text="@string/metrics_details_button_delete" />
 		</LinearLayout>
 		<LinearLayout
 	        style="?android:attr/buttonBarStyle"
 	        android:id="@+id/metrics_details_layout_editbuttons"
-	        android:layout_width="fill_parent"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
 	        android:orientation="horizontal"
 	        android:visibility="gone"
-	        android:weightSum="2" >
+			>
 	   	    <Button
 	   	        style="?android:attr/buttonBarButtonStyle"
 		        android:id="@+id/metrics_details_button_editcancel"
-		        android:layout_width="0dp"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-	            android:layout_weight="1"
 		        android:text="@string/metrics_details_button_editcancel" />
 	       	<Button
 		        style="?android:attr/buttonBarButtonStyle"
 		        android:id="@+id/metrics_details_button_save"
-		        android:layout_width="0dp"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-	            android:layout_weight="1"
 		        android:text="@string/metrics_details_button_save" />
 		</LinearLayout>
-	</LinearLayout>
+	</RelativeLayout>
 </RelativeLayout>
