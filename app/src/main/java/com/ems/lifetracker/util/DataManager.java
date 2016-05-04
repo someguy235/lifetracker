@@ -1,5 +1,10 @@
 package com.ems.lifetracker.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,6 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 
 import com.ems.lifetracker.domain.*;
 
@@ -74,7 +80,7 @@ public class DataManager extends SQLiteOpenHelper{
         // Create tables again
         //this.onCreate(db);
 
-        db.execSQL("ALTER TABLE "+ TABLE_METRICS +" ADD COLUMN "+ KEY_ARCH +" TEXT");
+        db.execSQL("ALTER TABLE " + TABLE_METRICS + " ADD COLUMN " + KEY_ARCH + " TEXT");
     }
     
     public Metric getMetricByName(String name){
@@ -211,7 +217,7 @@ public class DataManager extends SQLiteOpenHelper{
     public boolean deleteMetricByName(String name){
     	SQLiteDatabase db = this.getWritableDatabase();
     	
-		long success = db.delete(TABLE_METRICS, KEY_NAME + "='" + name +"'", null);
+		long success = db.delete(TABLE_METRICS, KEY_NAME + "='" + name + "'", null);
 		if(success >= -1){
 			success = db.delete(TABLE_INSTANCES, KEY_NAME + "='" + name +"'", null);
 		}
@@ -397,5 +403,73 @@ public class DataManager extends SQLiteOpenHelper{
     	}
     	
     	return entries;
+    }
+
+    private static String DB_FILEPATH = "/data/data/com.ems.lifetracker/databases/"+ DATABASE_NAME +"";
+    private static String DB_FILE_EXPORT_DIR = Environment.getExternalStorageDirectory().toString() + "/lifetracker/";
+    private static String DB_FILE_EXPORT_PATH = DB_FILE_EXPORT_DIR + DATABASE_NAME + ".db";
+
+    public boolean exportDatabase() throws IOException {
+        /*
+        // Close the SQLiteOpenHelper so it will commit the created empty
+        // database to internal storage.
+        close();
+        System.out.println(DB_FILE_EXPORT_DIR);
+        File newDbDir = new File(DB_FILE_EXPORT_DIR);
+        if(!newDbDir.mkdirs()){
+            System.out.println("couldn't make dirs");
+        }
+        File newDb = new File(DB_FILE_EXPORT_PATH);
+        File oldDb = new File(DB_FILEPATH);
+        System.out.println("oldDB: "+ DB_FILEPATH);
+        System.out.println("exists: " + oldDb.exists());
+        if (oldDb.exists()) {
+            copyFile(new FileInputStream(oldDb), new FileOutputStream(newDb));
+            // Access the copied database so SQLiteHelper will cache it and mark
+            // it as created.
+            getWritableDatabase().close();
+            System.out.println("db written to: "+ DB_FILE_EXPORT_PATH);
+            return true;
+        }
+        */
+        return false;
+    }
+
+    public boolean importDatabase() throws IOException {
+        /*
+        // Close the SQLiteOpenHelper so it will commit the created empty
+        // database to internal storage.
+        close();
+        File newDb = new File(DB_FILE_EXPORT_PATH);
+        File oldDb = new File(DB_FILEPATH);
+        if (newDb.exists()) {
+            copyFile(new FileInputStream(newDb), new FileOutputStream(oldDb));
+            // Access the copied database so SQLiteHelper will cache it and mark
+            // it as created.
+            getWritableDatabase().close();
+            return true;
+        }
+        */
+        return false;
+    }
+
+    private static void copyFile(FileInputStream fromFile, FileOutputStream toFile) throws IOException {
+        FileChannel fromChannel = null;
+        FileChannel toChannel = null;
+        try {
+            fromChannel = fromFile.getChannel();
+            toChannel = toFile.getChannel();
+            fromChannel.transferTo(0, fromChannel.size(), toChannel);
+        } finally {
+            try {
+                if (fromChannel != null) {
+                    fromChannel.close();
+                }
+            } finally {
+                if (toChannel != null) {
+                    toChannel.close();
+                }
+            }
+        }
     }
 }

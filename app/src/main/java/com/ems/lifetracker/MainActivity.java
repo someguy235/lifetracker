@@ -1,5 +1,6 @@
 package com.ems.lifetracker;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.Toast;
 
 import com.ems.lifetracker.domain.*;
 import com.ems.lifetracker.fragment.*;
@@ -68,6 +70,7 @@ public class MainActivity extends Activity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        System.out.println("onNavigationDrawerItemSelected: "+ position);
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = null;
@@ -85,11 +88,38 @@ public class MainActivity extends Activity
         		fragment = new HistoryMainFragment();
         		break;
         }
-        this.position = position;
-        fragmentManager.beginTransaction()
-        	.replace(R.id.main_container, fragment, "CURRENT_FRAGMENT_TAG")
-        	.addToBackStack(null)
-        	.commit();
+        if(position < 3) {
+            this.position = position;
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_container, fragment, "CURRENT_FRAGMENT_TAG")
+                    .addToBackStack(null)
+                    .commit();
+        /*
+        }else if(position == 3){
+            System.out.println("export");
+            DataManager dm = new DataManager(this);
+            try {
+                dm.exportDatabase();
+                Toast.makeText(this, "That worked!",
+                        Toast.LENGTH_LONG).show();
+            }catch(IOException e){
+                Toast.makeText(this, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+            }
+
+        }else if(position == 4){
+            System.out.println("import");
+            DataManager dm = new DataManager(this);
+            try {
+                dm.importDatabase();
+                Toast.makeText(this, "That worked!",
+                        Toast.LENGTH_LONG).show();
+            }catch(IOException e){
+                Toast.makeText(this, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+            }
+        */
+        }
     } 
 
     public void showActionBarMenu(boolean show){

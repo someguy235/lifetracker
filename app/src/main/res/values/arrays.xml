@@ -15,12 +15,16 @@
         <item>Track</item>
         <item>Metrics</item>
         <item>History</item>
+        <item>Export</item>
+        <item>Import</item>
     </array>
 
     <array name="nav_drawer_icons">
         <item>@drawable/track</item>
         <item>@drawable/metrics</item>
         <item>@drawable/history</item>
+        <item>@drawable/upload</item>
+        <item>@drawable/download</item>
     </array>
 </resources>
 
